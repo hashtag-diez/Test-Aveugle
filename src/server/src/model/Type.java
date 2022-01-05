@@ -1,6 +1,6 @@
 package server.src.model;
 
-enum Type {
+public enum Type {
   GET_CHANNELS, //RETOURNE les channels crées et les users présents
   // Ne prend aucun paramètre
   // Retourne un map avec les id des channels et pour chanque clé, une map contenant le nom du 
