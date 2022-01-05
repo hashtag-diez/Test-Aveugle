@@ -33,7 +33,7 @@ public class App implements Callable<Boolean> {
 	}
 	public void waitForRequest(AsynchronousSocketChannel client) throws 
 		InterruptedException, ExecutionException, IOException, ClassNotFoundException{
-			while(true&&users.containsKey(client)){
+			while(true){
 				ByteBuffer buffer = ByteBuffer.allocate(1024);
 				client.read(buffer).get();
 				Load request = Serialization.deserializeLoad(buffer.flip().array());
@@ -87,7 +87,6 @@ public class App implements Callable<Boolean> {
 				exc.printStackTrace();
 			}
 		});
-		System.in.read();
 		return true;
 	}
 	public static void main(String[] args) throws Exception {
