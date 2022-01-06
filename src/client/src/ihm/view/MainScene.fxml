@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="330.0" prefWidth="404.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ihm.controller.MainSceneController">
+<Pane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ihm.controller.MainSceneController">
    <children>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="2.0" layoutY="29.0" prefHeight="74.0" prefWidth="398.0" text="Test Aveugle">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="317.0" layoutX="5.0" layoutY="72.0" stroke="#a8a3a3" strokeType="INSIDE" width="214.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="317.0" layoutX="225.0" layoutY="72.0" stroke="#a8a3a3" strokeType="INSIDE" width="370.0" />
+      <Text fx:id="text" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Test Aveugle" textAlignment="CENTER" wrappingWidth="600.0">
          <font>
-            <Font size="51.0" />
+            <Font name="Agency FB" size="41.0" />
          </font>
-      </Label>
-      <TextField fx:id="usernameTextField" layoutX="127.0" layoutY="165.0" />
-      <Button layoutX="169.0" layoutY="246.0" mnemonicParsing="false" onAction="#btnJoinClicked" text="Rejoindre" />
-      <Label contentDisplay="CENTER" layoutX="149.0" layoutY="134.0" text="Entrer un username" />
+      </Text>
+      <Button fx:id="createGameButton" layoutX="12.0" layoutY="358.0" mnemonicParsing="false" onAction="#createGameButtonPushed" prefHeight="25.0" prefWidth="200.0" text="Créer une partie" />
+      <ListView fx:id="gameList" layoutX="12.0" layoutY="111.0" prefHeight="241.0" prefWidth="200.0" />
+      <Text layoutX="58.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Parties disponibles" textAlignment="CENTER">
+         <font>
+            <Font name="Agency FB" size="18.0" />
+         </font>
+      </Text>
+      <BorderPane fx:id="mainViewGamePanel" layoutX="225.0" layoutY="72.0" prefHeight="317.0" prefWidth="370.0" />
    </children>
-</AnchorPane>
+</Pane>
