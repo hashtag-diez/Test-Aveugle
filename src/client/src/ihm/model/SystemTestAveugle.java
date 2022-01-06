@@ -10,12 +10,14 @@ public class SystemTestAveugle {
     private ArrayList<Theme> themes;
 
     private App app;
+    public Player currentPlayer;
 
     private static SystemTestAveugle system = new SystemTestAveugle();
 
     private SystemTestAveugle() {
         games = null;
         themes = setThemeList();
+        currentPlayer = null;
     }
 
     public void setApp(App app) {
@@ -40,13 +42,25 @@ public class SystemTestAveugle {
         return null;
     }
 
+    public boolean checkGameExistence(String title) {
+        for(Game g : games) {
+            if(g.getName().equals(title)) return true;
+        }
+        return false;
+    }
+
     public void createGame(String title, Theme theme, String adminName, int nbTours){
+        currentPlayer = new Player(adminName, true);
+        currentPlayer.setGame(title);
         Network.pushGame(title, theme, adminName, nbTours);
     }
 
     public void receiveGame(String title, Theme theme, String adminName, int nbTours) {
         games.add(new Game(title, theme, adminName, nbTours));
         app.updateGameList();
+        if(currentPlayer != null) {
+            if(currentPlayer.getGame().equals(title));
+        }
     }
 
     public ArrayList<Theme> getThemes() {

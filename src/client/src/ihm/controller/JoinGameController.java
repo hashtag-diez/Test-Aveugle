@@ -1,17 +1,13 @@
 package ihm.controller;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
-
-import org.w3c.dom.css.RGBColor;
 
 import ihm.model.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 public class JoinGameController {
@@ -33,6 +29,14 @@ public class JoinGameController {
     
     @FXML
     private ListView<String> playerList;
+
+    @FXML
+    private Button joinGameButton;
+
+    @FXML
+    void joinGameClicked(ActionEvent event) {
+
+    }
 
     public void setGame(Game game) {
         ArrayList<Player> players = game.getPlayers();
@@ -57,6 +61,14 @@ public class JoinGameController {
             } else {
                 playerList.getItems().add(p.getName());
             }
+        }
+
+        if(players.size() >= 10) {
+            joinGameButton.setDisable(true);
+            joinGameButton.setText("Partie complète!");
+        } else {
+            joinGameButton.setDisable(false);
+            joinGameButton.setText("Rejoindre");
         }
     }
 

@@ -4,6 +4,7 @@ public class Player {
     private String name;
     private int points;
     private boolean isAdmin;
+    private String game;
 
     public Player(String name, boolean admin) {
         this.name = name;
@@ -25,5 +26,13 @@ public class Player {
 
     public boolean isAdmin() {
         return isAdmin;
+    }
+
+    public String getGame() {
+        return game;
+    }
+
+    public void setGame(String title) {
+        this.game = title;
     }
 }

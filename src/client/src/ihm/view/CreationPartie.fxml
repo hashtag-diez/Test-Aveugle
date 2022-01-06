@@ -17,6 +17,7 @@
       <Label layoutX="31.0" layoutY="87.0" text="Thème" />
       <Label layoutX="28.0" layoutY="133.0" prefHeight="40.0" prefWidth="52.0" text="Nombre de tours" wrapText="true" />
       <Label layoutX="30.0" layoutY="202.0" text="Pseudo" />
-      <Button layoutX="163.0" layoutY="261.0" mnemonicParsing="false" onAction="#createGame" text="Créer" />
+      <Button layoutX="163.0" layoutY="272.0" mnemonicParsing="false" onAction="#createGame" text="Créer" />
+      <Label fx:id="errorLabel" alignment="CENTER" layoutX="29.0" layoutY="237.0" prefHeight="17.0" prefWidth="323.0" textFill="#da2020" />
    </children>
 </Pane>
