@@ -11,6 +11,7 @@ public class SystemTestAveugle {
 
     private App app;
     public Player currentPlayer;
+    public Game currentGame;
 
     private static SystemTestAveugle system = new SystemTestAveugle();
 
@@ -56,10 +57,14 @@ public class SystemTestAveugle {
     }
 
     public void receiveGame(String title, Theme theme, String adminName, int nbTours) {
-        games.add(new Game(title, theme, adminName, nbTours));
+        Game newGame = new Game(title, theme, adminName, nbTours);
+        games.add(newGame);
         app.updateGameList();
-        if(currentPlayer != null) {
-            if(currentPlayer.getGame().equals(title));
+        if(currentPlayer != null && newGame != null) {
+            if(currentPlayer.getGame().equals(title)){
+                currentGame = newGame;
+                app.goToGame();
+            }
         }
     }
 
@@ -73,5 +78,9 @@ public class SystemTestAveugle {
         res.add(new Theme("Films", "#f34646"));
         res.add(new Theme("Autres", "#6df073"));
         return res;
+    }
+
+    public Game getCurrentGame() {
+        return currentGame;
     }
 }

@@ -1,5 +1,8 @@
 package ihm;
 
+import java.io.IOException;
+
+import ihm.controller.GameSceneController;
 import ihm.controller.MainSceneController;
 import ihm.model.SystemTestAveugle;
 import javafx.application.Application;
@@ -13,11 +16,17 @@ public class App extends Application {
     private static Scene mainScene;
     private static MainSceneController mainSceneController;
 
+    private static Scene gameScene;
+    private static GameSceneController gameSceneController;
+
+    private static Stage stage;
+
     private static SystemTestAveugle system;
 
     @Override
     public void start(Stage stage) throws Exception {
         system.setApp(this);
+        this.stage = stage;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("view/MainScene.fxml"));
             mainScene = new Scene(loader.load());
@@ -35,6 +44,19 @@ public class App extends Application {
 
     public void updateGameList() {
         mainSceneController.updateGameList();
+    }
+
+    public void goToGame() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("view/GameScene.fxml"));
+            gameScene = new Scene(loader.load());
+            gameSceneController = loader.getController();
+
+            stage.setScene(gameScene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
