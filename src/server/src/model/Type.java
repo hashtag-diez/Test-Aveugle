@@ -38,4 +38,5 @@ public enum Type {
   // Prend en paramètre le nom du channel à démarrer 
   // Retourne le nouveau score et l'heure de démarrage des timers 
   // PARTICIPANTS
+  EXIT
 }
