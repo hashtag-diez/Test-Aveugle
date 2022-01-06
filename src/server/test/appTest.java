@@ -1,4 +1,4 @@
-package server.test;
+/*package server.test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import app.Model.Channel;
+import server.src.Model.Channel;
 import app.Model.Message;
 import app.Model.Request;
 import app.Model.Response;
@@ -221,4 +221,4 @@ public class appTest {
   public static void main(String[] args) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
     new Main("").run();
   }
-}
+}*/
