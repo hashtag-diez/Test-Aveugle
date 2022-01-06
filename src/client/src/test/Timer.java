@@ -2,7 +2,9 @@ package client.src.test;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,12 +14,15 @@ public class Timer {
   public volatile boolean ongoing = true;
   public static void main(String[] args) throws InterruptedException {
     Timer timer = new Timer();
-    Instant server = Instant.now().plus(10, ChronoUnit.SECONDS);
+    String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
     System.out.println("Envoi de la requete SCORE_REFRESH");
     TimeUnit.SECONDS.sleep(8);
     System.out.println("Réception de la réponse");
-    Instant client = Instant.now();
-    Duration d = Duration.between(client, server);
+    System.out.println("Dans la requête : " + serverInstant);
+    Instant clientInstant = Instant.now();
+    TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(serverInstant);
+    Instant serverParsedInstant = Instant.from(ta);
+    Duration d = Duration.between(clientInstant, serverParsedInstant);
     ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
     Runnable countdown = () -> {
       System.out.println("DEBUT TIMER");   
