@@ -23,7 +23,6 @@ public class Categorie {
         return categImages;
     }
 
-    //TODO : Option --- addImage() _ getXRandomImages(int x) -> return X none equal catalogue Images. 
     /*
     TODO : Options --- 
                     addImage() _ 

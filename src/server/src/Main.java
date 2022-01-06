@@ -13,7 +13,7 @@ public class Main {
         Catalogue c =new Catalogue();
         c.showCatalogue();
         List<Categorie> l = c.getCatalogue();
-        Image i = l.get(0).getCategoryImages().get(0);
+        Image i = l.get(0).getCategoryImages().get(1);
         File f = new File("src/server/img/new.png");
         if(!f.exists())
             try {
