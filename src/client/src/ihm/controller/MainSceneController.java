@@ -1,4 +1,4 @@
-package ihm.controller;
+package client.src.ihm.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

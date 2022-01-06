@@ -1,4 +1,4 @@
-package ihm;
+package client.src.ihm;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
