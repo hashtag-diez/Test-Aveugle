@@ -4,11 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Load {
-  public enum Range{
-    ONLY_CLIENT,
-    ONLY_PLAYERS,
-    EVERYONE
-  }
   private Range range;
   public enum Status{
     OK,
@@ -16,7 +11,8 @@ public class Load {
   }
   private Status status;
   private Type type;
-  private Map<String,Map<String,String>> data;
+  private Status status;
+  private Map<String,Map<String,String>> data = new HashMap<String, Map<String, String>>();
 
   public Load(){}
   public Load(Map<String,String> header, Map<String, Map<String,String>> params, boolean isRequest){
@@ -45,6 +41,12 @@ public class Load {
   }
   public void setType(Type type) {
     this.type = type;
+  }
+  public Status getStatus() {
+    return status;
+  }
+  public void setStatus(Status status) {
+    this.status = status;
   }
   public Map<String, Map<String, String>> getData() {
     return data;
