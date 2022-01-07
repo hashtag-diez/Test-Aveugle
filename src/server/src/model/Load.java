@@ -28,6 +28,9 @@ public class Load {
   public Type getType() {
     return type;
   }
+  public Status getStatus() {
+    return status;
+  }
   public void setType(Type type) {
     this.type = type;
   }
@@ -36,6 +39,9 @@ public class Load {
   }
   public void setData(Map<String, Map<String, String>> data) {
     this.data = data;
+  }
+  public void setStatus(Status status){
+    this.status = status;
   }
   public Map<String,Map<String,String>> convertToMap(){
     Map<String,Map<String,String>> res = new HashMap<String, Map<String, String>>();
