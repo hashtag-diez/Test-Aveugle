@@ -3,8 +3,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
@@ -14,19 +12,17 @@
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="783.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.ihm.controller.InGameController">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="513.0" stroke="#a8a3a3" strokeType="INSIDE" width="214.0" />
-      <TableView fx:id="scoreTable" layoutX="7.0" layoutY="8.0" prefHeight="460.0" prefWidth="200.0">
-        <columns>
-          <TableColumn fx:id="playerColumn" prefWidth="145.0" text="Joueur" />
-          <TableColumn fx:id="scoreColumn" prefWidth="54.0" text="Score" />
-        </columns>
-      </TableView>
       <Label fx:id="tourLabel" layoutX="120.0" layoutY="482.0" text="15/15" />
       <ProgressIndicator fx:id="timer" layoutX="221.0" layoutY="14.0" progress="0.0" />
-      <Text layoutX="33.0" layoutY="495.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tours restants :" />
-      <ImageView fx:id="image" fitHeight="402.0" fitWidth="341.0" layoutX="222.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true" />
+      <Text layoutX="33.0" layoutY="495.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tour :" />
+      <ImageView fx:id="image" fitHeight="402.0" fitWidth="330.0" layoutX="226.0" layoutY="64.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="513.0" layoutX="569.0" stroke="#a8a3a3" strokeType="INSIDE" width="214.0" />
       <ListView fx:id="responseList" layoutX="576.0" layoutY="35.0" prefHeight="434.0" prefWidth="200.0" />
       <TextField fx:id="responseInput" layoutX="576.0" layoutY="478.0" onKeyPressed="#enterAnswer" prefHeight="25.0" prefWidth="200.0" />
       <Text layoutX="576.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Réponses :" textAlignment="CENTER" wrappingWidth="200.0" />
+      <ListView fx:id="playerList" fixedCellSize="30.0" layoutX="3.0" layoutY="35.0" prefHeight="441.0" prefWidth="147.0" />
+      <ListView fx:id="scoreList" fixedCellSize="30.0" layoutX="149.0" layoutY="35.0" prefHeight="441.0" prefWidth="61.0" />
+      <Text layoutX="59.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Joueur" />
+      <Text layoutX="165.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score" />
    </children>
 </Pane>

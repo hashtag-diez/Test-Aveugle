@@ -58,7 +58,7 @@ public class Network {
 
     public static void joinGame(String pseudo, Game game) {
         //TODO notifier le server que l'utilisateur à rejoint la partie Game
-        // /!\ le serveur doit notifier TOUT LES UTILISATEURS
+        // /!\ le serveur doit notifier TOUS LES UTILISATEURS
 
         //à supprimer: simulation du retour du back
         hasJoinedGame(pseudo, game);

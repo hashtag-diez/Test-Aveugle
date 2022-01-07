@@ -6,14 +6,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -27,19 +24,16 @@ public class InGameController implements Initializable{
     private ImageView image;
 
     @FXML
-    private TableColumn<?, ?> playerColumn;
-
-    @FXML
     private TextField responseInput;
 
     @FXML
     private ListView<String> responseList;
 
-    @FXML
-    private TableColumn<?, ?> scoreColumn;
+    @FXML 
+    private ListView<Player> playerList;
 
     @FXML
-    private TableView<?> scoreTable;
+    private ListView<String> scoreList;
 
     @FXML
     private ProgressIndicator timer;
@@ -73,18 +67,46 @@ public class InGameController implements Initializable{
 
         try {
             FileInputStream imageInFile = new FileInputStream("src/client/img/image.jpg");
-            image.setImage(new Image(imageInFile));
-            //image.setVisible(false);
+            Image newImage = new Image(imageInFile);
+            setImage(newImage);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        setTable(currentGame.getPlayers());
+
         //TODO gestion du timer:
         //new Timer(c)
-        /*playerColumn.setCellFactory(new PropertyValueFactory<Player, String>("name"));
-        scoreColumn.setCellFactory(new PropertyValueFactory<Player, Integer>("points"));
-        scoreTable.setItems(currentGame.getPlayers());
-        */
 
+    }
+
+    public void setImage(Image newImage) {
+        double x = newImage.getWidth();
+        double y = newImage.getHeight();
+        double a = image.getFitWidth();
+        double b = image.getFitHeight();
+        double ratioX = a / x;
+        double ratioY = b / y;
+        double applicableRatio = (ratioX > ratioY) ? ratioY : ratioX;
+        image.setX(image.getX() + (a - x * applicableRatio)/2);
+        image.setY(image.getY() + (b - y * applicableRatio)/2);
+        image.setImage(newImage);
+    }
+
+    public void setTable(ArrayList<Player> players) {
+        playerList.getItems().clear();
+        scoreList.getItems().clear();
+        //trie la liste des joueurs en fonction de leur score
+        ArrayList<Player> tempList = new ArrayList<>(players);
+        while(tempList.size() > 0) {
+            Player highScorePlayer = tempList.get(0);
+            for(Player p : tempList) {
+                if(p.getPoints() > highScorePlayer.getPoints()) highScorePlayer = p;
+            }
+            tempList.remove(highScorePlayer);
+            playerList.getItems().add(highScorePlayer);
+            scoreList.getItems().add(highScorePlayer.getPoints() + " pts");
+        }
     }
 
     public void updateAnswers() {
@@ -92,7 +114,7 @@ public class InGameController implements Initializable{
         ArrayList<String> answers = currentGame.getAnswers();
         responseList.getItems().clear();
         responseList.getItems().addAll(answers);  
-        //if(answers.size() > 0 ) responseList.scrollTo(answers.size() - 1);     
+        if(answers.size() > 0 ) responseList.scrollTo(answers.size() - 1);     
     }
 
     public void updateGame() {

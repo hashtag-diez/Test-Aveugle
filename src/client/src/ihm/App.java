@@ -35,7 +35,6 @@ public class App extends Application {
             stage.getIcons().add(new Image("img/logo.png"));
             stage.setScene(mainScene);
             stage.show();
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
