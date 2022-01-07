@@ -8,7 +8,7 @@ import src.ihm.model.SystemTestAveugle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-//import javafx.scene.image.Image;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -31,9 +31,8 @@ public class App extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("view/MainScene.fxml"));
             mainScene = new Scene(loader.load());
             mainSceneController = loader.getController();
-
             stage.setTitle("Test Aveugle");
-            //stage.getIcons().add(new Image("src/client/lib/img/logo.png"));
+            stage.getIcons().add(new Image("img/logo.png"));
             stage.setScene(mainScene);
             stage.show();
             
@@ -47,12 +46,19 @@ public class App extends Application {
         if(gameSceneController != null) gameSceneController.updateGame();
     }
 
+    public void updateAnswers() {
+        if(gameSceneController != null) {
+            gameSceneController.updateAnswers();
+        } 
+    }
+
     public void goToGame() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("view/GameScene.fxml"));
             gameScene = new Scene(loader.load());
             gameSceneController = loader.getController();
-
+            stage.setX(200);
+            stage.setY(25);
             stage.setScene(gameScene);
             stage.show();
         } catch (IOException e) {
@@ -66,6 +72,7 @@ public class App extends Application {
 
     public static void main(String[] args) {
         system = SystemTestAveugle.getSystem();
+        system.connexion();
         Application.launch(args);
     }
 }

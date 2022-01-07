@@ -1,6 +1,12 @@
 package src.network;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Map;
 
 import src.ihm.model.*;
 
@@ -8,7 +14,7 @@ public class Network {
     private static SystemTestAveugle system = SystemTestAveugle.getSystem();
     private static ArrayList<Theme> themes = system.getThemes();
 
-    public void setConnexion() {
+    public static void setConnexion() {
         //TODO méthode de connexion au server (lance la connexion dans un thread pour permetter l'exécution parallèle des affichages)
     }
 
@@ -64,4 +70,48 @@ public class Network {
         system.hasJoinedGame(player, game);
     }
 
+    public static void startGame() {
+        //TODO méthode de notification de jeu lancé par l'administrateur
+
+        //à supprimer: simulation du retour back
+        String base64Image = "";
+		File file = new File("src/client/img/logo.png");
+		try (FileInputStream imageInFile = new FileInputStream(file)) {
+			// Reading a Image file from file system
+			byte imageData[] = new byte[(int) file.length()];
+			imageInFile.read(imageData);
+			base64Image = Base64.getEncoder().encodeToString(imageData);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+        String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
+        Question q = new Question(base64Image, serverInstant);
+        gameStarted(q);
+    }
+
+    public static void gameStarted(Question question) {
+        system.gameStarted(question);
+    }
+
+    public static void scoreRefresh(Question q, Map<Player, Integer> scores) {
+        //TODO score refresh
+    }
+
+    public static void sendAnswer(String text, Game game, String player) {
+        //TODO send answer to server in game, then send back to all players
+
+        //à supprimer : simulation du retour server
+        receiveAnswer(text, game, player);
+    }
+
+    public static void receiveAnswer(String text, Game game, String player) {
+        //TODO receive answer
+        if(game.getName().equals(system.getCurrentGame().getName())){
+            system.receiveAnswer(text, player);
+        }
+    }
+
+    public static void endGame(Map<Player, Integer> scores) {
+        //TODO end of game
+    }
 }

@@ -9,6 +9,8 @@ public class Game {
     private Player admin;
     private int nbTours;
     private boolean isStarted;
+    private Question currentQuestion;
+    private ArrayList<String> answers;
 
     public Game(String name, Theme theme, String adminName, int tours, boolean isLocalPlayer) {
         this.name = name;
@@ -19,6 +21,8 @@ public class Game {
         this.players.add(this.admin);
         this.nbTours = tours;
         this.isStarted = false;
+        this.currentQuestion = null;
+        this.answers = new ArrayList<>();
     }
 
     public Player getAdmin() {
@@ -47,6 +51,22 @@ public class Game {
 
     public void setStarted(boolean isStarted) {
         this.isStarted = isStarted;
+    }
+
+    public Question getCurrentQuestion() {
+        return currentQuestion;
+    }
+
+    public void setCurrentQuestion(Question currentQuestion) {
+        this.currentQuestion = currentQuestion;
+    }
+
+    public ArrayList<String> getAnswers() {
+        return answers;
+    }
+
+    public void addAnswer(String text) {
+        answers.add(text);
     }
 
     public void decrementTours() {

@@ -49,8 +49,8 @@ public class GameSceneController implements Initializable {
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/WaitingRoom.fxml"));
-            waitingRoomController = loader.getController();
             Pane createPane = (Pane) loader.load();
+            waitingRoomController = loader.getController();
             gamePane.setCenter(createPane);
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,8 +60,8 @@ public class GameSceneController implements Initializable {
     public void startGame() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/InGameView.fxml"));
-            inGameController = loader.getController();
             Pane createPane = (Pane) loader.load();
+            inGameController = loader.getController();
             gamePane.setCenter(createPane);
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,6 +73,10 @@ public class GameSceneController implements Initializable {
         if(inGameController != null) {
             inGameController.updateGame();
         }
+    }
+
+    public void updateAnswers() {
+        if(inGameController != null) inGameController.updateAnswers();
     }
 
 }

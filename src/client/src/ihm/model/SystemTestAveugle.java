@@ -91,7 +91,23 @@ public class SystemTestAveugle {
     }
 
     public void startGame() {
+        Network.startGame();
+    }
+
+    public void gameStarted(Question question) {
+        currentGame.setStarted(true);
+        currentGame.setCurrentQuestion(question);
         app.startGame();
+    }
+
+    public void sendAnswer(String text) {
+        Network.sendAnswer(text, currentGame, currentPlayer.getName());
+    }
+
+    public void receiveAnswer(String text, String player) {
+        String isMe = player.equals(currentPlayer.getName()) ? " (moi) : " : " : ";
+        currentGame.addAnswer(player + isMe + text);
+        app.updateAnswers();
     }
 
     public boolean checkPseudoExistenceInGame(String pseudo, Game game) {
@@ -130,5 +146,9 @@ public class SystemTestAveugle {
         }
         addPlayerInGameList(player, game, false);
         app.updateGameList();
+    }
+
+    public void connexion() {
+        Network.setConnexion();
     }
 }
