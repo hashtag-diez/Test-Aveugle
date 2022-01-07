@@ -4,22 +4,15 @@ import server.src.model.User;
 
 public class UserRepository {
 
-    public static void scored(String user){
-        User u = findUserByPseudo(user, channel);
-        u.setScore(user.getScore() + 1 );
+    public static User createAndConnectUser(String pseudo, String channelName, ){
+        User user = new User(pseudo);
+        ChannelRepository.addParticipant(user, channelName);
+        return user;
     }
 
-    public static User createAndConnectUser(String channelName, String pseudo){
-        User u = new User(pseudo);
-        addParticipant(u, channelName);
-        return u;
+    public static boolean disconnectUser(String pseudo, String channelName) {
+        User user = ChannelRepository.findUserByPseudo(pseudo, channelName);
+        return ChannelRepository.removeParticipant(user, channelName);
     }
 
-    // TODO: discuss the place of this function
-    public static boolean disconnectUser(String user, String channel){
-        
-        return true;
-        return false;
-    }
-    
 }

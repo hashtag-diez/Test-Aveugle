@@ -9,7 +9,6 @@ import server.src.model.User;
 
 public class ChannelRepository {
 
-    // TODO: discuss the place of this function
     public static User findUserByPseudo(String name, String channel){
         Channel c = getChannelByName(channel);
         if(c == null) return null;
@@ -19,7 +18,6 @@ public class ChannelRepository {
         return null;
     }
     
-    // TODO: discuss the place of this function
     public static void addParticipant(User user, String channel){
         Channel c = getChannelByName(channel);
         if(c != null && user != null) {
@@ -27,6 +25,17 @@ public class ChannelRepository {
             lU.add(user);
             c.setChannelParticipants(lU);
         }
+    }
+
+    public static boolean removeParticipant(User user, String channel){
+        Channel c = getChannelByName(channel);
+        if(user!=null && c!=null) {
+            List<User> lU = c.getChannelParticipants();
+            lU.remove(user);
+            c.setChannelParticipants(lU);
+            return true;
+        }
+        return false;
     }
 
     public static Channel addChannel(String channel , String adminName, String categorie){
@@ -45,17 +54,7 @@ public class ChannelRepository {
         }
         return false;
     }
-
-    // TODO: discuss the place of this function
-    public static void removeParticipant(String user, String channel){
-        User u = findUserByPseudo(user, channel);
-        Channel c = getChannelByName(channel);
-        if(u!=null && c!=null) {
-            List<User> lU = c.getChannelParticipants();
-            lU.remove(u);
-            c.setChannelParticipants(lU);
-        }
-    }
+    
     public static void clearUserList(String channel){
         Channel c = getChannelByName(channel);
         if(c!=null) {

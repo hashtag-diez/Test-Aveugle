@@ -111,8 +111,8 @@ public class ChannelService implements ServiceInterface {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    String channelName = req.getParams().get("channelName");
-    String adminName = req.getParams().get("admin");
+    String channelName = req.getData().get("params").get("channelName");
+    String adminName = req.getData().get("params").get("adminName");
     boolean deleted = ChannelRepository.deleteChannel(channelName, adminName);
 
     if (!deleted) {
@@ -135,14 +135,12 @@ public class ChannelService implements ServiceInterface {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-  
-    String channelName = req.getParams().get("channelName");
     String categorieName = req.getData().get("params").get("categorieName");
     int nbQuestions = Integer.parseInt(req.getData().get("params").get("nbQuestions"));
 
     List<Image> images = CategorieRepository.getXRandomImages(nbQuestions, categorieName);
 
-    if (images == null) {
+    if (images.isEmpty()) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
       data.put("result", result);

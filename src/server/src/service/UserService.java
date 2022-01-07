@@ -32,9 +32,9 @@ public class UserService implements ServiceInterface {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    String channel = req.getData().get("params").get("channelName");
+    String channelName = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
-    User user = UserRepository.createAndConnectUser(channel, pseudo);
+    User user = UserRepository.createAndConnectUser(pseudo, channelName);
     if (user == null) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
@@ -58,8 +58,7 @@ public class UserService implements ServiceInterface {
 
     String channel = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
-    // TODO:
-    boolean deleted = UserRepository.removeParticipant(channel, pseudo);
+    boolean deleted = UserRepository.disconnectUser(channel, pseudo);
     if (!deleted) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
@@ -72,9 +71,7 @@ public class UserService implements ServiceInterface {
     res.setData(data);
   }
 
-  // TODO: discuss trigger SCORE_REFRESH what to do
   public void userAnswer(Load res, Load req, AsynchronousSocketChannel client) {
-
     // USER_ANSWER, // ENVOIE le message du user, TRIGGER le message SCORE_REFRESH
     // Prend en paramètre le message du user, la réponse à la question et l'id du
     // user qui l'a envoyé
@@ -95,11 +92,11 @@ public class UserService implements ServiceInterface {
       result.put("psuedo", pseudo);
       result.put("userAnswer", userAnswer);
       if (userAnswer == questionResponse) {
-        result.put("trueOrFalse", true);
+        result.put("trueOrFalse", "true");
       } else {
-        result.put("trueOrFalse", false);
+        result.put("trueOrFalse", "false");
       }
-      res.setRange(Range.ONLY_PARTICIPANTS);
+      res.setRange(Range.ONLY_PLAYERS);
     }
     data.put("result", result);
     res.setData(data);
@@ -127,6 +124,5 @@ public class UserService implements ServiceInterface {
 }
 
 // exit 
-// userrepo
-// onerepogame
+
 // router

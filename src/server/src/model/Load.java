@@ -22,12 +22,6 @@ public class Load {
   public Range getRange() {
     return range;
   }
-  public Status getStatus() {
-    return status;
-  }
-  public void setStatus(Status status) {
-    this.status = status;
-  }
   public void setRange(Range range) {
     this.range = range;
   }
