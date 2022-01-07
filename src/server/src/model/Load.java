@@ -5,12 +5,8 @@ import java.util.Map;
 
 public class Load {
   private Range range;
-  public enum Status{
-    OK,
-    ERROR
-  }
-  private Status status;
   private Type type;
+
   private Status status;
   private Map<String,Map<String,String>> data = new HashMap<String, Map<String, String>>();
 
@@ -30,9 +26,6 @@ public class Load {
   public Status getStatus() {
     return status;
   }
-  public void setStatus(Status status) {
-    this.status = status;
-  }
   public void setRange(Range range) {
     this.range = range;
   }
@@ -41,9 +34,6 @@ public class Load {
   }
   public void setType(Type type) {
     this.type = type;
-  }
-  public Status getStatus() {
-    return status;
   }
   public void setStatus(Status status) {
     this.status = status;
