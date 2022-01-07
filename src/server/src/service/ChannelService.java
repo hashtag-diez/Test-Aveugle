@@ -1,10 +1,10 @@
 package server.src.service;
 
 import java.nio.channels.AsynchronousSocketChannel;
-import java.sql.Connection;
-import java.sql.SQLException;
+
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.TypeInfo;
@@ -12,6 +12,8 @@ import org.w3c.dom.TypeInfo;
 import server.src.model.Channel;
 import server.src.model.Load;
 import server.src.model.Type;
+import server.src.model.User;
+import server.src.repository.ChannelRepository;
 import server.src.model.Status;
 import server.src.model.Range;
 
@@ -19,29 +21,20 @@ import server.src.model.Range;
 import server.src.service.serviceinterface.ServiceInterface;
 
 public class ChannelService implements ServiceInterface {
-  // private ChannelRepository ChannelRepository;
 
-  public ChannelRepository(Connection con) throws Exception {
-      try {
-        // this.ChannelRepository = new ChannelRepository(con);
-      } catch (SQLException e) {
-        throw e;
-      }
-    }
-
-  public void createChannel(Load req, Load res) throws SQLException {
+  public void createChannel(Load req, Load res) {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
     String name = req.getData().get("params").get("name");
-    String adminUuid = Integer.parseInt(getData().get("params").get("admin"));
+    int adminUuid = Integer.parseInt(req.getData().get("params").get("admin"));
     if (name.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
       Channel channel = ChannelRepository.add(name, adminUuid); // ETIENNE
-      result.put("channelName", channel.getName());
+      result.put("channelName", channel.getChannelName());
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -65,7 +58,7 @@ public class ChannelService implements ServiceInterface {
    * }
    * ],
    */
-  public void getChannels(Load req, Load res) throws SQLException {
+  public void getChannels(Load req, Load res) {
 
     res.setStatus(Status.OK);
 
@@ -78,18 +71,20 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> channelData;
     for (Channel channel : channels) {
       channelData = new HashMap<String, String>();
-      channelData.put("channelName", channel.getName());
-      channelData.put("channelUsers", channel.getUsers());
-      channelData.put("categorie", channel.getCategorie());
-
-      data.put(channel.getCuid(), channelData);
+      channelData.put("channelName", channel.getChannelName());
+      channelData.put("categorie", channel.getCategorie().getCategoryName());
+      List<User> users = channel.getChannelParticipants();
+      for(User user : users){
+        channelData.put("User"+user.getUid(), user.toString() );
+      }
+      data.put("Channel"+channel.getCuid(), channelData);
     }
     res.setData(data);
     res.setRange(Range.ONLY_CLIENT);
   }
 
   // reste flux
-  public void startChannel(Load req, Load res) throws SQLException {
+  public void startChannel(Load req, Load res) {
     // informUsersAboutStartOfGame(); // TODO
     // startGame(); // TODO
     // startTimer(); //TODO
@@ -98,7 +93,7 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("name");
-    if (name.equals("")) {
+    if (channelName.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
@@ -113,12 +108,12 @@ public class ChannelService implements ServiceInterface {
     res.setData(data);
   }
 
-  public void deleteChannel(Load req, Load res) throws SQLException {
+  public void deleteChannel(Load req, Load res) {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    int channelId = Integer.parseInt(req.getParams().get("channelId"));
-    int adminUuid = Integer.parseInt(req.getParams().get("admin"));
+    int channelId = Integer.parseInt(req.getData().get("params").get("channelId"));
+    int adminUuid = Integer.parseInt(req.getData().get("params").get("admin"));
     boolean deleted = ChannelRepository.delete(channelId, adminUuid);
 
     if (!deleted) {
@@ -136,7 +131,7 @@ public class ChannelService implements ServiceInterface {
     res.setData(data);
   }
 
-  public void channelQuestions(Load req, Load res) throws SQLException {
+  public void channelQuestions(Load req, Load res) {
   // Retourne les questions selon les params données, TRIGGER le message CHANNEL_START
   // Prend en paramètre l'id du channel, le nom de la catégorie 
   // Retourne une Map<String,String> avec des couple <Image, réponse>
@@ -145,7 +140,7 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
   
-    int channelId = Integer.parseInt(req.getParams().get("channelId"));
+    int channelId = Integer.parseInt(req.getData().get("params").get("channelId"));
     String categorieName = req.getData().get("params").get("categorieName");
 
     // ETIENNE -> make model Question (with associated image and response) and associate it with Categorie ??
@@ -154,7 +149,7 @@ public class ChannelService implements ServiceInterface {
     if (!questions) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
-      data.put("result", result)
+      data.put("result", result);
     } else {
       res.setStatus(Status.OK);
       //  TRIGGER le message CHANNEL_START  // TODO: discuss ask???
@@ -172,8 +167,7 @@ public class ChannelService implements ServiceInterface {
     res.setData(data);
   }
 
-  public void run(Load req, Load res, AsynchronousSocketChannel client)
-      throws SQLException {
+  public void run(Load req, Load res, AsynchronousSocketChannel client){
     switch (req.getType()) {
       case CHANNEL_CREATE:
         System.out.println("Un client veut creer un channel!");
