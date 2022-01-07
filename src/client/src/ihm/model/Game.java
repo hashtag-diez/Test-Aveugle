@@ -8,6 +8,7 @@ public class Game {
     private ArrayList<Player> players;
     private Player admin;
     private int nbTours;
+    private boolean isStarted;
 
     public Game(String name, Theme theme, String adminName, int tours) {
         this.name = name;
@@ -16,6 +17,7 @@ public class Game {
         this.admin = new Player(adminName, true);
         this.players.add(this.admin);
         this.nbTours = tours;
+        this.isStarted = false;
     }
 
     public Player getAdmin() {
@@ -36,6 +38,14 @@ public class Game {
 
     public int getNbTours() {
         return nbTours;
+    }
+
+    public boolean isStarted() {
+        return isStarted;
+    }
+
+    public void setStarted(boolean isStarted) {
+        this.isStarted = isStarted;
     }
 
     public void decrementTours() {

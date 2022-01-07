@@ -59,6 +59,10 @@ public class App extends Application {
         }
     }
 
+    public void startGame() {
+        gameSceneController.startGame();
+    }
+
     public static void main(String[] args) {
         system = SystemTestAveugle.getSystem();
         Application.launch(args);

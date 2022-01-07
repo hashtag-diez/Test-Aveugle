@@ -83,4 +83,8 @@ public class SystemTestAveugle {
     public Game getCurrentGame() {
         return currentGame;
     }
+
+    public void startGame() {
+        app.startGame();
+    }
 }
