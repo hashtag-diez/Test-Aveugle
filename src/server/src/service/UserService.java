@@ -2,9 +2,8 @@ package server.src.service;
 
 import server.src.service.serviceinterface.ServiceInterface;
 
+import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +17,8 @@ import server.src.model.User;
 import server.src.repository.UserRepository;
 import server.src.model.Status;
 import server.src.model.Range;
+
+import server.src.App;
 
 //import App
 
@@ -102,6 +103,16 @@ public class UserService implements ServiceInterface {
     res.setData(data);
   }
 
+  public void exit(Load res, Load req, AsynchronousSocketChannel client) throws IOException{
+    App.clients.remove(client);
+    System.out.println("Clients restants :");
+    for(AsynchronousSocketChannel cli : App.clients){
+      System.out.println(cli.getRemoteAddress());
+    }
+    res.setStatus(Status.OK);
+    res.setRange(Range.EVERYONE);
+  }
+
   public void run(Load res, Load req, AsynchronousSocketChannel client){
     switch (req.getType()) {
       case USER_CONNECT:
@@ -115,7 +126,8 @@ public class UserService implements ServiceInterface {
         System.out.println("Un client veut se deconnecter!");
         userDisconnect(res, req, client);
       case EXIT:
-      // todo enlever de liste des sockets -> fonction dans repo -> client.remove(client)
+        System.out.println("Un client veut exit!");
+        exit(res, req, client);
       default:
         break;
     }
@@ -123,6 +135,5 @@ public class UserService implements ServiceInterface {
 
 }
 
-// exit 
 
 // router
