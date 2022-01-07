@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="783.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ihm.controller.InGameController">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="513.0" stroke="#a8a3a3" strokeType="INSIDE" width="214.0" />
+      <TableView layoutX="7.0" layoutY="8.0" prefHeight="460.0" prefWidth="200.0">
+        <columns>
+          <TableColumn prefWidth="145.0" text="Joueur" />
+          <TableColumn prefWidth="54.0" text="Score" />
+        </columns>
+      </TableView>
+      <Label layoutX="120.0" layoutY="482.0" text="15/15" />
+      <ProgressIndicator layoutX="221.0" layoutY="14.0" progress="0.0" />
+      <Text layoutX="33.0" layoutY="495.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tours restants :" />
+      <ImageView fx:id="image" fitHeight="370.0" fitWidth="273.0" layoutX="255.0" layoutY="166.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../lib/img/image.jpg" />
+         </image>
+      </ImageView>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="513.0" layoutX="569.0" stroke="#a8a3a3" strokeType="INSIDE" width="214.0" />
+      <ListView layoutX="576.0" layoutY="35.0" prefHeight="434.0" prefWidth="200.0" />
+      <TextField layoutX="576.0" layoutY="478.0" prefHeight="25.0" prefWidth="200.0" />
+      <Text layoutX="576.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Réponses :" textAlignment="CENTER" wrappingWidth="200.0" />
+   </children>
+</Pane>

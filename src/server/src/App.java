@@ -14,32 +14,47 @@ import java.util.concurrent.ExecutionException;
 
 import server.src.model.Channel;
 import server.src.model.Load;
+import server.src.model.Type;
 import server.src.model.User;
-import server.src.router.Router;
-import server.src.utils.Serialization;
+import server.src.model.Load.Range;
+import server.src.model.Load.Status;
+/* import server.src.router.Router;
+ */import server.src.utils.Serialization;
 
 public class App implements Callable<Boolean> {
-  private AsynchronousServerSocketChannel server;
+	private AsynchronousServerSocketChannel server;
+
 	public static Map<AsynchronousSocketChannel, User> users = new HashMap<AsynchronousSocketChannel, User>();
-	public static Map<Channel, List<User>> rooms = new HashMap<Channel, List<User>>();
-	private Router router;
+	public static List<Channel> rooms = new ArrayList<Channel>();
+	public Map<User, Channel> players = new HashMap<User, Channel>();
+	
+/* 	private Router router;
 	public App() throws Exception{
 			router = new Router();
-	}
-	public void handleRequest(Load req, Load res, AsynchronousSocketChannel client) throws 
+	} */
+	public void handleRequest(Load request, Load response, AsynchronousSocketChannel client) throws 
 		InterruptedException, ExecutionException, IOException{
-			res.setType(req.getType());
-			router.run(req, res, client);
+			if(request.getType().equals(Type.USER_CONNECT)){
+				response.setType(request.getType());
+				response.setRange(Range.ONLY_CLIENT);
+				response.setStatus(Status.OK);
+				Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
+				Map<String, String> res = new HashMap<String, String>();
+				res.put("message", request.getData().get("params").get("username"));
+				data.put("result", res);
+				response.setData(data);
+			};
+			sendToOneClient(response, client);
 	}
 	public void waitForRequest(AsynchronousSocketChannel client) throws 
 		InterruptedException, ExecutionException, IOException, ClassNotFoundException{
 			while(true){
 				ByteBuffer buffer = ByteBuffer.allocate(1024);
 				client.read(buffer).get();
-				Load request = Serialization.deserializeLoad(buffer.flip().array());
+				Load request = Serialization.deserializeLoad(buffer.flip().array(), true);
 				Load response = new Load();
 				handleRequest(request, response, client);
-		}
+			}
 	}
 	public void sendToAll(Load res) throws InterruptedException, ExecutionException, IOException{
 		// Faire sur la liste de users à la place
@@ -48,7 +63,7 @@ public class App implements Callable<Boolean> {
 			cli.write(ByteBuffer.wrap(Serialization.serializeLoad(res))).get();
 		}
 	}
-	public void sendToPlayers(Load res, AsynchronousSocketChannel client) throws InterruptedException, ExecutionException, IOException{
+	/* public void sendToPlayers(Load res, AsynchronousSocketChannel client) throws InterruptedException, ExecutionException, IOException{
     for (Map.Entry<Channel, List<User>> entry : App.rooms.entrySet()) {
 			List<User> players = entry.getValue();
 			if(players.contains(App.users.get(client))){
@@ -57,7 +72,7 @@ public class App implements Callable<Boolean> {
 				}
 			}
 		}
-	}
+	} */
 	public void sendToOneClient(Load res, AsynchronousSocketChannel client) throws IOException, InterruptedException, ExecutionException{
 		client.write(ByteBuffer.wrap(Serialization.serializeLoad(res))).get();
 	}
@@ -66,7 +81,6 @@ public class App implements Callable<Boolean> {
 		server = AsynchronousServerSocketChannel.open();
 		server.bind(new InetSocketAddress("localhost", 1237));
 		server.accept(null, new CompletionHandler<AsynchronousSocketChannel, Object>() {
-
 			@Override
 			public void completed(AsynchronousSocketChannel client, Object attachment) {
 				server.accept(null, this);
@@ -81,12 +95,12 @@ public class App implements Callable<Boolean> {
 					failed(e, null);
 				}
 			}
-
 			@Override
 			public void failed(Throwable exc, Object attachment) {
 				exc.printStackTrace();
 			}
 		});
+		System.in.read();
 		return true;
 	}
 	public static void main(String[] args) throws Exception {
