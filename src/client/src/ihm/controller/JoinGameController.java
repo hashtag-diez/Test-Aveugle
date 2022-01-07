@@ -1,7 +1,7 @@
-package ihm.controller;
+package client.src.ihm.controller;
 import java.util.ArrayList;
 
-import ihm.model.*;
+import client.src.ihm.model.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

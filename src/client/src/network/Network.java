@@ -1,8 +1,8 @@
-package network;
+package client.src.network;
 
 import java.util.ArrayList;
 
-import ihm.model.*;
+import client.src.ihm.model.*;
 
 public class Network {
     private static SystemTestAveugle system = SystemTestAveugle.getSystem();

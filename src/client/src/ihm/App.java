@@ -1,10 +1,10 @@
-package ihm;
+package client.src.ihm;
 
 import java.io.IOException;
 
-import ihm.controller.GameSceneController;
-import ihm.controller.MainSceneController;
-import ihm.model.SystemTestAveugle;
+import client.src.ihm.controller.GameSceneController;
+import client.src.ihm.controller.MainSceneController;
+import client.src.ihm.model.SystemTestAveugle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

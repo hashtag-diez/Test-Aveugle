@@ -1,4 +1,4 @@
-package ihm.model;
+package client.src.ihm.model;
 
 public class Theme {
     private String name;
