@@ -90,9 +90,13 @@ public class ChannelService implements ServiceInterface {
 
   // reste flux
   public void startChannel(Load req, Load res) throws SQLException {
-    // informUsersAboutStartOfGame(); // TODO
     // startGame(); // TODO
     // startTimer(); //TODO
+    
+    //channel attribute admin 
+    // startGame(); // TODO isStarted -> dans le channel (un channel c'est ne partie)
+    // startTimer(envoyer time datetime  -> get function from zeid ); //TODO
+
     res.setStatus(Status.OK); // TODO: discuss possibility error
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();

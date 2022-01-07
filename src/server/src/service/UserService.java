@@ -43,7 +43,7 @@ public class UserService implements ServiceInterface {
     String pseudo = req.getData().get("params").get("channelId");
     String pseudo = req.getData().get("params").get("pseudo");
     // Etienne-> createAndConnectUser()
-    User user = UserRepository.createAndConnectUser(channelId, pseudo);
+    User user = UserRepository.createAndConnectUser(channelId, pseudo); // add user to list of channel
     if(!user){
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
@@ -62,6 +62,7 @@ public class UserService implements ServiceInterface {
   // Retourne les infos du user qui s'est déconnecté 
   // Cible = TOUT LE MONDE
 
+  liste user de channel -> delete from list
 */
 
   // why message ?? ?? discuss a quoi ca sert, should i verify wether answer is correct
@@ -73,6 +74,9 @@ public class UserService implements ServiceInterface {
     // Prend en paramètre le message du user, la réponse à la question et l'id du user qui l'a envoyé
     // Retourne le message et les infos de l'envoyeur 
     // Cible = PARTICIPANTS
+    message -> reponse ? score_refresh
+
+    si reponse correct score refresh
     */
 
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
@@ -91,6 +95,11 @@ public class UserService implements ServiceInterface {
       // don't know what to do ?? 
       result.put("userName", user.getName());
       // retourner quelle message
+/*
+      if result.get("bonReponse"){
+        User.score++
+      }
+      */
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
