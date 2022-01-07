@@ -5,11 +5,13 @@ public class Player {
     private int points;
     private boolean isAdmin;
     private String game;
+    private boolean isLocal;
 
     public Player(String name, boolean admin) {
         this.name = name;
         this.isAdmin = admin;
         this.points = 0;
+        this.isLocal = false;
     }
 
     public String getName() {
@@ -18,6 +20,14 @@ public class Player {
 
     public int getPoints() {
         return points;
+    }
+
+    public void setLocal(boolean isLocal) {
+        this.isLocal = isLocal;
+    }
+
+    public boolean isLocal() {
+        return isLocal;
     }
 
     public void addPoints() {
@@ -34,5 +44,9 @@ public class Player {
 
     public void setGame(String title) {
         this.game = title;
+    }
+
+    public String toString() {
+        return isLocal ? isAdmin ? name + "(moi : admin)" : name + "(moi)" : isAdmin ? name + "(admin)" : name;
     }
 }

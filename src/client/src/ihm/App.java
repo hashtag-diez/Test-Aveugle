@@ -19,7 +19,7 @@ public class App extends Application {
     private static Scene gameScene;
     private static GameSceneController gameSceneController;
 
-    private static Stage stage;
+    private Stage stage;
 
     private static SystemTestAveugle system;
 
@@ -44,6 +44,7 @@ public class App extends Application {
 
     public void updateGameList() {
         mainSceneController.updateGameList();
+        if(gameSceneController != null) gameSceneController.updateGame();
     }
 
     public void goToGame() {

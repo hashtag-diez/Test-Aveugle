@@ -95,4 +95,9 @@ public class JoinGameController {
         errorLabel.setText("");
     }
 
+    public void updateGame() {
+        Game g = system.getGameByName(game.getName());
+        setGame(g);
+    }
+
 }

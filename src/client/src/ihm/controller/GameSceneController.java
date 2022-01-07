@@ -20,6 +20,9 @@ public class GameSceneController implements Initializable {
     private static SystemTestAveugle system = SystemTestAveugle.getSystem();
     private static Game game;
 
+    private static WaitingRoomController waitingRoomController;
+    private static InGameController inGameController;
+
     @FXML
     private Label gameNameLabel;
 
@@ -46,6 +49,7 @@ public class GameSceneController implements Initializable {
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/WaitingRoom.fxml"));
+            waitingRoomController = loader.getController();
             Pane createPane = (Pane) loader.load();
             gamePane.setCenter(createPane);
         } catch (IOException e) {
@@ -56,10 +60,18 @@ public class GameSceneController implements Initializable {
     public void startGame() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/InGameView.fxml"));
+            inGameController = loader.getController();
             Pane createPane = (Pane) loader.load();
             gamePane.setCenter(createPane);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void updateGame() {
+        waitingRoomController.updatePlayerList();
+        if(inGameController != null) {
+            inGameController.updateGame();
         }
     }
 

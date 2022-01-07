@@ -57,14 +57,16 @@ public class SystemTestAveugle {
     }
 
     public void receiveGame(String title, Theme theme, String adminName, int nbTours) {
-        Game newGame = new Game(title, theme, adminName, nbTours);
-        games.add(newGame);
-        app.updateGameList();
-        if(currentPlayer != null && newGame != null) {
-            if(currentPlayer.getGame().equals(title)){
-                currentGame = newGame;
-                app.goToGame();
-            }
+        Game newGame = new Game(title, theme, adminName, nbTours, false);
+        if(currentPlayer != null && currentPlayer.getGame().equals(title)){
+            newGame = new Game(title, theme, adminName, nbTours, true);
+            games.add(newGame);
+            app.updateGameList();
+            currentGame = newGame;
+            app.goToGame();
+        } else {
+            games.add(newGame);
+            app.updateGameList();
         }
     }
 
@@ -84,6 +86,10 @@ public class SystemTestAveugle {
         return currentGame;
     }
 
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     public void startGame() {
         app.startGame();
     }
@@ -96,7 +102,33 @@ public class SystemTestAveugle {
         return false;
     }
 
+    public void addPlayerInGameList(String player, Game game, boolean isLocalPlayer) {
+        for(Game g : games) {
+            if(g.equals(game)) {
+                g.addPlayer(player, isLocalPlayer);
+                return;
+            } 
+        }
+        //cas où la partie n'existe pas dans le système
+        game.addPlayer(player, isLocalPlayer);
+        games.add(game);
+    }
+
     public void joinGame(String pseudo, Game game) {
+        currentPlayer = new Player(pseudo, false);
+        currentPlayer.setGame(game.getName());
         Network.joinGame(pseudo, game);
+    }
+
+    public void hasJoinedGame(String player, Game game) {
+        if(currentPlayer != null && currentPlayer.getGame().equals(game.getName())){
+            addPlayerInGameList(player, game, true);
+            app.updateGameList();
+            currentGame = game;
+            app.goToGame();
+            return;
+        }
+        addPlayerInGameList(player, game, false);
+        app.updateGameList();
     }
 }

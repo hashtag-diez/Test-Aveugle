@@ -10,11 +10,12 @@ public class Game {
     private int nbTours;
     private boolean isStarted;
 
-    public Game(String name, Theme theme, String adminName, int tours) {
+    public Game(String name, Theme theme, String adminName, int tours, boolean isLocalPlayer) {
         this.name = name;
         this.theme = theme;
         this.players = new ArrayList<>();
         this.admin = new Player(adminName, true);
+        this.admin.setLocal(isLocalPlayer);
         this.players.add(this.admin);
         this.nbTours = tours;
         this.isStarted = false;
@@ -51,9 +52,10 @@ public class Game {
     public void decrementTours() {
         nbTours --;
     }
-
-    public void addPlayer(String name) {
-        players.add(new Player(name, false));
+    public void addPlayer(String name, boolean isLocalPlayer) {
+        Player player = new Player(name, false);
+        player.setLocal(isLocalPlayer);
+        players.add(player);
     }
 
     public void quitGame(Player player) {
