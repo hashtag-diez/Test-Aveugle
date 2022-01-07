@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
+import server.src.model.Catalogue;
 import server.src.model.Channel;
 import server.src.model.Load;
 import server.src.model.Type;
@@ -24,6 +25,7 @@ import server.src.model.Load.Status;
 public class App implements Callable<Boolean> {
 	private AsynchronousServerSocketChannel server;
 
+	public static Catalogue catalogue = new Catalogue();
 	public static Map<AsynchronousSocketChannel, User> users = new HashMap<AsynchronousSocketChannel, User>();
 	public static List<Channel> rooms = new ArrayList<Channel>();
 	public Map<User, Channel> players = new HashMap<User, Channel>();

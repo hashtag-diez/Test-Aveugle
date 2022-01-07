@@ -3,6 +3,7 @@ package server.src.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import server.src.App;
 import server.src.model.Categorie;
 import server.src.model.Image;
 
@@ -10,7 +11,9 @@ public class CategorieRepository {
     
     //-> return X none equal catalogue Images    if(x >= categImages.size()) return categImages
         
-    public static List<Image> getXRandomImages(int x, Categorie c) {
+    //TODO 
+    public static List<Image> getXRandomImages(int x, String categorieName) {
+        Categorie c = CatalogueRepository.findCategorieByName(App.catalogue, categorieName);
         List<Image> l = c.getCategoryImages();
         int i=0;
         List<Image> l1 = l;

@@ -14,6 +14,8 @@ import org.w3c.dom.TypeInfo;
 import server.src.model.Channel;
 import server.src.model.Load;
 import server.src.model.Type;
+import server.src.model.User;
+import server.src.repository.UserRepository;
 import server.src.model.Status;
 import server.src.model.Range;
 
@@ -22,34 +24,30 @@ import server.src.model.Range;
 public class UserService implements ServiceInterface {
   // private UserRepository UserRepository
 
-  public UserService(Connection con) throws Exception {
-    try {
-      // this.UserRepository = new UserRepository(con);
-    } catch (SQLException e) {
-      throw e;
-    }
+  public UserService() {
+    
   }
 //user connection connect to channel and enter pseudo dedans!!! idée changé
 // AJOUTE un user dans un channel
   // Prend l'id du user à connecter et l'id du channel
   // Retourne les infos du user qui s'est connecté 
   // Cible = TOUT LE MONDE
-  public void userConnectChannel(Load response, Load req, AsynchronousSocketChannel client)
+  public void userConnectChannel(Load res, Load req, AsynchronousSocketChannel client)
       throws NoSuchAlgorithmException, SQLException {
 
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
     
-    String pseudo = req.getData().get("params").get("channelId");
+    String channel = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
     // Etienne-> createAndConnectUser()
-    User user = UserRepository.createAndConnectUser(channelId, pseudo); // add user to list of channel
-    if(!user){
+    User user = UserRepository.createAndConnectUser(channel, pseudo);
+    if(user == null){
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     }else{
       res.setStatus(Status.OK);
-      result.put("userName", user.getName());
+      result.put("userName", user.getPseudo());
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
