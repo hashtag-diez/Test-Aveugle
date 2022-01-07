@@ -5,13 +5,19 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.TypeInfo;
 
+import server.src.App;
 import server.src.model.Channel;
+import server.src.model.Image;
 import server.src.model.Load;
 import server.src.model.Type;
+import server.src.repository.CatalogueRepository;
+import server.src.repository.CategorieRepository;
+import server.src.repository.ChannelRepository;
 import server.src.model.Status;
 import server.src.model.Range;
 
@@ -19,29 +25,23 @@ import server.src.model.Range;
 import server.src.service.serviceinterface.ServiceInterface;
 
 public class ChannelService implements ServiceInterface {
-  // private ChannelRepository ChannelRepository;
 
-  public ChannelRepository(Connection con) throws Exception {
-      try {
-        // this.ChannelRepository = new ChannelRepository(con);
-      } catch (SQLException e) {
-        throw e;
-      }
-    }
+  public ChannelService(){}
 
   public void createChannel(Load req, Load res) throws SQLException {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
     String name = req.getData().get("params").get("name");
-    String adminUuid = Integer.parseInt(getData().get("params").get("admin"));
+    String admin = req.getData().get("params").get("admin");
+    String categ = req.getData().get("params").get("categorie");
     if (name.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      Channel channel = ChannelRepository.add(name, adminUuid); // ETIENNE
-      result.put("channelName", channel.getName());
+      Channel channel = ChannelRepository.addChannel(name, admin, categ);
+      result.put("channelName", channel.getChannelName());
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -51,15 +51,13 @@ public class ChannelService implements ServiceInterface {
   /*
    * return names of channels and present users
    * [
-   * channelId {
-   * channelName: ...,
+   * channelName {
    * categorie: ...,
    * channelUsers: (String with users id or name divided by ",")
    * }
    * ],
    * [
-   * channelId {
-   * channelName: ...,
+   * channelName {
    * categorie: ...,
    * channelUsers: (String with users id or name divided by ",")
    * }
@@ -71,18 +69,16 @@ public class ChannelService implements ServiceInterface {
 
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
 
-    // ETIENNE -> getAllChannels() in repo. ANd in channel models getName() +
-    // getCuid() + getUsers() +getCategorie()
-    List<Channel> channels = ChannelRepository.getChannels();
+    List<Channel> channels = App.rooms;
 
     Map<String, String> channelData;
     for (Channel channel : channels) {
       channelData = new HashMap<String, String>();
-      channelData.put("channelName", channel.getName());
-      channelData.put("channelUsers", channel.getUsers());
+      
+      channelData.put("channelUsers", channel.getChannelParticipants());
       channelData.put("categorie", channel.getCategorie());
 
-      data.put(channel.getCuid(), channelData);
+      data.put(channel.getChannelName(), channelData);
     }
     res.setData(data);
     res.setRange(Range.ONLY_CLIENT);
@@ -117,16 +113,16 @@ public class ChannelService implements ServiceInterface {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    int channelId = Integer.parseInt(req.getParams().get("channelId"));
-    int adminUuid = Integer.parseInt(req.getParams().get("admin"));
-    boolean deleted = ChannelRepository.delete(channelId, adminUuid);
+    String channel = req.getParams().get("channelName");
+    String admin = req.getParams().get("admin");
+    boolean deleted = ChannelRepository.deleteChannel(channel, admin);
 
     if (!deleted) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      result.put("channelId", channelId);
+      result.put("channelName", channel);
       // Channel channel = ChannelRepository.getChannel(channel);
       // channel.start(); ???
       // result.put("channelName", channel);
@@ -145,28 +141,30 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
   
-    int channelId = Integer.parseInt(req.getParams().get("channelId"));
+    String channel = req.getParams().get("channelName");
     String categorieName = req.getData().get("params").get("categorieName");
+    int nbQuestions = Integer.parseInt(req.getData().get("params").get("nbQuestions"));
 
     // ETIENNE -> make model Question (with associated image and response) and associate it with Categorie ??
-    //List<Question> questions = ChannelRepository.getQuestions(categorieName) //TODO
+    List<Image> images = CategorieRepository.getXRandomImages(nbQuestions, categorieName);
 
-    if (!questions) {
+
+    if (!images) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
-      data.put("result", result)
+      data.put("result", result);
     } else {
       res.setStatus(Status.OK);
       //  TRIGGER le message CHANNEL_START  // TODO: discuss ask???
-      //Etienne -> getAnswer, getImage, getId 
-      Map<String, String> questionData;
-      for (Channel question : questions) {
-        questionData = new HashMap<String, String>();
-        questionData.put("question", question.getAnswer());
-        questionData.put("image", question.getImage());
-        
-        data.put(question.getId(), questionData);
+      int idImage = 0;
+      Map<String, String> imageData;
+      for (Image image : images) {
+        imageData = new HashMap<String, String>();
+        imageData.put("image", image.getResponse());
+        imageData.put("image", image.getImg());
+        data.put(idImage, imageData);
         res.setRange(Range.ONLY_PLAYERS);
+        idImage++;
       }
     }
     res.setData(data);
