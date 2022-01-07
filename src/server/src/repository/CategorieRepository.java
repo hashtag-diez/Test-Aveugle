@@ -1,10 +1,10 @@
-package server.src.repository;
+package src.repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import server.src.model.Categorie;
-import server.src.model.Image;
+import src.model.Categorie;
+import src.model.Image;
 
 public class CategorieRepository {
     

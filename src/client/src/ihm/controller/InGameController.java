@@ -1,4 +1,4 @@
-package client.src.ihm.controller;
+package src.ihm.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -9,7 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import client.src.ihm.model.*;
+import src.ihm.model.*;
 
 public class InGameController implements Initializable{
 

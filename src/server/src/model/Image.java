@@ -1,4 +1,4 @@
-package server.src.model;
+package src.model;
 
 /**
  * La classe Image stock une image en format string pour faciliter les transactions entre Utilisateurs, ainsi que la bonne réponse correspondante

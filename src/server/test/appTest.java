@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import server.src.Model.Channel;
+import src.Model.Channel;
 import app.Model.Message;
 import app.Model.Request;
 import app.Model.Response;

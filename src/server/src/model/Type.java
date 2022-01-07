@@ -1,4 +1,4 @@
-package server.src.model;
+package src.model;
 
 public enum Type {
   GET_CHANNELS, //RETOURNE les channels crées et les users présents

@@ -1,4 +1,4 @@
-package server.src.model;
+package src.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,8 +6,6 @@ import java.util.Map;
 public class Load {
   private Range range;
   private Type type;
-
-  private Status status;
   private Map<String,Map<String,String>> data = new HashMap<String, Map<String, String>>();
 
   public Load(){}
@@ -34,9 +32,6 @@ public class Load {
   }
   public void setType(Type type) {
     this.type = type;
-  }
-  public void setStatus(Status status) {
-    this.status = status;
   }
   public Map<String, Map<String, String>> getData() {
     return data;

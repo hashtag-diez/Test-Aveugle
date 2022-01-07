@@ -1,4 +1,4 @@
-package client.src.ihm.model;
+package src.ihm.model;
 
 import java.util.ArrayList;
 

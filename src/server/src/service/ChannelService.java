@@ -1,4 +1,4 @@
-package server.src.service;
+package src.service;
 
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -9,16 +9,14 @@ import java.util.Map;
 
 import org.w3c.dom.TypeInfo;
 
-import server.src.model.Channel;
-import server.src.model.Load;
-import server.src.model.Type;
-import server.src.model.User;
-import server.src.repository.ChannelRepository;
-import server.src.model.Status;
-import server.src.model.Range;
+import src.model.Channel;
+import src.model.Load;
+import src.model.Type;
+import src.model.Status;
+import src.model.Range;
 
-//import server.src.repository.ChannelRepository;
-import server.src.service.serviceinterface.ServiceInterface;
+//import src.repository.ChannelRepository;
+import src.service.serviceinterface.ServiceInterface;
 
 public class ChannelService implements ServiceInterface {
 

@@ -1,4 +1,4 @@
-package server.src.router;
+package src.router;
 
 public class Router {
   

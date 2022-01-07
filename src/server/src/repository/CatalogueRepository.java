@@ -1,8 +1,8 @@
-package server.src.repository;
+package src.repository;
 
-import server.src.model.Catalogue;
-import server.src.model.Categorie;
-import server.src.model.Image;
+import src.model.Catalogue;
+import src.model.Categorie;
+import src.model.Image;
 
 public class CatalogueRepository {
 
