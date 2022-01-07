@@ -51,6 +51,10 @@ public class App extends Application {
         } 
     }
 
+    public void updateGameInSession() {
+        gameSceneController.updateGameInSession();
+    }
+
     public void goToGame() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("view/GameScene.fxml"));

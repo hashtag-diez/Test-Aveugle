@@ -79,4 +79,9 @@ public class GameSceneController implements Initializable {
         if(inGameController != null) inGameController.updateAnswers();
     }
 
+    public void updateGameInSession() {
+        inGameController.updateScore();
+        inGameController.updateGame();
+    }
+
 }

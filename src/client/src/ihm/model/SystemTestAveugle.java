@@ -100,15 +100,37 @@ public class SystemTestAveugle {
         app.startGame();
     }
 
+    public void setNextQuestion(Question question) {
+        currentGame.setCurrentQuestion(question);
+        if(currentGame.isStarted()) app.updateGameInSession();
+    }
+
     public void sendAnswer(String text) {
         Network.sendAnswer(text, currentGame, currentPlayer.getName());
     }
 
     public void receiveAnswer(String text, String player) {
-        String isMe = player.equals(currentPlayer.getName()) ? " (moi) : " : " : ";
-        currentGame.addAnswer(player + isMe + text);
+        String name = currentPlayer.getName().equals(player) ? "moi" : player;
+        currentGame.addAnswer(name + text);
         app.updateAnswers();
     }
+
+    public void receiveCorrectAnswer(String text, String player, boolean isClockEnd) {
+        for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
+            if(player.equals(currentGame.getPlayers().get(i).getName())) {
+                currentGame.getPlayers().get(i).addPoints();
+            }
+        }
+        if(isClockEnd) {
+            currentGame.addAnswer("Personne n'a trouvé ! ");
+        } else {
+            String name = currentPlayer.getName().equals(player) ? "moi" : player;
+            currentGame.addAnswer(name + text);
+            currentGame.addAnswer(player + " a trouvé ! ");
+        }
+        app.updateAnswers();
+    }
+
 
     public boolean checkPseudoExistenceInGame(String pseudo, Game game) {
         ArrayList<Player> players = game.getPlayers(); 

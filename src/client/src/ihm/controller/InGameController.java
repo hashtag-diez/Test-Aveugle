@@ -73,7 +73,7 @@ public class InGameController implements Initializable{
             e.printStackTrace();
         }
 
-        setTable(currentGame.getPlayers());
+        setSortedTable(currentGame.getPlayers());
 
         //TODO gestion du timer:
         //new Timer(c)
@@ -93,7 +93,7 @@ public class InGameController implements Initializable{
         image.setImage(newImage);
     }
 
-    public void setTable(ArrayList<Player> players) {
+    public void setSortedTable(ArrayList<Player> players) {
         playerList.getItems().clear();
         scoreList.getItems().clear();
         //trie la liste des joueurs en fonction de leur score
@@ -115,6 +115,10 @@ public class InGameController implements Initializable{
         responseList.getItems().clear();
         responseList.getItems().addAll(answers);  
         if(answers.size() > 0 ) responseList.scrollTo(answers.size() - 1);     
+    }
+
+    public void updateScore() {
+        setSortedTable(system.getCurrentGame().getPlayers());
     }
 
     public void updateGame() {

@@ -31,7 +31,7 @@ public class Player {
     }
 
     public void addPoints() {
-        this.points ++;
+        this.points += 10;
     }
 
     public boolean isAdmin() {

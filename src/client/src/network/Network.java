@@ -85,7 +85,7 @@ public class Network {
 			System.out.println(e);
 		}
         String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
-        Question q = new Question(base64Image, serverInstant);
+        Question q = new Question(base64Image, serverInstant, "test");
         gameStarted(q);
     }
 
@@ -93,25 +93,44 @@ public class Network {
         system.gameStarted(question);
     }
 
-    public static void scoreRefresh(Question q, Map<Player, Integer> scores) {
-        //TODO score refresh
-    }
-
     public static void sendAnswer(String text, Game game, String player) {
         //TODO send answer to server in game, then send back to all players
 
-        //à supprimer : simulation du retour server
-        receiveAnswer(text, game, player);
+        //à supprimer: simulation du retour back
+        String base64Image = "";
+		File file = new File("src/client/img/logo_accueil.png");
+		try (FileInputStream imageInFile = new FileInputStream(file)) {
+			// Reading a Image file from file system
+			byte imageData[] = new byte[(int) file.length()];
+			imageInFile.read(imageData);
+			base64Image = Base64.getEncoder().encodeToString(imageData);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+        String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
+        Question nextQuestion = new Question(base64Image, serverInstant, "test");
+        if(game.getCurrentQuestion().isGoodAnswer(text)) scoreRefresh(text, game, player, nextQuestion, false);
+        else receiveAnswer(text, game, player);
     }
 
     public static void receiveAnswer(String text, Game game, String player) {
         //TODO receive answer
+
         if(game.getName().equals(system.getCurrentGame().getName())){
             system.receiveAnswer(text, player);
         }
     }
 
-    public static void endGame(Map<Player, Integer> scores) {
+    public static void scoreRefresh(String text, Game game, String player, Question nextQuestion, boolean isClockEnd) {
+        //TODO réception d'un score refresh (fin du tour, incrémentation du score)
+
+        if(game.getName().equals(system.getCurrentGame().getName())){
+            system.receiveCorrectAnswer(text, player, isClockEnd);
+            system.setNextQuestion(nextQuestion);
+        }
+    }
+
+    public static void endGame(String turnWinnerName) {
         //TODO end of game
     }
 }
