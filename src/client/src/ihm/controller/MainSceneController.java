@@ -1,4 +1,4 @@
-package ihm.controller;
+package src.ihm.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import ihm.model.*;
+import src.ihm.model.*;
 
 public class MainSceneController implements Initializable {
 

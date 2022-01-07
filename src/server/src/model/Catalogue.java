@@ -1,10 +1,10 @@
-package server.src.model;
+package src.model;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import server.src.utils.EncodingImage;
+import src.utils.EncodingImage;
 
 /**
  * La classe Catalogue crée et stock une liste de Categorie à partir des dossiers locaux au projet

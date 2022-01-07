@@ -1,4 +1,4 @@
-package ihm.model;
+package src.ihm.model;
 
 public class Player {
     private String name;

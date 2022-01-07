@@ -1,4 +1,4 @@
-package server.src.model;
+package src.model;
 
 public enum Status{
   ERROR,

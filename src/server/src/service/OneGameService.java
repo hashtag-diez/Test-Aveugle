@@ -1,4 +1,4 @@
-package server.src.service;
+package src.service;
 
 public class OneGameService implements ServiceInterface {
   /* 

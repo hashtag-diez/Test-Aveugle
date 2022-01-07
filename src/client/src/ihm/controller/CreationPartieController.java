@@ -1,10 +1,10 @@
-package ihm.controller;
+package src.ihm.controller;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import ihm.model.*;
+import src.ihm.model.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

@@ -1,9 +1,9 @@
-package ihm.controller;
+package src.ihm.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import ihm.model.*;
+import src.ihm.model.*;
 
 public class WaitingRoomController {
 

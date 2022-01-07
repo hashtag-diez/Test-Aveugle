@@ -1,14 +1,14 @@
-package server.src;
+package src;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import server.src.model.Catalogue;
-import server.src.model.Categorie;
-import server.src.model.Image;
-import server.src.repository.CatalogueRepository;
-import server.src.utils.EncodingImage;
+import src.model.Catalogue;
+import src.model.Categorie;
+import src.model.Image;
+import src.repository.CatalogueRepository;
+import src.utils.EncodingImage;
 
 public class Main {
     public static void main(String[] args) {

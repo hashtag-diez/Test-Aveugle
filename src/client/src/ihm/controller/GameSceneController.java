@@ -1,4 +1,4 @@
-package ihm.controller;
+package src.ihm.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import ihm.model.*;
+import src.ihm.model.*;
 
 public class GameSceneController implements Initializable {
 

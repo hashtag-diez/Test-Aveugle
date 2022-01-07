@@ -1,9 +1,9 @@
-package ihm.model;
+package src.ihm.model;
 
 import java.util.ArrayList;
 
-import ihm.App;
-import network.Network;
+import src.ihm.App;
+import src.network.Network;
 
 public class SystemTestAveugle {
     private ArrayList<Game> games;

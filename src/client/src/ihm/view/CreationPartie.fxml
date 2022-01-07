@@ -6,8 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-
-<Pane fx:id="createGamePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="317.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ihm.controller.CreationPartieController">
+<Pane fx:id="createGamePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="317.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.ihm.controller.CreationPartieController">
    <children>
       <TextField fx:id="titrePartieFiels" layoutX="96.0" layoutY="27.0" prefHeight="25.0" prefWidth="260.0" />
       <TextField fx:id="pseudoField" layoutX="96.0" layoutY="198.0" prefHeight="25.0" prefWidth="260.0" />

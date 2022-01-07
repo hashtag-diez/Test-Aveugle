@@ -1,7 +1,7 @@
-package server.src.repository;
+package src.repository;
 
-import server.src.model.Channel;
-import server.src.model.User;
+import src.model.Channel;
+import src.model.User;
 
 public class ChannelRepository {
 

@@ -1,4 +1,4 @@
-package server.src.utils;
+package src.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
-import server.src.model.Load;
+import src.model.Load;
 
 public class Serialization {
 

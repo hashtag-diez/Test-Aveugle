@@ -1,4 +1,4 @@
-package server.src;
+package src;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -12,14 +12,9 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-import server.src.model.Channel;
-import server.src.model.Load;
-import server.src.model.Type;
-import server.src.model.User;
-import server.src.model.Load.Range;
-import server.src.model.Load.Status;
-/* import server.src.router.Router;
- */import server.src.utils.Serialization;
+import src.model.*;
+/* import router.Router;
+ */import src.utils.Serialization;
 
 public class App implements Callable<Boolean> {
 	private AsynchronousServerSocketChannel server;
