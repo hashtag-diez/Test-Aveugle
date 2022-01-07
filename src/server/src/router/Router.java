@@ -1,12 +1,14 @@
 package src.router;
 
-import server.src.model.Type;
-import server.src.service.serviceinterface.ServiceInterface;
+import src.model.Load;
+import src.model.Type;
+import src.service.serviceinterface.ServiceInterface;
 
-import server.src.service.ChannelService;
-import server.src.service.OneGameService;
-import server.src.service.UserService;
+import src.service.ChannelService;
+import src.service.OneGameService;
+import src.service.UserService;
 
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +32,9 @@ public class Router {
 
     OneGameService  oneGame = new OneGameService();
     services.put(Type.SCORE_REFRESH, oneGame);
-
-    public void run(Request req, Response res, AsynchronousSocketChannel client) {
-      ServiceInterface action = services.get(req.getType());
-      action.run(req, res, client);
-    }
+  }
+  public void run(Load req, Load res, AsynchronousSocketChannel client) {
+    ServiceInterface action = services.get(req.getType());
+    action.run(req, res, client);
   }
 }

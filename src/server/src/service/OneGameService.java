@@ -1,6 +1,6 @@
 package src.service;
 
-import server.src.service.serviceinterface.ServiceInterface;
+import src.service.serviceinterface.ServiceInterface;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,13 +8,12 @@ import java.util.Map;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import server.src.model.User;
-import server.src.model.Load;
-import server.src.model.Range;
-import server.src.model.Type;
-import server.src.model.Status;
+import src.model.User;
+import src.model.Load;
+import src.model.Range;
+import src.model.Status;
 
-import server.src.repository.OneGameRepository;
+import src.repository.OneGameRepository;
 
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -48,7 +47,7 @@ public class OneGameService implements ServiceInterface {
         res.setStatus(Status.OK);
         res.setRange(Range.ONLY_PLAYERS);
         result.put("userNewScore", String.valueOf(user.getScore()));
-        result.put("startTime", startTime)
+        result.put("startTime", startTime);
       }
     }else{
       res.setStatus(Status.OK);

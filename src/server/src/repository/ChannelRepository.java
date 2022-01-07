@@ -2,10 +2,10 @@ package src.repository;
 
 import java.util.List;
 
-import server.src.App;
-import server.src.model.Categorie;
-import server.src.model.Channel;
-import server.src.model.User;
+import src.App;
+import src.model.Categorie;
+import src.model.Channel;
+import src.model.User;
 
 public class ChannelRepository {
 

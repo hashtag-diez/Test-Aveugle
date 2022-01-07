@@ -10,18 +10,15 @@ import java.util.Map;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.w3c.dom.TypeInfo;
-
-import server.src.App;
-import server.src.model.Channel;
-import server.src.model.Image;
-import server.src.model.Load;
-import server.src.model.Type;
-import server.src.repository.CatalogueRepository;
-import server.src.repository.CategorieRepository;
-import server.src.repository.ChannelRepository;
-import server.src.model.Status;
-import server.src.model.Range;
+import src.App;
+import src.model.Channel;
+import src.model.Image;
+import src.model.Load;
+import src.model.User;
+import src.repository.CategorieRepository;
+import src.repository.ChannelRepository;
+import src.model.Status;
+import src.model.Range;
 
 //import src.repository.ChannelRepository;
 import src.service.serviceinterface.ServiceInterface;
@@ -40,7 +37,7 @@ public class ChannelService implements ServiceInterface {
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      Channel channel = ChannelRepository.addChannel(channelName, adminName, categName);
+      Channel channel = ChannelRepository.addChannel(channelName, adminName, categorieName);
       result.put("channelName", channel.getChannelName());
       res.setRange(Range.EVERYONE);
     }
@@ -74,10 +71,11 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> channelData;
     for (Channel channel : channels) {
       channelData = new HashMap<String, String>();
-
-      channelData.put("channelUsers", channel.getChannelParticipants());
-      channelData.put("categorie", channel.getCategorie());
-
+      List<User> players = channel.getChannelParticipants();
+      channelData.put("categorie", channel.getCategorie().getCategoryName());
+      for(User player : players){
+        channelData.put("user"+player.getUid(), player.getPseudo());
+      }
       data.put(channel.getChannelName(), channelData);
     }
     res.setData(data);

@@ -1,10 +1,10 @@
 package src.repository;
 
-import server.src.model.User;
+import src.model.User;
 
 public class UserRepository {
 
-    public static User createAndConnectUser(String pseudo, String channelName, ){
+    public static User createAndConnectUser(String pseudo, String channelName){
         User user = new User(pseudo);
         ChannelRepository.addParticipant(user, channelName);
         return user;
