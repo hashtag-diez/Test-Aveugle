@@ -16,8 +16,8 @@ import server.src.model.Channel;
 import server.src.model.Load;
 import server.src.model.Type;
 import server.src.model.User;
-import server.src.model.Load.Range;
-import server.src.model.Load.Status;
+import server.src.model.Range;
+import server.src.model.Status;
 /* import server.src.router.Router;
  */import server.src.utils.Serialization;
 
