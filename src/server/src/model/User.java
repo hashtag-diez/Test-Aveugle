@@ -4,11 +4,13 @@ import java.nio.channels.AsynchronousSocketChannel;
 
 public class User {
   private String pseudo;
+  private int score;
   private AsynchronousSocketChannel clientSocket;
   private int uid;
 
   public User(String pseudo){
     this.pseudo = pseudo;
+    this.score = 0;
   }
 
   public AsynchronousSocketChannel getClientSocket() {
@@ -30,4 +32,12 @@ public class User {
   }
 
   public String getPseudo(){return pseudo;}
+
+  public int getScore(){return score;}
+
+  public void setScore(int score){
+    this.score = score;
+  }
+
+  
 }

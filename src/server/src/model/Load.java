@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Load {
   private Range range;
+  private Status status;
   private Type type;
   private Map<String,Map<String,String>> data = new HashMap<String, Map<String, String>>();
 
@@ -20,9 +21,6 @@ public class Load {
   }
   public Range getRange() {
     return range;
-  }
-  public Status getStatus() {
-    return status;
   }
   public void setRange(Range range) {
     this.range = range;

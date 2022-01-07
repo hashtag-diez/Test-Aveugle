@@ -7,12 +7,14 @@ public class Channel {
     private String name;
     private User admin;
     private List<User> participants;
-    private int cuid;
     private Categorie categorie;
+    private boolean isStarted;
 
-    public Channel(String name, User admin){
+    public Channel(String name, User admin, Categorie categorie){
         this.name = name;
         this.admin = admin;
+        this.isStarted = false;
+        this.categorie = categorie;
         this.participants = new ArrayList<>();
         participants.add(admin);
     }
@@ -31,22 +33,31 @@ public class Channel {
     
     public List<User> getChannelParticipants(){return participants;}
 
-    public void addParticipant(User u){
-        participants.add(u);
-    }
-    public int getCuid() {
-        return cuid;
+    public void setChannelName(String name){
+        this.name = name;
     }
 
-    public void setCuid(int cuid) {
-        this.cuid = cuid;
+    public Categorie getCategorie(){return categorie;}
+
+    public void setCategorie(Categorie categ){
+        this.categorie = categ;
     }
 
-    public void removeParticipant(User u){
-        participants.remove(u);
+    public void setChannelAdmin(User admin){
+        this.admin = admin;
     }
-    public void clearUserList(){
-        participants.clear();;
+    
+    public void setChannelParticipants(List<User> participants){
+        this.participants = participants;
     }
+
+    public boolean getIsStarted(){
+        return isStarted;
+    }
+
+    public void setIsStarted(boolean b){
+        this.isStarted = b;
+    }
+    
 
 }
