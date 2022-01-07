@@ -129,7 +129,7 @@ public class ChannelService implements ServiceInterface {
     res.setData(data);
   }
 
-  //See Etienne (CategoryRepo TODO) and Zeid (trigger channel start) 
+  //see with Zeid (trigger channel start) 
   public void channelQuestions(Load req, Load res) {
   // Retourne les questions selon les params données, TRIGGER le message CHANNEL_START
   // Prend en paramètre l'id du channel, le nom de la catégorie 

@@ -4,8 +4,9 @@ import server.src.model.User;
 
 public class UserRepository {
 
-    public static void scored(User user){
-        user.setScore(user.getScore() + 1 );
+    public static void scored(String user){
+        User u = findUserByPseudo(user, channel);
+        u.setScore(user.getScore() + 1 );
     }
 
     public static User createAndConnectUser(String channelName, String pseudo){
@@ -14,6 +15,7 @@ public class UserRepository {
         return u;
     }
 
+    // TODO: discuss the place of this function
     public static boolean removeParticipant(String user, String channel){
         User u = findUserByPseudo(user, channel);
         Channel c = getChannelByName(channel);
