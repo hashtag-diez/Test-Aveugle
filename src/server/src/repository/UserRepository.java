@@ -13,5 +13,17 @@ public class UserRepository {
         ChannelRepository.addParticipant(u, channelName);
         return u;
     }
+
+    public static boolean removeParticipant(String user, String channel){
+        User u = findUserByPseudo(user, channel);
+        Channel c = getChannelByName(channel);
+        if(u!=null && c!=null) {
+            List<User> lU = c.getChannelParticipants();
+            lU.remove(u);
+            c.setChannelParticipants(lU);
+            return true;
+        }
+        return false;
+    }
     
 }

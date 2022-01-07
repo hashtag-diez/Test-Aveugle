@@ -1,12 +1,13 @@
 package server.src.service;
 
 import java.nio.channels.AsynchronousSocketChannel;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.time.Instant; 
+import java.time.temporal.ChronoUnit; 
 
 import org.w3c.dom.TypeInfo;
 
@@ -28,19 +29,19 @@ public class ChannelService implements ServiceInterface {
 
   public ChannelService(){}
 
-  public void createChannel(Load req, Load res) throws SQLException {
+  public void createChannel(Load req, Load res) {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    String name = req.getData().get("params").get("name");
-    String admin = req.getData().get("params").get("admin");
-    String categ = req.getData().get("params").get("categorie");
+    String channelName = req.getData().get("params").get("channelName");
+    String adminName = req.getData().get("params").get("adminName");
+    String categorieName = req.getData().get("params").get("categorieName");
     if (name.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      Channel channel = ChannelRepository.addChannel(name, admin, categ);
+      Channel channel = ChannelRepository.addChannel(channelName, adminName, categName);
       result.put("channelName", channel.getChannelName());
       res.setRange(Range.EVERYONE);
     }
@@ -63,7 +64,7 @@ public class ChannelService implements ServiceInterface {
    * }
    * ],
    */
-  public void getChannels(Load req, Load res) throws SQLException {
+  public void getChannels(Load req, Load res){
 
     res.setStatus(Status.OK);
 
@@ -84,59 +85,52 @@ public class ChannelService implements ServiceInterface {
     res.setRange(Range.ONLY_CLIENT);
   }
 
-  // reste flux
-  public void startChannel(Load req, Load res) throws SQLException {
-    // startGame(); // TODO
-    // startTimer(); //TODO
-    
-    //channel attribute admin 
-    // startGame(); // TODO isStarted -> dans le channel (un channel c'est ne partie)
-    // startTimer(envoyer time datetime  -> get function from zeid ); //TODO
+  // take in parameter channelName, return hashmap with startTime and channelName(may be no need)
+  public void startChannel(Load req, Load res){
 
     res.setStatus(Status.OK); // TODO: discuss possibility error
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    String channelName = req.getData().get("params").get("name");
-    if (name.equals("")) {
+    String channelName = req.getData().get("params").get("channelName");
+
+    if (channelName.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      // Channel channel = ChannelRepository.getChannel(channel);
-      // channel.start(); ???
-      // result.put("channelName", channel.getName());
+      ChannelRepository.start(channelName);
+      String serverInstant = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
+      result.put("channelName", channelName); // may be no need
+      result.put("startTime", serverInstant);
       res.setRange(Range.EVERYONE);
-
     }
     data.put("result", result);
     res.setData(data);
   }
 
-  public void deleteChannel(Load req, Load res) throws SQLException {
+  public void deleteChannel(Load req, Load res) {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    String channel = req.getParams().get("channelName");
-    String admin = req.getParams().get("admin");
-    boolean deleted = ChannelRepository.deleteChannel(channel, admin);
+    String channelName = req.getParams().get("channelName");
+    String adminName = req.getParams().get("admin");
+    boolean deleted = ChannelRepository.deleteChannel(channelName, adminName);
 
     if (!deleted) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      result.put("channelName", channel);
-      // Channel channel = ChannelRepository.getChannel(channel);
-      // channel.start(); ???
-      // result.put("channelName", channel);
+      result.put("channelName", channelName); // may be no need
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
     res.setData(data);
   }
 
-  public void channelQuestions(Load req, Load res) throws SQLException {
+  //See Etienne (CategoryRepo TODO) and Zeid (trigger channel start) 
+  public void channelQuestions(Load req, Load res) {
   // Retourne les questions selon les params données, TRIGGER le message CHANNEL_START
   // Prend en paramètre l'id du channel, le nom de la catégorie 
   // Retourne une Map<String,String> avec des couple <Image, réponse>
@@ -145,11 +139,11 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
   
-    String channel = req.getParams().get("channelName");
+    String channelName = req.getParams().get("channelName");
     String categorieName = req.getData().get("params").get("categorieName");
     int nbQuestions = Integer.parseInt(req.getData().get("params").get("nbQuestions"));
 
-    // ETIENNE -> make model Question (with associated image and response) and associate it with Categorie ??
+    // ETIENNE -> see CategorieRepository TODO
     List<Image> images = CategorieRepository.getXRandomImages(nbQuestions, categorieName);
 
 

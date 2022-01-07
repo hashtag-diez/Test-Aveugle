@@ -22,25 +22,18 @@ import server.src.model.Range;
 //import App
 
 public class UserService implements ServiceInterface {
-  // private UserRepository UserRepository
-
-  public UserService() {
-    
-  }
-//user connection connect to channel and enter pseudo dedans!!! idée changé
+  public UserService() {}
 // AJOUTE un user dans un channel
   // Prend l'id du user à connecter et l'id du channel
   // Retourne les infos du user qui s'est connecté 
   // Cible = TOUT LE MONDE
-  public void userConnectChannel(Load res, Load req, AsynchronousSocketChannel client)
-      throws NoSuchAlgorithmException, SQLException {
+  public void userConnectChannel(Load res, Load req, AsynchronousSocketChannel client){
 
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
     
     String channel = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
-    // Etienne-> createAndConnectUser()
     User user = UserRepository.createAndConnectUser(channel, pseudo);
     if(user == null){
       res.setStatus(Status.ERROR);
@@ -53,18 +46,34 @@ public class UserService implements ServiceInterface {
     data.put("result", result);
     res.setData(data);
   }
-/*
-  //TODO USER_DISCONNECT HOW? if user created only during game?? discuss
-  USER_DISCONNECT, // ENLEVE un user d'un channel, TRIGGER le message CHANNEL_DELETE si plus aucun user
-  // Prend l'id du user à déconnecter et l'id du channel
-  // Retourne les infos du user qui s'est déconnecté 
-  // Cible = TOUT LE MONDE
 
-  liste user de channel -> delete from list
-*/
+  public void userDisconnect(Load resp, Load req, AsynchronousSocketChannel client){
+    //USER_DISCONNECT, // ENLEVE un user d'un channel, TRIGGER le message CHANNEL_DELETE si plus aucun user
+    // Prend l'id du user à déconnecter et l'id du channel
+    // Retourne les infos du user qui s'est déconnecté 
+    // Cible = TOUT LE MONDE
+    Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
+    Map<String, String> result = new HashMap<String, String>();
+    
+    String channel = req.getData().get("params").get("channelName");
+    String pseudo = req.getData().get("params").get("pseudo");
+    boolean deleted = UserRepository.removeParticipant(channel, pseudo);
+    if(!deleted){
+      res.setStatus(Status.ERROR);
+      result.put("errorMessage", "Il manque des informations, veuillez réessayer");
+    }else{
+      res.setStatus(Status.OK);
+      result.put("disconnectedUser", pseudo);
+      res.setRange(Range.EVERYONE);
+    }
+    data.put("result", result);
+    res.setData(data);
+  }
 
-  // why message ?? ?? discuss a quoi ca sert, should i verify wether answer is correct
-  public void userAnswer(Load response, Load req, AsynchronousSocketChannel client)
+
+
+
+  public void userAnswer(Load res, Load req, AsynchronousSocketChannel client)
       throws NoSuchAlgorithmException, SQLException {
 
     /*
@@ -104,8 +113,7 @@ public class UserService implements ServiceInterface {
     res.setData(data);
   }
 
-  public void run(Load res, Load req, AsynchronousSocketChannel client)
-      throws IOException, NoSuchAlgorithmException, SQLException {
+  public void run(Load res, Load req, AsynchronousSocketChannel client){
     switch (req.getType()) {
       case USER_CONNECT:
         System.out.println("Un client veut se connecter!");
@@ -113,7 +121,10 @@ public class UserService implements ServiceInterface {
         break;
       case USER_ANSWER:
         System.out.println("Un client veut se connecter!");
-        userAnswer(response, req, client);
+        userAnswer(res, req, client);
+      case USER_DISCONNECT:
+        System.out.println("Un client veut se deconnecter!");
+        userDisconect(res, req, client);
       default:
         break;
     }
