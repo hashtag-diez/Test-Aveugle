@@ -18,15 +18,7 @@ public class Channel {
         this.participants = new ArrayList<>();
         participants.add(admin);
     }
-
-    public Categorie getCategorie() {
-        return categorie;
-    }
-
-    public void setCategorie(Categorie categorie) {
-        this.categorie = categorie;
-    }
-
+    
     public String getChannelName(){return name;}
 
     public User getChannelAdmin(){return admin;}

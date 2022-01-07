@@ -1,4 +1,4 @@
-package server.src.repository;
+package src.repository;
 
 public class MusicCatalogueRepository {
     
