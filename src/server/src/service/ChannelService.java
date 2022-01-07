@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import java.time.Instant; 
-import java.time.temporal.ChronoUnit; 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.w3c.dom.TypeInfo;
 
@@ -62,7 +62,7 @@ public class ChannelService implements ServiceInterface {
    * }
    * ],
    */
-  public void getChannels(Load req, Load res){
+  public void getChannels(Load req, Load res) {
 
     res.setStatus(Status.OK);
 
@@ -73,7 +73,7 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> channelData;
     for (Channel channel : channels) {
       channelData = new HashMap<String, String>();
-      
+
       channelData.put("channelUsers", channel.getChannelParticipants());
       channelData.put("categorie", channel.getCategorie());
 
@@ -83,8 +83,9 @@ public class ChannelService implements ServiceInterface {
     res.setRange(Range.ONLY_CLIENT);
   }
 
-  // take in parameter channelName, return hashmap with startTime and channelName(may be no need)
-  public void startChannel(Load req, Load res){
+  // take in parameter channelName, return hashmap with startTime and
+  // channelName(may be no need)
+  public void startChannel(Load req, Load res) {
 
     res.setStatus(Status.OK); // TODO: discuss possibility error
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
@@ -128,10 +129,11 @@ public class ChannelService implements ServiceInterface {
   }
 
   public void channelQuestions(Load req, Load res) {
-  // Retourne les questions selon les params données, TRIGGER le message CHANNEL_START
-  // Prend en paramètre l'id du channel, le nom de la catégorie 
-  // Retourne une Map<String,String> avec des couple <Image, réponse>
-  // Cible = PARTICIPANTS
+    // Retourne les questions selon les params données, TRIGGER le message
+    // CHANNEL_START
+    // Prend en paramètre l'id du channel, le nom de la catégorie
+    // Retourne une Map<String,String> avec des couple <Image, réponse>
+    // Cible = PARTICIPANTS
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 

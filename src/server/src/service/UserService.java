@@ -103,10 +103,10 @@ public class UserService implements ServiceInterface {
     res.setData(data);
   }
 
-  public void exit(Load res, Load req, AsynchronousSocketChannel client) throws IOException{
+  public void exit(Load res, Load req, AsynchronousSocketChannel client) throws IOException {
     App.clients.remove(client);
     System.out.println("Clients restants :");
-    for(AsynchronousSocketChannel cli : App.clients){
+    for (AsynchronousSocketChannel cli : App.clients) {
       System.out.println(cli.getRemoteAddress());
     }
     res.setStatus(Status.OK);
@@ -134,6 +134,3 @@ public class UserService implements ServiceInterface {
   }
 
 }
-
-
-// router
