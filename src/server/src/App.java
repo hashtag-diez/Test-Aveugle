@@ -21,7 +21,7 @@ public class App implements Callable<Boolean> {
 
 	public static Catalogue catalogue = new Catalogue();
 	// TODO: correct related bugs
-	public static List<AsynchronousSocketChannel> clients = new List<AsynchronousSocketChannel>();
+	public static List<AsynchronousSocketChannel> clients = new ArrayList<AsynchronousSocketChannel>();
 	public static List<Channel> rooms = new ArrayList<Channel>();
 	public Map<User, Channel> players = new HashMap<User, Channel>();
 	
@@ -55,9 +55,8 @@ public class App implements Callable<Boolean> {
 	}
 	public void sendToAll(Load res) throws InterruptedException, ExecutionException, IOException{
 		// Faire sur la liste de users à la place
-    for (Map.Entry<AsynchronousSocketChannel, User> entry : App.users.entrySet()) {
-			AsynchronousSocketChannel cli = entry.getKey();
-			cli.write(ByteBuffer.wrap(Serialization.serializeLoad(res))).get();
+    for (AsynchronousSocketChannel client : clients) {
+			client.write(ByteBuffer.wrap(Serialization.serializeLoad(res))).get();
 		}
 	}
 	/* public void sendToPlayers(Load res, AsynchronousSocketChannel client) throws InterruptedException, ExecutionException, IOException{

@@ -1,4 +1,4 @@
-package server.src.utils;
+package src.utils;
 
 public class MusicManager {
     

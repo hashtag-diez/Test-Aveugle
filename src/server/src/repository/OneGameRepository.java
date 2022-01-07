@@ -1,6 +1,6 @@
-package server.src.repository;
+package src.repository;
 
-import server.src.model.User;
+import src.model.User;
 
 public class OneGameRepository {
 
@@ -8,6 +8,7 @@ public class OneGameRepository {
     User u = ChannelRepository.findUserByPseudo(user, channel);
     if(u != null){
       u.setScore(u.getScore() + 1);
+    }
     return u;    
   }
 }

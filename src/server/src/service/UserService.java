@@ -2,23 +2,19 @@ package src.service;
 
 import src.service.serviceinterface.ServiceInterface;
 
-import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.w3c.dom.TypeInfo;
 
-import server.src.model.Channel;
-import server.src.model.Load;
-import server.src.model.Type;
-import server.src.model.User;
-import server.src.repository.UserRepository;
-import server.src.model.Status;
-import server.src.model.Range;
+import src.model.Load;
+import src.model.User;
+import src.repository.UserRepository;
+import src.model.Status;
+import src.model.Range;
 
-import server.src.App;
+import src.App;
 
 //import App
 
@@ -45,7 +41,7 @@ public class UserService implements ServiceInterface {
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
-    response.setData(data);
+    res.setData(data);
   }
 
   public void userDisconnect(Load res, Load req, AsynchronousSocketChannel client) {
@@ -100,15 +96,12 @@ public class UserService implements ServiceInterface {
       res.setRange(Range.ONLY_PLAYERS);
     }
     data.put("result", result);
-    response.setData(data);
+    res.setData(data);
   }
 
-  public void exit(Load res, Load req, AsynchronousSocketChannel client) throws IOException {
+  public void exit(Load res, Load req, AsynchronousSocketChannel client) {
     App.clients.remove(client);
-    System.out.println("Clients restants :");
-    for (AsynchronousSocketChannel cli : App.clients) {
-      System.out.println(cli.getRemoteAddress());
-    }
+    System.out.println("Un client est parti :");
     res.setStatus(Status.OK);
     res.setRange(Range.EVERYONE);
   }
@@ -117,7 +110,7 @@ public class UserService implements ServiceInterface {
     switch (req.getType()) {
       case USER_CONNECT:
         System.out.println("Un client veut se connecter!"); 
-        userConnectChannel(r
+        userConnectChannel(res, req,client);
         break;
       case USER_ANSWER:
         System.out.println("Un client veut se connecter!");
