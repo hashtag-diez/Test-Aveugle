@@ -87,4 +87,16 @@ public class SystemTestAveugle {
     public void startGame() {
         app.startGame();
     }
+
+    public boolean checkPseudoExistenceInGame(String pseudo, Game game) {
+        ArrayList<Player> players = game.getPlayers(); 
+        for(Player p : players) {
+            if(p.getName().equals(pseudo)) return true;
+        }
+        return false;
+    }
+
+    public void joinGame(String pseudo, Game game) {
+        Network.joinGame(pseudo, game);
+    }
 }

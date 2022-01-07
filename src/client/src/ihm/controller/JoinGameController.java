@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -34,11 +35,31 @@ public class JoinGameController {
     private Button joinGameButton;
 
     @FXML
-    void joinGameClicked(ActionEvent event) {
+    private TextField pseudoInput;
 
+    @FXML
+    private Label errorLabel;
+
+    private Game game;
+
+    private SystemTestAveugle system = SystemTestAveugle.getSystem();
+
+    @FXML
+    void joinGameClicked(ActionEvent event) {
+        String pseudo = pseudoInput.getText();
+        if(pseudo.isEmpty()) {
+            errorLabel.setText("Le champ doit être rempli !");
+        } else {
+            if(system.checkPseudoExistenceInGame(pseudo, game)) {
+                errorLabel.setText("Ce joueur existe déjà !");
+            } else {
+                system.joinGame(pseudo, game);
+            }
+        }
     }
 
     public void setGame(Game game) {
+        this.game = game;
         ArrayList<Player> players = game.getPlayers();
         Theme theme = game.getTheme();
         String themeColor = theme.getColor();
@@ -70,6 +91,8 @@ public class JoinGameController {
             joinGameButton.setDisable(false);
             joinGameButton.setText("Rejoindre");
         }
+
+        errorLabel.setText("");
     }
 
 }
