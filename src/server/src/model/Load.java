@@ -5,13 +5,8 @@ import java.util.Map;
 
 public class Load {
   private Range range;
-  public enum Status{
-    OK,
-    ERROR
-  }
   private Status status;
   private Type type;
-  private Status status;
   private Map<String,Map<String,String>> data = new HashMap<String, Map<String, String>>();
 
   public Load(){}

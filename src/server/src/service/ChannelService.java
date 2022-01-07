@@ -27,8 +27,6 @@ import server.src.service.serviceinterface.ServiceInterface;
 
 public class ChannelService implements ServiceInterface {
 
-  public ChannelService(){}
-
   public void createChannel(Load req, Load res) {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
@@ -36,7 +34,7 @@ public class ChannelService implements ServiceInterface {
     String channelName = req.getData().get("params").get("channelName");
     String adminName = req.getData().get("params").get("adminName");
     String categorieName = req.getData().get("params").get("categorieName");
-    if (name.equals("")) {
+    if (channelName.equals("") || adminName.equals("") || categorieName.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
@@ -52,13 +50,13 @@ public class ChannelService implements ServiceInterface {
   /*
    * return names of channels and present users
    * [
-   * channelName {
-   * categorie: ...,
-   * channelUsers: (String with users id or name divided by ",")
+   * 0 {
+   * response: ...,
+   * image: (String with users id or name divided by ",")
    * }
    * ],
    * [
-   * channelName {
+   * 1 {
    * categorie: ...,
    * channelUsers: (String with users id or name divided by ",")
    * }
@@ -100,9 +98,9 @@ public class ChannelService implements ServiceInterface {
     } else {
       res.setStatus(Status.OK);
       ChannelRepository.start(channelName);
-      String serverInstant = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
+      String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
       result.put("channelName", channelName); // may be no need
-      result.put("startTime", serverInstant);
+      result.put("startTime", startTime);
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -129,7 +127,6 @@ public class ChannelService implements ServiceInterface {
     res.setData(data);
   }
 
-  //see with Zeid (trigger channel start) 
   public void channelQuestions(Load req, Load res) {
   // Retourne les questions selon les params données, TRIGGER le message CHANNEL_START
   // Prend en paramètre l'id du channel, le nom de la catégorie 
@@ -143,24 +140,21 @@ public class ChannelService implements ServiceInterface {
     String categorieName = req.getData().get("params").get("categorieName");
     int nbQuestions = Integer.parseInt(req.getData().get("params").get("nbQuestions"));
 
-    // ETIENNE -> see CategorieRepository TODO
     List<Image> images = CategorieRepository.getXRandomImages(nbQuestions, categorieName);
 
-
-    if (!images) {
+    if (images == null) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
       data.put("result", result);
     } else {
       res.setStatus(Status.OK);
-      //  TRIGGER le message CHANNEL_START  // TODO: discuss ask???
       int idImage = 0;
       Map<String, String> imageData;
       for (Image image : images) {
         imageData = new HashMap<String, String>();
-        imageData.put("image", image.getResponse());
+        imageData.put("response", image.getResponse());
         imageData.put("image", image.getImg());
-        data.put(idImage, imageData);
+        data.put(String.valueOf(idImage), imageData);
         res.setRange(Range.ONLY_PLAYERS);
         idImage++;
       }

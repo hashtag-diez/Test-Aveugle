@@ -26,7 +26,8 @@ public class App implements Callable<Boolean> {
 	private AsynchronousServerSocketChannel server;
 
 	public static Catalogue catalogue = new Catalogue();
-	public static Map<AsynchronousSocketChannel, User> users = new HashMap<AsynchronousSocketChannel, User>();
+	// TODO: correct related bugs
+	public static List<AsynchronousSocketChannel> clients = new List<AsynchronousSocketChannel>();
 	public static List<Channel> rooms = new ArrayList<Channel>();
 	public Map<User, Channel> players = new HashMap<User, Channel>();
 	

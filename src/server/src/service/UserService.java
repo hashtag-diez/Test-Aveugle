@@ -22,8 +22,6 @@ import server.src.model.Range;
 //import App
 
 public class UserService implements ServiceInterface {
-  public UserService() {
-  }
 
   // AJOUTE un user dans un channel
   // Prend l'id du user à connecter et l'id du channel
@@ -49,7 +47,7 @@ public class UserService implements ServiceInterface {
     res.setData(data);
   }
 
-  public void userDisconnect(Load resp, Load req, AsynchronousSocketChannel client) {
+  public void userDisconnect(Load res, Load req, AsynchronousSocketChannel client) {
     // USER_DISCONNECT, // ENLEVE un user d'un channel, TRIGGER le message
     // CHANNEL_DELETE si plus aucun user
     // Prend l'id du user à déconnecter et l'id du channel
@@ -60,6 +58,7 @@ public class UserService implements ServiceInterface {
 
     String channel = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
+    // TODO:
     boolean deleted = UserRepository.removeParticipant(channel, pseudo);
     if (!deleted) {
       res.setStatus(Status.ERROR);
@@ -97,11 +96,10 @@ public class UserService implements ServiceInterface {
       result.put("userAnswer", userAnswer);
       if (userAnswer == questionResponse) {
         result.put("trueOrFalse", true);
-        // UserRepository.scored(pseudo) or Trigger ScoreRefresh
       } else {
         result.put("trueOrFalse", false);
       }
-      res.setRange(Range.EVERYONE);
+      res.setRange(Range.ONLY_PARTICIPANTS);
     }
     data.put("result", result);
     res.setData(data);
@@ -119,9 +117,16 @@ public class UserService implements ServiceInterface {
       case USER_DISCONNECT:
         System.out.println("Un client veut se deconnecter!");
         userDisconnect(res, req, client);
+      case EXIT:
+      // todo enlever de liste des sockets -> fonction dans repo -> client.remove(client)
       default:
         break;
     }
   }
 
 }
+
+// exit 
+// userrepo
+// onerepogame
+// router

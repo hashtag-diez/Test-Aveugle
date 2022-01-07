@@ -8,5 +8,4 @@ import server.src.model.Load;
 
 public interface ServiceInterface {
   public void run(Load res, Load req, AsynchronousSocketChannel client)
-      throws IOException, SQLException, NoSuchAlgorithmException;
 }

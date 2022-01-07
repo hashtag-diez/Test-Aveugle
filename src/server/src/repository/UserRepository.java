@@ -11,20 +11,14 @@ public class UserRepository {
 
     public static User createAndConnectUser(String channelName, String pseudo){
         User u = new User(pseudo);
-        ChannelRepository.addParticipant(u, channelName);
+        addParticipant(u, channelName);
         return u;
     }
 
     // TODO: discuss the place of this function
-    public static boolean removeParticipant(String user, String channel){
-        User u = findUserByPseudo(user, channel);
-        Channel c = getChannelByName(channel);
-        if(u!=null && c!=null) {
-            List<User> lU = c.getChannelParticipants();
-            lU.remove(u);
-            c.setChannelParticipants(lU);
-            return true;
-        }
+    public static boolean disconnectUser(String user, String channel){
+        
+        return true;
         return false;
     }
     
