@@ -102,6 +102,7 @@ public class SystemTestAveugle {
 
     public void setNextQuestion(Question question) {
         currentGame.setCurrentQuestion(question);
+        currentGame.decrementTours();
         if(currentGame.isStarted()) app.updateGameInSession();
     }
 
@@ -111,7 +112,7 @@ public class SystemTestAveugle {
 
     public void receiveAnswer(String text, String player) {
         String name = currentPlayer.getName().equals(player) ? "moi" : player;
-        currentGame.addAnswer(name + text);
+        currentGame.addAnswer(name + " : " + text);
         app.updateAnswers();
     }
 
@@ -125,7 +126,7 @@ public class SystemTestAveugle {
             currentGame.addAnswer("Personne n'a trouvé ! ");
         } else {
             String name = currentPlayer.getName().equals(player) ? "moi" : player;
-            currentGame.addAnswer(name + text);
+            currentGame.addAnswer(name + " : " + text);
             currentGame.addAnswer(player + " a trouvé ! ");
         }
         app.updateAnswers();
@@ -150,6 +151,18 @@ public class SystemTestAveugle {
         //cas où la partie n'existe pas dans le système
         game.addPlayer(player, isLocalPlayer);
         games.add(game);
+    }
+
+    public void deconnection() {
+        //TODO
+    }
+
+    public void receiveDeconnection(Game game, String player, boolean isAdmin) {
+        //TODO
+    }
+
+    public void endGame() {
+        //TODO
     }
 
     public void joinGame(String pseudo, Game game) {

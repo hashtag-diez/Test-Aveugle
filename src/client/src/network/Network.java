@@ -1,3 +1,7 @@
+//Note: dans certaines méthodes, la présence du Game sert uniquement à la vérification du jeu courrant dans le front
+//en théorie, les messages destinés à une partie en particulier seront receptionné uniquement par les joueurs concernés
+//le Game peut donc, le cas échéant, être supprimé
+
 package src.network;
 
 import java.io.File;
@@ -19,7 +23,7 @@ public class Network {
     }
 
     public static ArrayList<Game> getGames() {
-        //TODO résupère la liste des parties disponibles
+        //TODO résupère la liste des parties disponibles: /!\ méthode synchrone: doit envoyer la requête et se mettre en attente jusqu'à recevoir la bonne réponse
 
         ArrayList<Game> games = new ArrayList<>();
         //à supprimer plus tard:
@@ -39,6 +43,7 @@ public class Network {
         games.get(1).addPlayer("Fifi", false);
         games.get(1).addPlayer("Loulou", false);
         //
+
         return games;
     }
 
@@ -109,8 +114,15 @@ public class Network {
 		}
         String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
         Question nextQuestion = new Question(base64Image, serverInstant, "test");
-        if(game.getCurrentQuestion().isGoodAnswer(text)) scoreRefresh(text, game, player, nextQuestion, false);
-        else receiveAnswer(text, game, player);
+        if(game.getCurrentQuestion().isGoodAnswer(text)) {
+            scoreRefresh(text, game, player, nextQuestion, false);
+        } else {
+            receiveAnswer(text, game, player);
+        }
+    }
+
+    public static void sendEndOfClock() {
+        //TODO notifier le serveur de la fin de l'horloge (USER_ANSWER vide avec isClockEnd à true)
     }
 
     public static void receiveAnswer(String text, Game game, String player) {
@@ -130,7 +142,16 @@ public class Network {
         }
     }
 
+    public static void deconnection(Game game, String player, boolean isAdmin) {
+        //TODO notifier le server de la déconnexion du joueur de son serveur de jeu, si isAdmin, supprimer la partie
+    }
+
+    public static void receiveDeconnection(Game game, String player, boolean isAdmin) {
+        //TODO réception d'un message de déconnexion, si isAdmin, la partie est supprimée, affichage page erreur
+        system.receiveDeconnection(game, player, isAdmin);
+    } 
+
     public static void endGame(String turnWinnerName) {
-        //TODO end of game
+        //TODO end of game : réception d'un score refresh sans nouvelle question et/ou avec nombre de tour restant à 0 (selon format du back)
     }
 }

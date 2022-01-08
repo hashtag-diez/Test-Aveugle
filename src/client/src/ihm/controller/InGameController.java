@@ -53,12 +53,20 @@ public class InGameController implements Initializable{
     }
 
     private Integer nbQuestions;
+    private double imageX;
+    private double imageY;
+    private double a;
+    private double b;
     private SystemTestAveugle system = SystemTestAveugle.getSystem();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Game currentGame = system.getCurrentGame();
-        //Question currentQuestion = currentGame.getCurrentQuestion();
+        Question currentQuestion = currentGame.getCurrentQuestion();
+        imageX = image.getX();
+        imageY = image.getY();
+        a = image.getFitWidth();
+        b = image.getFitHeight();
 
         nbQuestions = currentGame.getNbTours();
         tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);
@@ -75,21 +83,17 @@ public class InGameController implements Initializable{
 
         setSortedTable(currentGame.getPlayers());
 
-        //TODO gestion du timer:
-        //new Timer(c)
-
+        setTimer(currentQuestion.getStartingDate());
     }
 
     public void setImage(Image newImage) {
         double x = newImage.getWidth();
         double y = newImage.getHeight();
-        double a = image.getFitWidth();
-        double b = image.getFitHeight();
         double ratioX = a / x;
         double ratioY = b / y;
         double applicableRatio = (ratioX > ratioY) ? ratioY : ratioX;
-        image.setX(image.getX() + (a - x * applicableRatio)/2);
-        image.setY(image.getY() + (b - y * applicableRatio)/2);
+        image.setX(imageX + (a - x * applicableRatio)/2);
+        image.setY(imageY + (b - y * applicableRatio)/2);
         image.setImage(newImage);
     }
 
@@ -109,6 +113,10 @@ public class InGameController implements Initializable{
         }
     }
 
+    public void setTimer(String startTime) {
+        //TODO
+    }
+
     public void updateAnswers() {
         Game currentGame = system.getCurrentGame();
         ArrayList<String> answers = currentGame.getAnswers();
@@ -122,7 +130,22 @@ public class InGameController implements Initializable{
     }
 
     public void updateGame() {
-        //TODO
+        Game currentGame = system.getCurrentGame();
+        Question currentQuestion = currentGame.getCurrentQuestion();
+
+        tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);      
+
+        try {
+            FileInputStream imageInFile = new FileInputStream("src/client/img/image.jpg");
+            Image newImage = new Image(imageInFile);
+            setImage(newImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        setSortedTable(currentGame.getPlayers());
+
+        setTimer(currentQuestion.getStartingDate());
     }
 
     public void endGame() {
