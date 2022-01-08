@@ -138,8 +138,12 @@ public class Network {
         //TODO notifier le serveur de la fin de l'horloge (USER_ANSWER vide avec isClockEnd à true)
     }
 
-    public static void receiveAnswer(String text, Game game, String player) {
-        //TODO receive answer
+    public static void receiveAnswer(Map<String, Map<String, String>> data) {
+        String text = data.get("result").get("userAnswer");
+        String player = data.get("result").get("pseudo");
+
+        String gameName = data.get("result").get("gameName"); //??
+        Game game = system.getGameByName(gameName);
 
         if(game.getName().equals(system.getCurrentGame().getName())){
             system.receiveAnswer(text, player);
@@ -166,8 +170,15 @@ public class Network {
         receiveDeconnection(game, player, isAdmin);
     }
 
-    public static void receiveDeconnection(Game game, String player, boolean isAdmin) {
-        //TODO réception d'un message de déconnexion, si isAdmin: la partie est supprimée, affichage page erreur
+    public static void receiveDeconnection(Map<String, Map<String, String>> data) {
+        // réception d'un message de déconnexion, si isAdmin: la partie est supprimée, affichage page erreur
+        String gameName = data.get("result").get("gameName"); //??
+        Game game = system.getGameByName(gameName);
+
+        String player = data.get("result").get("pseudo");
+
+        Boolean isAdmin = Boolean.parseBoolean(data.get("result").get("isAdmin"));
+
         system.receiveDeconnection(game, player, isAdmin);
     } 
 }
