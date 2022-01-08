@@ -49,6 +49,7 @@ public class UserConnection {
         params.put("channelName", command[1]);
         params.put("adminName", command[2]);
         params.put("categorieName", command[3]);
+        params.put("nbTours", command[4]);
         request.put("header", type);
         request.put("params", params);
         break;
@@ -134,20 +135,21 @@ public class UserConnection {
     scanner.close();
   }
 
-  public static void sendRequest(String line) throws IOException, ExecutionException, InterruptedException {
+  public void sendRequest(String line) throws IOException, ExecutionException, InterruptedException {
     Map<String, Map<String, String>> request = outputParser(line);
     socket.write(ByteBuffer.wrap(Serialization.serializeMap(request))).get();
   }
 
   public void handleResponse(ByteBuffer buffer) throws ClassNotFoundException, IOException {
+    //change a map
     Load response = Serialization.deserializeLoad(buffer.flip().array());
     if (response.getStatus().equals(Status.OK)) {
       switch (response.getType()) {
         case CHANNEL_CREATE:
-          Network.receiveGame(response.getData()); // DONE
+          Network.receiveGame(response.getData()); // ok
           break;
         case CHANNEL_DELETE:
-          Network.receiveDeconnection(response.getData()); // DONE
+          //TODO
           break;
         case CHANNEL_START:
           Network.gameStarted(response.getData()); // TODO
@@ -159,13 +161,13 @@ public class UserConnection {
           // TODO: function that gets names of games and has list of players
           break;
         case USER_CONNECT:
-          Network.hasJoinedGame(response.getData()); // ? pas sur + TODO joinGame
+          Network.hasJoinedGame(response.getData()); // ok
           break;
         case USER_DISCONNECT:
           Network.receiveDeconnection(response.getData()); // ok
           break;
         case USER_ANSWER:
-          Network.receiveAnswer(response.getData()); // see sended data and received
+          Network.receiveAnswer(response.getData()); // ok
           break;
         case SCORE_REFRESH:
           Network.scoreRefresh(response.getData()); // TODO
