@@ -13,8 +13,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import src.model.*;
-/* import router.Router;
- */import src.utils.Serialization;
+import src.router.Router;
+import src.utils.Serialization;
 
 public class App implements Callable<Boolean> {
 	private AsynchronousServerSocketChannel server;
@@ -25,22 +25,13 @@ public class App implements Callable<Boolean> {
 	public static List<Channel> rooms = new ArrayList<Channel>();
 	public Map<User, Channel> players = new HashMap<User, Channel>();
 	
-/* 	private Router router;
+	private Router router;
 	public App() throws Exception{
 			router = new Router();
-	} */
+	} 
 	public void handleRequest(Load request, Load response, AsynchronousSocketChannel client) throws 
 		InterruptedException, ExecutionException, IOException{
-			if(request.getType().equals(Type.USER_CONNECT)){
-				response.setType(request.getType());
-				response.setRange(Range.ONLY_CLIENT);
-				response.setStatus(Status.OK);
-				Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
-				Map<String, String> res = new HashMap<String, String>();
-				res.put("message", request.getData().get("params").get("username"));
-				data.put("result", res);
-				response.setData(data);
-			};
+			router.run(request, response, client);
 			sendToOneClient(response, client);
 	}
 	public void waitForRequest(AsynchronousSocketChannel client) throws 
@@ -48,8 +39,10 @@ public class App implements Callable<Boolean> {
 			while(true){
 				ByteBuffer buffer = ByteBuffer.allocate(1024);
 				client.read(buffer).get();
-				Load request = Serialization.deserializeLoad(buffer.flip().array(), true);
+				Load request = Serialization.deserializeLoad(buffer.flip().array());
+				System.out.println("Type de requête : "+request.getType());
 				Load response = new Load();
+				response.setType(request.getType());
 				handleRequest(request, response, client);
 			}
 	}

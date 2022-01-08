@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -20,7 +21,7 @@ public class appTest {
   public void waitForLoad(AsynchronousSocketChannel socket, String line) throws 
     InterruptedException, ExecutionException, ClassNotFoundException, IOException{
     while(true){
-      ByteBuffer buffer = ByteBuffer.allocate(1024);
+      ByteBuffer buffer = ByteBuffer.allocate(102400);
       System.out.println("Nouvelle réponse !");
       socket.read(buffer).get();
       handleResponse(buffer);
@@ -32,16 +33,89 @@ public class appTest {
     Map<String, String> params = new HashMap<String, String>();
     String[] command = line.split(" ");
     switch(command[0]){
-      case "USER_CONNECT":
-        System.out.println("On veut se connecter au serveur !");
+      case "CHANNEL_CREATE":
+        System.out.println("On veut créer une room !");
         type.put("type", command[0]);
-        params.put("username", command[1]);
+        params.put("channelName", command[1]);
+        params.put("adminName", command[2]);
+        params.put("categorieName", command[3]);
+        request.put("header", type);
+        request.put("params", params);
+        break;
+      case "CHANNEL_DELETE":
+        System.out.println("On veut quitter une room !");
+        type.put("type", command[0]);
+        params.put("channelName", command[1]);
+        params.put("adminName", command[2]);
+        request.put("header", type);
+        request.put("params", params);
+        break;
+      case "CHANNEL_START":
+        System.out.println("On veut quitter une room !");
+        type.put("type", command[0]);
+        params.put("channelName", command[1]);
+        request.put("header", type);
+        request.put("params", params);
+        break;
+      case "USER_CONNECT":
+        System.out.println("On veut se connecter à une room !");
+        type.put("type", command[0]);
+        params.put("channelName", command[1]);
+        params.put("pseudo", command[2]);
+        request.put("header", type);
+        request.put("params", params);
+        break;
+      case "USER_DISCONNECT":
+        System.out.println("On veut quitter à une room !");
+        type.put("type", command[0]);
+        params.put("channelName", command[1]);
+        params.put("pseudo", command[2]);
+        request.put("header", type);
+        request.put("params", params);
+        break;
+      case "USER_ANSWER":
+        System.out.println("On veut se connecter à une room !");
+        type.put("type", command[0]);
+        params.put("questionResponse", command[1]);
+        params.put("userAnswer",  String.join(" ",Arrays.copyOfRange(command, 3, command.length)));
+        params.put("pseudo", command[2]);
+        request.put("header", type);
+        request.put("params", params);
+        break;
+      case "CHANNEL_QUESTIONS":
+        System.out.println("On veut la liste des images pour la catégorie " + command[1]);
+        type.put("type", command[0]);
+        params.put("categorieName", command[1]);
+        params.put("nbQuestions", command[2]);
+        request.put("header", type);
+        request.put("params", params);
+        break;
+      case "GET_CHANNELS":
+        System.out.println("On veut la liste des rooms !");
+        type.put("type", command[0]);
+        request.put("header", type);
+        break;
+      case "SCORE_REFRESH":
+        System.out.println("On veut rafraichir le score !");
+        type.put("type", command[0]);
+        params.put("channelName", command[1]);
+        params.put("pseudo", command[2]);
         request.put("header", type);
         request.put("params", params);
         break;
       default:
         break;
     }
+    System.out.println("{");
+    for(Map.Entry<String, Map<String,String>> fields : request.entrySet()){
+      System.out.println("    "+ fields.getKey() + ": {");
+      Map<String,String> values = fields.getValue();
+      for(Map.Entry<String, String> props : values.entrySet()){
+        System.out.println("       " + props.getKey() + ": " + props.getValue());
+      }
+      System.out.println("    }");
+    }
+    System.out.println("}");
     return request;
   }
   public void handleRequest(AsynchronousSocketChannel socket, String line, Scanner scanner) throws 
@@ -56,21 +130,18 @@ public class appTest {
   }
   public void handleResponse(ByteBuffer buffer) throws 
     ClassNotFoundException, IOException{
+      
       Map<String,Map<String,String>> response = Serialization.deserializeMap(buffer.flip().array());
-      Map<String,String> header = response.get("header");
-      if(header.get("status").equals("OK")){
-        switch(header.get("type")){
-          case "USER_CONNECT":
-            username = response.get("result").get("message");
-            System.out.println("Le server a bien reçu "+  username);
-            // assertTrue("Erreur, mauvaise réception", username.equals(line.split(" ")[0]));
-            break;
-          default:
-            break;
+      System.out.println("{");
+      for(Map.Entry<String, Map<String,String>> fields : response.entrySet()){
+        System.out.println("    "+ fields.getKey() + ": {");
+        Map<String,String> values = fields.getValue();
+        for(Map.Entry<String, String> props : values.entrySet()){
+          System.out.println("       " + props.getKey() + ": " + props.getValue());
         }
-      } else {
-        System.out.println("Erreur");
+        System.out.println("    }");
       }
+      System.out.println("}");
   }
 /*   public void sendDisconnectLoad(AsynchronousSocketChannel socket) throws 
     InterruptedException, ExecutionException, IOException{
