@@ -21,7 +21,7 @@ public class appTest {
   public void waitForLoad(AsynchronousSocketChannel socket, String line) throws 
     InterruptedException, ExecutionException, ClassNotFoundException, IOException{
     while(true){
-      ByteBuffer buffer = ByteBuffer.allocate(102400);
+      ByteBuffer buffer = ByteBuffer.allocate(4024000);
       System.out.println("Nouvelle réponse !");
       socket.read(buffer).get();
       handleResponse(buffer);
@@ -86,7 +86,7 @@ public class appTest {
         System.out.println("On veut la liste des images pour la catégorie " + command[1]);
         type.put("type", command[0]);
         params.put("categorieName", command[1]);
-        params.put("nbQuestions", command[2]);
+        params.put("channelName", command[2]);
         request.put("header", type);
         request.put("params", params);
         break;
@@ -103,19 +103,13 @@ public class appTest {
         request.put("header", type);
         request.put("params", params);
         break;
+      case "EXIT":
+        type.put("type", command[0]);
+        request.put("header", type);
+        break;
       default:
         break;
     }
-    System.out.println("{");
-    for(Map.Entry<String, Map<String,String>> fields : request.entrySet()){
-      System.out.println("    "+ fields.getKey() + ": {");
-      Map<String,String> values = fields.getValue();
-      for(Map.Entry<String, String> props : values.entrySet()){
-        System.out.println("       " + props.getKey() + ": " + props.getValue());
-      }
-      System.out.println("    }");
-    }
-    System.out.println("}");
     return request;
   }
   public void handleRequest(AsynchronousSocketChannel socket, String line, Scanner scanner) throws 
@@ -125,7 +119,7 @@ public class appTest {
         Map<String,Map<String,String>> request = outputParser(line);
         socket.write(ByteBuffer.wrap(Serialization.serializeMap(request))).get();
       }
-    //sendDisconnectLoad(socket);
+    sendDisconnectLoad(socket);
     scanner.close();
   }
   public void handleResponse(ByteBuffer buffer) throws 
@@ -143,14 +137,12 @@ public class appTest {
       }
       System.out.println("}");
   }
-/*   public void sendDisconnectLoad(AsynchronousSocketChannel socket) throws 
+  public void sendDisconnectLoad(AsynchronousSocketChannel socket) throws 
     InterruptedException, ExecutionException, IOException{
-      Map<String, String> params = new HashMap<String,String>();
-      params.put("username", username);
-      Load req = new Load("EXIT",params);
-      socket.write(ByteBuffer.wrap(Serialization.serializeLoad(req))).get();
-  } */
- /*  public void setShutdownHook(AsynchronousSocketChannel socket){
+      Map<String,Map<String,String>> exit = outputParser("EXIT");
+      socket.write(ByteBuffer.wrap(Serialization.serializeMap(exit))).get();
+  } 
+  public void setShutdownHook(AsynchronousSocketChannel socket){
     Runtime.getRuntime().addShutdownHook(new Thread() {
       public void run() {
           try {
@@ -166,7 +158,7 @@ public class appTest {
           }
       }
     });
-  } */
+  }
   public void run() throws 
     InterruptedException, ExecutionException, ClassNotFoundException, IOException {
       try(AsynchronousSocketChannel socket = AsynchronousSocketChannel.open()) {
@@ -180,8 +172,8 @@ public class appTest {
           e.printStackTrace();
         }
       });
-/*       setShutdownHook(socket);
- */   handleRequest(socket, line, scanner);
+      setShutdownHook(socket);
+      handleRequest(socket, line, scanner);
     }
 	}
   public static void main(String[] args) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
