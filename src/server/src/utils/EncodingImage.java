@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Base64;
 
+//TODO faire une interface plutôt qu'une classe
 public class EncodingImage {
     
     public static String encoder(String imagePath) {
