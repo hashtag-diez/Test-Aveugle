@@ -86,6 +86,16 @@ public class GameSceneController implements Initializable {
         }
     }
 
+    public void endGame() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/EndGameView.fxml"));
+            Pane createPane = (Pane) loader.load();
+            gamePane.setCenter(createPane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     public void updateAnswers() {
         if(inGameController != null) inGameController.updateAnswers();
     }

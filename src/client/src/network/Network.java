@@ -97,7 +97,7 @@ public class Network {
         system.gameStarted(question);
     }
 
-    public static void sendAnswer(String text, Game game, String player) {
+    public static void sendAnswer(String text, Game game, String player, boolean isLastTurn) {
         //TODO send answer to server in game, then send back to all players
 
         //à supprimer: simulation du retour back
@@ -114,7 +114,7 @@ public class Network {
         String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
         Question nextQuestion = new Question(base64Image, serverInstant, "test");
         if(game.getCurrentQuestion().isGoodAnswer(text)) {
-            scoreRefresh(text, game, player, nextQuestion, false);
+            scoreRefresh(text, game, player, nextQuestion, false, isLastTurn);
         } else {
             receiveAnswer(text, game, player);
         }
@@ -132,12 +132,16 @@ public class Network {
         }
     }
 
-    public static void scoreRefresh(String text, Game game, String player, Question nextQuestion, boolean isClockEnd) {
+    public static void scoreRefresh(String text, Game game, String player, Question nextQuestion, boolean isClockEnd, boolean isLastTurn) {
         //TODO réception d'un score refresh (fin du tour, incrémentation du score)
 
         if(game.getName().equals(system.getCurrentGame().getName())){
             system.receiveCorrectAnswer(text, player, isClockEnd);
-            system.setNextQuestion(nextQuestion);
+            if(!isLastTurn) {
+                system.setNextQuestion(nextQuestion);
+            } else {
+                system.endGame();
+            }
         }
     }
 
@@ -152,8 +156,4 @@ public class Network {
         //TODO réception d'un message de déconnexion, si isAdmin: la partie est supprimée, affichage page erreur
         system.receiveDeconnection(game, player, isAdmin);
     } 
-
-    public static void endGame(String turnWinnerName) {
-        //TODO end of game : réception d'un score refresh sans nouvelle question et/ou avec nombre de tour restant à 0 (selon format du back)
-    }
 }

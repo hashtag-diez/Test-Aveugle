@@ -28,4 +28,8 @@ public class Question {
     public boolean isGoodAnswer(String answer) {
         return response.equals(answer.toLowerCase());
     }
+
+    public String getResponse() {
+        return response;
+    }
 }

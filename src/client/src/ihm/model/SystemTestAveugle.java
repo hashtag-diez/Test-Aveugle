@@ -110,7 +110,7 @@ public class SystemTestAveugle {
     }
 
     public void sendAnswer(String text) {
-        Network.sendAnswer(text, currentGame, currentPlayer.getName());
+        Network.sendAnswer(text, currentGame, currentPlayer.getName(), currentGame.isLastTurn());
     }
 
     public void receiveAnswer(String text, String player) {
@@ -197,7 +197,11 @@ public class SystemTestAveugle {
     }
 
     public void endGame() {
-        //TODO
+        app.endGame();
+        games.remove(currentGame);
+        currentGame = null;
+        currentPlayer = null;
+        app.updateGameList();
     }
 
     public void joinGame(String pseudo, Game game) {

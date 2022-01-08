@@ -87,6 +87,10 @@ public class App extends Application {
         gameSceneController.startGame();
     }
 
+    public void endGame() {
+        gameSceneController.endGame();
+    }
+
     public static void main(String[] args) {
         system = SystemTestAveugle.getSystem();
         system.connexion();

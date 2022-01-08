@@ -40,6 +40,9 @@ public class InGameController implements Initializable{
 
     @FXML
     private Label tourLabel;
+
+    @FXML
+    private Label answerLabel;
     
     @FXML
     void enterAnswer(KeyEvent event) {
@@ -71,6 +74,9 @@ public class InGameController implements Initializable{
         nbQuestions = currentGame.getNbTours();
         tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);
 
+        answerLabel.setText(currentQuestion.getResponse());
+        answerLabel.setVisible(false);
+
         responseList.getItems().addAll(currentGame.getAnswers());        
 
         try {
@@ -95,6 +101,7 @@ public class InGameController implements Initializable{
         image.setX(imageX + (a - x * applicableRatio)/2);
         image.setY(imageY + (b - y * applicableRatio)/2);
         image.setImage(newImage);
+        image.setVisible(false);
     }
 
     public void setSortedTable(ArrayList<Player> players) {
@@ -115,6 +122,7 @@ public class InGameController implements Initializable{
 
     public void setTimer(String startTime) {
         //TODO
+        image.setVisible(true);
     }
 
     public void killTime() {
@@ -135,10 +143,11 @@ public class InGameController implements Initializable{
     }
 
     public void updateGame() {
+        answerLabel.setVisible(true);
         Game currentGame = system.getCurrentGame();
         Question currentQuestion = currentGame.getCurrentQuestion();
 
-        tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);      
+        tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);
 
         try {
             FileInputStream imageInFile = new FileInputStream("src/client/img/image.jpg");
@@ -150,11 +159,9 @@ public class InGameController implements Initializable{
 
         setSortedTable(currentGame.getPlayers());
 
+        answerLabel.setText(currentQuestion.getResponse());
+        answerLabel.setVisible(false);
+
         setTimer(currentQuestion.getStartingDate());
     }
-
-    public void endGame() {
-        //TODO
-    }
-
 }

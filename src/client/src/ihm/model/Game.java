@@ -98,4 +98,8 @@ public class Game {
         }
         return false;
     }
+
+    public boolean isLastTurn() {
+        return nbTours <= 1;
+    }
 }
