@@ -35,6 +35,8 @@ public class MainSceneController implements Initializable {
     private ArrayList<Game> games;
     private String selectedGame;
 
+    private static JoinGameController joinGameController;
+
     private static SystemTestAveugle system;
     
     @Override
@@ -81,5 +83,6 @@ public class MainSceneController implements Initializable {
         for(Game g : games) {
             gameList.getItems().add(g.getName());
         }
+        if(joinGameController!= null) joinGameController.updateGame();
     }
 }

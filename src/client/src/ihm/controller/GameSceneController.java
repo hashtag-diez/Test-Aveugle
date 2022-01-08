@@ -20,6 +20,9 @@ public class GameSceneController implements Initializable {
     private static SystemTestAveugle system = SystemTestAveugle.getSystem();
     private static Game game;
 
+    private static WaitingRoomController waitingRoomController;
+    private static InGameController inGameController;
+
     @FXML
     private Label gameNameLabel;
 
@@ -47,6 +50,7 @@ public class GameSceneController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/WaitingRoom.fxml"));
             Pane createPane = (Pane) loader.load();
+            waitingRoomController = loader.getController();
             gamePane.setCenter(createPane);
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,10 +61,48 @@ public class GameSceneController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/InGameView.fxml"));
             Pane createPane = (Pane) loader.load();
+            inGameController = loader.getController();
             gamePane.setCenter(createPane);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void goToError() {
+        try {
+            inGameController.killTime();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/ErrorScene.fxml"));
+            Pane createPane = (Pane) loader.load();
+            gamePane.setCenter(createPane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateGame() {
+        waitingRoomController.updatePlayerList();
+        if(inGameController != null) {
+            inGameController.updateGame();
+        }
+    }
+
+    public void endGame() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/EndGameView.fxml"));
+            Pane createPane = (Pane) loader.load();
+            gamePane.setCenter(createPane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void updateAnswers() {
+        if(inGameController != null) inGameController.updateAnswers();
+    }
+
+    public void updateGameInSession() {
+        inGameController.updateScore();
+        inGameController.updateGame();
     }
 
 }
