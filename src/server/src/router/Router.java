@@ -20,18 +20,18 @@ public class Router {
     UserService user = new UserService();
     services.put(Type.USER_CONNECT, user); //DONE
     services.put(Type.USER_ANSWER, user); //DONE 
-    services.put(Type.USER_DISCONNECT, user); 
-    services.put(Type.EXIT, user);
+    services.put(Type.USER_DISCONNECT, user); //DONE
+    services.put(Type.EXIT, user); // DONE
 
     ChannelService channel = new ChannelService();
     services.put(Type.GET_CHANNELS, channel); //DONE
     services.put(Type.CHANNEL_CREATE, channel); //DONE
     services.put(Type.CHANNEL_START, channel); //DONE
-    services.put(Type.CHANNEL_DELETE, channel);
+    services.put(Type.CHANNEL_DELETE, channel); //DONE
     services.put(Type.CHANNEL_QUESTIONS, channel); //DONE
 
     OneGameService  oneGame = new OneGameService();
-    services.put(Type.SCORE_REFRESH, oneGame);
+    services.put(Type.SCORE_REFRESH, oneGame); //DONE
   }
   public void run(Load req, Load res, AsynchronousSocketChannel client) {
     ServiceInterface action = services.get((Type) req.getType());
