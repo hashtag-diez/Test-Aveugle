@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Channel {
+    
+
     private String name;
     private User admin;
     private List<User> participants;
+    private List<String> answeredQuestions;
     private Categorie categorie;
     private boolean isStarted;
 
@@ -16,14 +19,23 @@ public class Channel {
         this.isStarted = false;
         this.categorie = categorie;
         this.participants = new ArrayList<>();
+        answeredQuestions = new ArrayList<String> ();
         participants.add(admin);
     }
     public void addUser(User user){
         participants.add(user);
     }
+    public List<String> getAnsweredQuestions() {
+        return answeredQuestions;
+    }
+    public void addQuestions(String question) {
+        this.answeredQuestions.add(question);
+    }
     public boolean removeUser(String username){
         for(User user : participants){
-            if(user.getPseudo().equals(username)){
+            System.out.println("User : "+user.getPseudo());
+            if(user.getPseudo().equals(username)){  
+                System.out.println("Trouvé !");
                 participants.remove(user);
                 return true;
             } 

@@ -8,9 +8,10 @@ public class User {
   private AsynchronousSocketChannel clientSocket;
   private int uid;
 
-  public User(String pseudo){
+  public User(String pseudo, AsynchronousSocketChannel client){
     this.pseudo = pseudo;
     this.score = 0;
+    this.clientSocket = client;
   }
 
   public AsynchronousSocketChannel getClientSocket() {
