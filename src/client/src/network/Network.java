@@ -73,14 +73,18 @@ public class Network {
     public static void joinGame(String pseudo, Game game) {
         //TODO notifier le server que l'utilisateur à rejoint la partie Game
         // /!\ le serveur doit notifier TOUS LES UTILISATEURS
-
+    
         //à supprimer: simulation du retour du back
         hasJoinedGame(pseudo, game);
     }
 
-    public static void hasJoinedGame(String player, Game game) {
-        //TODO méthode de réception d'une nouvelle connexion à une partie
+    public static void hasJoinedGame(Map<String, Map<String, String>> data) {
+        // méthode de réception d'une nouvelle connexion à une partie
+        String player = data.get("result").get("pseudo");
 
+        String gameName = data.get("result").get("gameName"); // ??
+        Game game = system.getGameByName(gameName);
+        
         system.hasJoinedGame(player, game);
     }
 
