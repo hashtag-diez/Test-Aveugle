@@ -1,5 +1,6 @@
 package src.repository;
 
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.List;
 
 import src.App;
@@ -38,8 +39,8 @@ public class ChannelRepository {
         return false;
     }
 
-    public static Channel addChannel(String channel , String adminName, String categorie){
-        User user = new User(adminName);
+    public static Channel addChannel(String channel , String adminName, String categorie, AsynchronousSocketChannel client){
+        User user = new User(adminName, client);
         Categorie categ = CatalogueRepository.findCategorieByName(App.catalogue, categorie);
         System.out.println(categ.getCategoryName());
         Channel c = new Channel(channel, user, categ);
@@ -48,10 +49,11 @@ public class ChannelRepository {
     }
 
     public static boolean deleteChannel(String channel, String userName){
-        Channel c = getChannelByName(channel);
-        if(c!=null && c.getChannelAdmin().getPseudo() == userName) {
-            App.rooms.remove(c);
-            return true;
+        for(Channel c : App.rooms){
+            if(c.getChannelName().equals(channel)){
+                App.rooms.remove(c);
+                return true;
+            }
         }
         return false;
     }

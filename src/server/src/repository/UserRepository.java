@@ -1,11 +1,13 @@
 package src.repository;
 
+import java.nio.channels.AsynchronousSocketChannel;
+
 import src.model.User;
 
 public class UserRepository {
 
-    public static User createAndConnectUser(String pseudo, String channelName){
-        User user = new User(pseudo);
+    public static User createAndConnectUser(String pseudo, String channelName, AsynchronousSocketChannel client){
+        User user = new User(pseudo, client);
         ChannelRepository.addParticipant(user, channelName);
         return user;
     }
