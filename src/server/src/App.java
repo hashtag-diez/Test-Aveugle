@@ -86,6 +86,11 @@ public class App implements Callable<Boolean> {
 				try{
 					System.out.println("Un client s'est connecté depuis " + client.getRemoteAddress());
 					App.clients.add(client);
+					Load request = new Load();
+					request.setType(Type.GET_CHANNELS);
+					Load response = new Load();
+					router.run(request, response, client);
+					sendToOneClient(response, client);
 				} catch (Exception e) {
 					failed(e, null);
 				}
