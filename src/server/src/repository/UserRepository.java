@@ -12,7 +12,7 @@ public class UserRepository {
 
     public static boolean disconnectUser(String pseudo, String channelName) {
         User user = ChannelRepository.findUserByPseudo(pseudo, channelName);
-        return ChannelRepository.removeParticipant(user, channelName);
+        System.out.println(user==null);
+        return ChannelRepository.removeParticipant(pseudo, channelName);
     }
-
 }

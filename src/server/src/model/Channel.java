@@ -18,7 +18,18 @@ public class Channel {
         this.participants = new ArrayList<>();
         participants.add(admin);
     }
-    
+    public void addUser(User user){
+        participants.add(user);
+    }
+    public boolean removeUser(String username){
+        for(User user : participants){
+            if(user.getPseudo().equals(username)){
+                participants.remove(user);
+                return true;
+            } 
+        }
+        return false;
+    }
     public String getChannelName(){return name;}
 
     public User getChannelAdmin(){return admin;}

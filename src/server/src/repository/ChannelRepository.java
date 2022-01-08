@@ -13,7 +13,8 @@ public class ChannelRepository {
         Channel c = getChannelByName(channel);
         if(c == null) return null;
         for(User u : c.getChannelParticipants()){
-            if(u.getPseudo() == name) return u;
+            System.out.println(u.getPseudo());
+            if(u.getPseudo().equals(name)) return u;
         }
         return null;
     }
@@ -27,12 +28,11 @@ public class ChannelRepository {
         }
     }
 
-    public static boolean removeParticipant(User user, String channel){
+    public static boolean removeParticipant(String username , String channel){
         Channel c = getChannelByName(channel);
-        if(user!=null && c!=null) {
-            List<User> lU = c.getChannelParticipants();
-            lU.remove(user);
-            c.setChannelParticipants(lU);
+        if(username!=null && c!=null) {
+            System.out.println("Hop");
+            c.removeUser(username);
             return true;
         }
         return false;
@@ -41,6 +41,7 @@ public class ChannelRepository {
     public static Channel addChannel(String channel , String adminName, String categorie){
         User user = new User(adminName);
         Categorie categ = CatalogueRepository.findCategorieByName(App.catalogue, categorie);
+        System.out.println(categ.getCategoryName());
         Channel c = new Channel(channel, user, categ);
         App.rooms.add(c);
         return c;
@@ -73,8 +74,9 @@ public class ChannelRepository {
 
     public static Channel getChannelByName(String channelName){
         for(Channel c : App.rooms){
-            if(c.getChannelName() == channelName) return c;
+            if(c.getChannelName().equals(channelName)) return c;
         }
+        System.out.println("Rien trouvé");
         return null;
     }
 }

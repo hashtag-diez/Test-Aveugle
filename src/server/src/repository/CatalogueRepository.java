@@ -17,7 +17,7 @@ public class CatalogueRepository {
 
     public static Categorie findCategorieByName(Catalogue c, String name){
         for(Categorie categ : c.getCatalogue()){
-            if (categ.getCategoryName() == name) return categ;
+            if (categ.getCategoryName().equals(name)) return categ;
         }
         return null;
     }
