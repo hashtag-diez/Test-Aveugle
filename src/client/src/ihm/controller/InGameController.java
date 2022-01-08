@@ -117,7 +117,12 @@ public class InGameController implements Initializable{
         //TODO
     }
 
+    public void killTime() {
+        //TODO arrête le timer
+    }
+
     public void updateAnswers() {
+        //if(time)killTime();
         Game currentGame = system.getCurrentGame();
         ArrayList<String> answers = currentGame.getAnswers();
         responseList.getItems().clear();

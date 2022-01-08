@@ -82,6 +82,16 @@ public class Game {
         players.remove(player);
     }
 
+    public void remove(String player) {
+        Player tmp = null;
+        for(Player p : players) {
+            if(p.getName().equals(player)) {
+                tmp = p;
+            }
+        }
+        if(tmp != null) players.remove(tmp);
+    }
+
     public boolean checkPlayerExistence(String name) {
         for (Player p : players) {
             if(p.getName().equals(name)) return true;

@@ -60,6 +60,9 @@ public class SystemTestAveugle {
         Game newGame = new Game(title, theme, adminName, nbTours, false);
         if(currentPlayer != null && currentPlayer.getGame().equals(title)){
             newGame = new Game(title, theme, adminName, nbTours, true);
+            //à supprimer: pour test du lancement
+            newGame.addPlayer("Annie", false);
+            //
             games.add(newGame);
             app.updateGameList();
             currentGame = newGame;
@@ -116,6 +119,10 @@ public class SystemTestAveugle {
         app.updateAnswers();
     }
 
+    public void goToMenu() {
+        app.goToMenu();
+    }
+
     public void receiveCorrectAnswer(String text, String player, boolean isClockEnd) {
         for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
             if(player.equals(currentGame.getPlayers().get(i).getName())) {
@@ -141,6 +148,19 @@ public class SystemTestAveugle {
         return false;
     }
 
+    public void removePlayerFromGame(String game, String player) {
+        if(currentGame != null && currentGame.getName().equals(game)) {
+            currentGame.remove(player);
+        } else {
+            for(Game g : games) {
+                if(g.getName().equals(game)) {
+                    g.remove(player);
+                }
+            }
+        }
+    }
+
+
     public void addPlayerInGameList(String player, Game game, boolean isLocalPlayer) {
         for(Game g : games) {
             if(g.equals(game)) {
@@ -154,11 +174,26 @@ public class SystemTestAveugle {
     }
 
     public void deconnection() {
-        //TODO
+        Network.deconnection(currentGame, currentPlayer.getName(), currentPlayer.isAdmin());
     }
 
     public void receiveDeconnection(Game game, String player, boolean isAdmin) {
-        //TODO
+        if(isAdmin) {
+            games.remove(currentGame);
+            currentPlayer = null;
+            currentGame = null;
+            app.goToError();
+        } else {
+            removePlayerFromGame(game.getName(), player);
+            if(currentPlayer != null) {
+                if(player.equals(currentPlayer.getName())) {
+                    currentGame = null;
+                    currentPlayer = null;
+                    app.goToMenu();
+                } 
+            }
+            app.updateGameList();
+        }
     }
 
     public void endGame() {

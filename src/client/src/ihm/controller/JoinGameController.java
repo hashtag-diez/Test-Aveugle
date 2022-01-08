@@ -53,6 +53,7 @@ public class JoinGameController {
             if(system.checkPseudoExistenceInGame(pseudo, game)) {
                 errorLabel.setText("Ce joueur existe déjà !");
             } else {
+                pseudoInput.clear();
                 system.joinGame(pseudo, game);
             }
         }

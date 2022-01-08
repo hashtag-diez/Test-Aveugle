@@ -50,8 +50,7 @@ public class WaitingRoomController implements Initializable {
         } else {
             waitingActionButton.setText("Quitter");
             waitingActionButton.setOnAction( e -> {
-                //TODO changer l'action pour le bouton quitter (pour l'instant lance la partie)
-                system.startGame();
+                system.deconnection();
             });
             messageLabel.setText("En attente de lancement par l'administrateur ...");
         }

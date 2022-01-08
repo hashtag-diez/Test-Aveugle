@@ -68,6 +68,17 @@ public class GameSceneController implements Initializable {
         }
     }
 
+    public void goToError() {
+        try {
+            inGameController.killTime();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/ErrorScene.fxml"));
+            Pane createPane = (Pane) loader.load();
+            gamePane.setCenter(createPane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateGame() {
         waitingRoomController.updatePlayerList();
         if(inGameController != null) {

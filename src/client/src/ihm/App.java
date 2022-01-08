@@ -34,6 +34,11 @@ public class App extends Application {
             stage.setTitle("Test Aveugle");
             stage.getIcons().add(new Image("img/logo.png"));
             stage.setScene(mainScene);
+            stage.addEventFilter(javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST, e -> {
+                if(system.getCurrentPlayer() != null) {
+                    system.deconnection();
+                }
+            });
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,7 +47,7 @@ public class App extends Application {
 
     public void updateGameList() {
         mainSceneController.updateGameList();
-        if(gameSceneController != null) gameSceneController.updateGame();
+        if(gameSceneController != null && system.getCurrentGame() != null) gameSceneController.updateGame();
     }
 
     public void updateAnswers() {
@@ -60,13 +65,22 @@ public class App extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("view/GameScene.fxml"));
             gameScene = new Scene(loader.load());
             gameSceneController = loader.getController();
-            stage.setX(200);
-            stage.setY(25);
+            stage.centerOnScreen();
             stage.setScene(gameScene);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void goToMenu() {
+        stage.setScene(mainScene);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+    public void goToError() {
+        gameSceneController.goToError();
     }
 
     public void startGame() {

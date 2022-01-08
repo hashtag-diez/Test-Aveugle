@@ -1,6 +1,6 @@
 //Note: dans certaines méthodes, la présence du Game sert uniquement à la vérification du jeu courrant dans le front
 //en théorie, les messages destinés à une partie en particulier seront receptionné uniquement par les joueurs concernés
-//le Game peut donc, le cas échéant, être supprimé
+//le Game peut donc, le cas échéant, être supprimé (faire les vérifications nécessaires)
 
 package src.network;
 
@@ -10,7 +10,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Map;
 
 import src.ihm.model.*;
 
@@ -143,11 +142,14 @@ public class Network {
     }
 
     public static void deconnection(Game game, String player, boolean isAdmin) {
-        //TODO notifier le server de la déconnexion du joueur de son serveur de jeu, si isAdmin, supprimer la partie
+        //TODO notifier le server de la déconnexion du joueur de son jeu ou bien de la fermeture de la page(précise s'il s'agit d'un administrateur)
+
+        //à supprimer: simulation de la réponse serveur
+        receiveDeconnection(game, player, isAdmin);
     }
 
     public static void receiveDeconnection(Game game, String player, boolean isAdmin) {
-        //TODO réception d'un message de déconnexion, si isAdmin, la partie est supprimée, affichage page erreur
+        //TODO réception d'un message de déconnexion, si isAdmin: la partie est supprimée, affichage page erreur
         system.receiveDeconnection(game, player, isAdmin);
     } 
 
