@@ -49,8 +49,8 @@ public class ChannelService implements ServiceInterface {
    * return names of channels and present users
    * [
    * 0 {
-   * response: ...,
-   * image: (String with users id or name divided by ",")
+   * categorie: ...,
+   * channelUsers: (String with users id or name divided by ",")
    * }
    * ],
    * [
@@ -108,6 +108,7 @@ public class ChannelService implements ServiceInterface {
       result.put("image", image.getImg());
       result.put("channelName", channelName); // may be no need
       result.put("startTime", startTime);
+      // TODO : envoyer premier question avec
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -131,6 +132,31 @@ public class ChannelService implements ServiceInterface {
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
+    res.setData(data);
+  }
+  // voir avecZEID -> mettre ca dans channelStart
+  public void channelQuestions(Load req, Load res) {
+    Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
+
+    String categorieName = req.getData().get("params").get("categorieName");
+    String channelName = req.getData().get("params").get("channelName");
+
+    Image image = CategorieRepository.getRandomImage(channelName, categorieName);
+
+    if (image==null) {
+      Map<String, String> result = new HashMap<String, String>();
+      res.setStatus(Status.ERROR);
+      System.out.println("Pas d'images");
+      result.put("errorMessage", "Il manque des informations, veuillez réessayer");
+      data.put("result", result);
+    } else {
+      res.setStatus(Status.OK);
+      Map<String, String> imageData = new HashMap<String, String>();
+      imageData.put("response", image.getResponse());
+      imageData.put("image", image.getImg());
+      data.put("result", imageData);
+    }
+    res.setRange(Range.ONLY_PLAYERS);
     res.setData(data);
   }
 

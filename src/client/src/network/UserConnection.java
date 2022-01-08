@@ -134,47 +134,51 @@ public class UserConnection {
     scanner.close();
   }
 
-  public void handleResponse(ByteBuffer buffer) throws ClassNotFoundException, IOException {
+  public static void sendRequest(String line) throws IOException, ExecutionException, InterruptedException {
+    Map<String, Map<String, String>> request = outputParser(line);
+    socket.write(ByteBuffer.wrap(Serialization.serializeMap(request))).get();
+  }
 
+  public void handleResponse(ByteBuffer buffer) throws ClassNotFoundException, IOException {
     Load response = Serialization.deserializeLoad(buffer.flip().array());
-    if(response.getStatus().equals(Status.OK)){
-      switch(response.getType()){
+    if (response.getStatus().equals(Status.OK)) {
+      switch (response.getType()) {
         case CHANNEL_CREATE:
           Network.receiveGame(response.getData()); // DONE
           break;
         case CHANNEL_DELETE:
-          Network.receiveDeconnection(response.getData()); //DONE
+          Network.receiveDeconnection(response.getData()); // DONE
           break;
         case CHANNEL_START:
-          Network.startGame(); // TODO
+          Network.gameStarted(response.getData()); // TODO
           break;
         case CHANNEL_QUESTIONS:
-          Network.receiveAnswer(response.getData()); //TODO - you can do
+          // TODO ??
           break;
         case GET_CHANNELS:
-          // TODO
+          // TODO: function that gets names of games and has list of players
           break;
         case USER_CONNECT:
-          Network.hasJoinedGame(response.getData()); //? pas sur + TODO joinGame
+          Network.hasJoinedGame(response.getData()); // ? pas sur + TODO joinGame
           break;
         case USER_DISCONNECT:
-          Network.receiveDeconnection(response.getData()); // TODO deconnection
+          Network.receiveDeconnection(response.getData()); // ok
           break;
         case USER_ANSWER:
-          Network.sendAnswer(response.getData()); // TODO
+          Network.receiveAnswer(response.getData()); // see sended data and received
           break;
         case SCORE_REFRESH:
-          Network.scoreRefresh(response.getData()); //TODO
+          Network.scoreRefresh(response.getData()); // TODO
           break;
         case EXIT:
-          //TODO
+          // TODO
           break;
         default:
           break;
-      } 
-    }else{
+      }
+    } else {
       System.out.println("Erreur");
-      //Network.setAllRequestError ??
+      // Network.setAllRequestError ??
     }
   }
 
