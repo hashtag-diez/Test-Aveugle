@@ -10,12 +10,9 @@ public class Load {
   private Map<String,Map<String,String>> data = new HashMap<String, Map<String, String>>();
 
   public Load(){}
-  public Load(Map<String,String> header, Map<String, Map<String,String>> params, boolean isRequest){
+  public Load(Map<String,String> header, Map<String, Map<String,String>> params){
     this.type = Type.valueOf(header.get("type"));
-    if(!isRequest){
-      this.range = Range.valueOf(header.get("range"));
-      this.status = Status.valueOf(header.get("status")); 
-    }
+    System.out.println("Type du load créé : " + this.type);
     params.remove("header");
     this.data = params;
   }

@@ -13,13 +13,13 @@ import src.model.Load;
 public class Serialization {
 
 	@SuppressWarnings("unchecked")
-	public static Load deserializeLoad(byte[] bytes, boolean isRequest) throws ClassNotFoundException{
+	public static Load deserializeLoad(byte[] bytes) throws ClassNotFoundException{
 		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);    
 		ObjectInput in = null;
 		try {
 			in = new ObjectInputStream(bis);
 			Map<String,Map<String,String>> data = (Map<String,Map<String,String>>) in.readObject(); 
-			Load res = new Load(data.get("header"), data , isRequest);
+			Load res = new Load(data.get("header"), data);
 			return res;
 		} catch (IOException e) {
       e.printStackTrace();
