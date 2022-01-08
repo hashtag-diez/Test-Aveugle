@@ -18,10 +18,6 @@ public enum Type {
   // Prend en paramètre l'id du Channel à supprimer
   // Retourne les infos du channel à supprimer
   // Cible = TOUT LE MONDE
-  CHANNEL_QUESTIONS, // Retourne les questions selon les params données, TRIGGER le message CHANNEL_START
-  // Prend en paramètre l'id du channel, le nom de la catégorie 
-  // Retourne une Map<String,String> avec des couple <Image, réponse>
-  // Cible = PARTICIPANTS
   USER_CONNECT, // AJOUTE un user dans un channel
   // Prend l'id du user à connecter et l'id du channel
   // Retourne les infos du user qui s'est connecté 

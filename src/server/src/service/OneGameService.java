@@ -9,10 +9,11 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import src.model.User;
+import src.model.Image;
 import src.model.Load;
 import src.model.Range;
 import src.model.Status;
-
+import src.repository.CategorieRepository;
 import src.repository.OneGameRepository;
 
 import java.nio.channels.AsynchronousSocketChannel;
@@ -32,8 +33,10 @@ public class OneGameService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("channelName");
+    String categorieName = req.getData().get("params").get("categorieName");
     String winnerUser = req.getData().get("params").get("pseudo"); // user that found a correct answer
     String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
+    Image image = CategorieRepository.getRandomImage(channelName, categorieName);
 
     if(channelName.equals("") || startTime.equals("")){
       res.setStatus(Status.ERROR);
@@ -50,11 +53,12 @@ public class OneGameService implements ServiceInterface {
         result.put("winnerUser", winnerUser);
         result.put("userNewScore", String.valueOf(user.getScore()));
         result.put("startTime", startTime);
+        result.put("response", image.getResponse());
+        result.put("image", image.getImg());
       }
     }else{
       res.setStatus(Status.OK);
       res.setRange(Range.ONLY_PLAYERS);
-      result.put("startTime", startTime);
     }
     data.put("result", result);
     res.setData(data);

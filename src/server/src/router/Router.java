@@ -28,7 +28,6 @@ public class Router {
     services.put(Type.CHANNEL_CREATE, channel); //DONE
     services.put(Type.CHANNEL_START, channel); //DONE
     services.put(Type.CHANNEL_DELETE, channel); //DONE
-    services.put(Type.CHANNEL_QUESTIONS, channel); //DONE
 
     OneGameService  oneGame = new OneGameService();
     services.put(Type.SCORE_REFRESH, oneGame); //DONE

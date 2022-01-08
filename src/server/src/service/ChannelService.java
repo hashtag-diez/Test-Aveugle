@@ -94,6 +94,9 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("channelName");
+    String categorieName = req.getData().get("params").get("categorieName");
+    Image image = CategorieRepository.getRandomImage(channelName, categorieName);
+    String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
 
     if (channelName.equals("")) {
       res.setStatus(Status.ERROR);
@@ -101,7 +104,8 @@ public class ChannelService implements ServiceInterface {
     } else {
       res.setStatus(Status.OK);
       ChannelRepository.start(channelName);
-      String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
+      result.put("response", image.getResponse());
+      result.put("image", image.getImg());
       result.put("channelName", channelName); // may be no need
       result.put("startTime", startTime);
       res.setRange(Range.EVERYONE);
@@ -130,31 +134,6 @@ public class ChannelService implements ServiceInterface {
     res.setData(data);
   }
 
-  public void channelQuestions(Load req, Load res) {
-    Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
-
-    String categorieName = req.getData().get("params").get("categorieName");
-    String channelName = req.getData().get("params").get("channelName");
-
-    Image image = CategorieRepository.getRandomImage(channelName, categorieName);
-
-    if (image==null) {
-      Map<String, String> result = new HashMap<String, String>();
-      res.setStatus(Status.ERROR);
-      System.out.println("Pas d'images");
-      result.put("errorMessage", "Il manque des informations, veuillez réessayer");
-      data.put("result", result);
-    } else {
-      res.setStatus(Status.OK);
-      Map<String, String> imageData = new HashMap<String, String>();
-      imageData.put("response", image.getResponse());
-      imageData.put("image", image.getImg());
-      data.put("result", imageData);
-    }
-    res.setRange(Range.ONLY_PLAYERS);
-    res.setData(data);
-  }
-
   public void run(Load req, Load res, AsynchronousSocketChannel client){
     switch (req.getType()) {
       case CHANNEL_CREATE:
@@ -172,10 +151,6 @@ public class ChannelService implements ServiceInterface {
       case CHANNEL_START:
         System.out.println("Un client veut commencer un channel");
         startChannel(req, res);
-        break;
-      case CHANNEL_QUESTIONS:
-        System.out.println("Un client veut une liste d'images");
-        channelQuestions(req, res);
         break;
       default:
         break;
