@@ -14,6 +14,7 @@ public class CategorieRepository {
     //TODO 
     public static List<Image> getXRandomImages(int x, String categorieName) {
         Categorie c = CatalogueRepository.findCategorieByName(App.catalogue, categorieName);
+        System.out.println(c.getCategoryName());
         List<Image> l = c.getCategoryImages();
         int i=0;
         List<Image> l1 = l;
@@ -24,6 +25,7 @@ public class CategorieRepository {
             l1.remove(j);
             i++;
         }
+        System.out.println(returnedList.size());
         return returnedList;
     }
 

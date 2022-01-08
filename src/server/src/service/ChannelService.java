@@ -68,13 +68,16 @@ public class ChannelService implements ServiceInterface {
 
     List<Channel> channels = App.rooms;
 
-    Map<String, String> channelData;
     for (Channel channel : channels) {
-      channelData = new HashMap<String, String>();
+      Map<String, String> channelData = new HashMap<String, String>();
       List<User> players = channel.getChannelParticipants();
       channelData.put("categorie", channel.getCategorie().getCategoryName());
+      channelData.put("admin", channel.getChannelAdmin().getPseudo());
+      System.out.println(players.size());
+      int i = 0;
       for(User player : players){
-        channelData.put("user"+player.getUid(), player.getPseudo());
+        channelData.put("user"+i, player.getPseudo());
+        i++;
       }
       data.put(channel.getChannelName(), channelData);
     }
@@ -128,13 +131,7 @@ public class ChannelService implements ServiceInterface {
   }
 
   public void channelQuestions(Load req, Load res) {
-    // Retourne les questions selon les params données, TRIGGER le message
-    // CHANNEL_START
-    // Prend en paramètre l'id du channel, le nom de la catégorie
-    // Retourne une Map<String,String> avec des couple <Image, réponse>
-    // Cible = PARTICIPANTS
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
-    Map<String, String> result = new HashMap<String, String>();
 
     String categorieName = req.getData().get("params").get("categorieName");
     int nbQuestions = Integer.parseInt(req.getData().get("params").get("nbQuestions"));
@@ -142,22 +139,24 @@ public class ChannelService implements ServiceInterface {
     List<Image> images = CategorieRepository.getXRandomImages(nbQuestions, categorieName);
 
     if (images.isEmpty()) {
+      Map<String, String> result = new HashMap<String, String>();
       res.setStatus(Status.ERROR);
+      System.out.println("Pas d'images");
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
       data.put("result", result);
     } else {
       res.setStatus(Status.OK);
-      int idImage = 0;
-      Map<String, String> imageData;
+      int idImage = 1;
       for (Image image : images) {
-        imageData = new HashMap<String, String>();
+        Map<String, String> imageData = new HashMap<String, String>();
         imageData.put("response", image.getResponse());
         imageData.put("image", image.getImg());
-        data.put(String.valueOf(idImage), imageData);
-        res.setRange(Range.ONLY_PLAYERS);
+        System.out.println(image.getImg().length());
+        data.put("image" + idImage, imageData);
         idImage++;
       }
     }
+    res.setRange(Range.ONLY_CLIENT);
     res.setData(data);
   }
 
@@ -167,6 +166,10 @@ public class ChannelService implements ServiceInterface {
         System.out.println("Un client veut creer un channel!");
         createChannel(req, res);
         break;
+      case CHANNEL_DELETE:
+        System.out.println("Un client veut supprimer un channel!");
+        deleteChannel(req, res);
+        break;
       case GET_CHANNELS:
         System.out.println("Un client veut get channels.");
         getChannels(req, res);
@@ -175,7 +178,13 @@ public class ChannelService implements ServiceInterface {
         System.out.println("Un client veut commencer un channel");
         startChannel(req, res);
         break;
+      case CHANNEL_QUESTIONS:
+        System.out.println("Un client veut une liste d'images");
+        channelQuestions(req, res);
+        break;
       default:
+        System.out.println("Un client veut creer un channel!");
+        createChannel(req, res);
         break;
     }
   }
