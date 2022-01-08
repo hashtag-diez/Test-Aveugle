@@ -73,6 +73,13 @@ public class SystemTestAveugle {
         }
     }
 
+    public Theme getThemeByName(String name) {
+        for(Theme t : themes) {
+            if(t.getName().equals(name)) return t;
+        }
+        return null;
+    }
+
     public ArrayList<Theme> getThemes() {
         return themes;
     }

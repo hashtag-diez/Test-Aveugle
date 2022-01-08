@@ -64,8 +64,7 @@ public class Network {
         String title = data.get("result").get("title");
 
         String themeName = data.get("result").get("categorieName"); // ??
-        String themeColor = data.get("result").get("categorieColor"); // ??
-        Theme theme = new Theme(themeName, themeColor);
+        Theme theme = system.getThemeByName(themeName);
 
         String adminName = data.get("result").get("adminName");
         int nbTours = Integer.parseInt(data.get("result").get("nbTours"));
