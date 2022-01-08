@@ -54,11 +54,7 @@ public class Network {
 
     public static void pushGame(String title, Theme theme, String adminName, int nbTours) {
         //TODO push la nouvelle partie vers le serveur
-        String player = data.get("result").get("pseudo");
-
-        String gameName = data.get("result").get("gameName"); // ??
-        Game game = system.getGameByName(gameName);
-        
+                
         //à supprimer: l'appel suivant simule le retour du serveur
         receiveGame(title, theme, adminName, nbTours);
     }

@@ -140,26 +140,34 @@ public class UserConnection {
     if(response.getStatus().equals(Status.OK)){
       switch(response.getType()){
         case CHANNEL_CREATE:
-          Network.receiveGame(response.getData());
+          Network.receiveGame(response.getData()); // DONE
           break;
         case CHANNEL_DELETE:
-          Network.receiveDeconnection(response.getData())
+          Network.receiveDeconnection(response.getData()); //DONE
           break;
         case CHANNEL_START:
-          break;
-        case USER_CONNECT:
-          break;
-        case USER_DISCONNECT:
-          break;
-        case USER_ANSWER:
+          Network.startGame(); // TODO
           break;
         case CHANNEL_QUESTIONS:
+          Network.receiveAnswer(response.getData()); //TODO - you can do
           break;
         case GET_CHANNELS:
+          // TODO
+          break;
+        case USER_CONNECT:
+          Network.hasJoinedGame(response.getData()); //? pas sur + TODO joinGame
+          break;
+        case USER_DISCONNECT:
+          Network.receiveDeconnection(response.getData()); // TODO deconnection
+          break;
+        case USER_ANSWER:
+          Network.sendAnswer(response.getData()); // TODO
           break;
         case SCORE_REFRESH:
+          Network.scoreRefresh(response.getData()); //TODO
           break;
         case EXIT:
+          //TODO
           break;
         default:
           break;
