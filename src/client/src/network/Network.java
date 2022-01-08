@@ -10,6 +10,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
+//import java.util.HashMap;
+//import java.util.List;
+import java.util.Map;
+
 
 import src.ihm.model.*;
 
@@ -50,14 +54,21 @@ public class Network {
 
     public static void pushGame(String title, Theme theme, String adminName, int nbTours) {
         //TODO push la nouvelle partie vers le serveur
-
+        
         //à supprimer: l'appel suivant simule le retour du serveur
         receiveGame(title, theme, adminName, nbTours);
     }
 
-    public static void receiveGame(String title, Theme theme, String adminName, int nbTours) {
-        //TODO cette méthode reçoit un Map<String, Map<String,String> -> à adapter
+    //public static void receiveGame(String title, Theme theme, String adminName, int nbTours) {
+    public static void receiveGame(Map<String, Map<String, String>> data) {
+        String title = data.get("result").get("title");
 
+        String themeName = data.get("result").get("categorieName"); // ??
+        String themeColor = data.get("result").get("categorieColor"); // ??
+        Theme theme = new Theme(themeName, themeColor);
+
+        String adminName = data.get("result").get("adminName");
+        int nbTours = Integer.parseInt(data.get("result").get("nbTours"));
 
         system.receiveGame(title, theme, adminName, nbTours);
     }
