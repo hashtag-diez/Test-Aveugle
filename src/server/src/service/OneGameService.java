@@ -44,8 +44,10 @@ public class OneGameService implements ServiceInterface {
         res.setStatus(Status.ERROR);
         result.put("errorMessage", "Il manque des informations, veuillez réessayer");
       }else{
+        System.out.println("UPDATE");
         res.setStatus(Status.OK);
         res.setRange(Range.ONLY_PLAYERS);
+        result.put("winnerUser", winnerUser);
         result.put("userNewScore", String.valueOf(user.getScore()));
         result.put("startTime", startTime);
       }
@@ -55,6 +57,7 @@ public class OneGameService implements ServiceInterface {
       result.put("startTime", startTime);
     }
     data.put("result", result);
+    res.setData(data);
   }
 
   public void run(Load res, Load req, AsynchronousSocketChannel client) {

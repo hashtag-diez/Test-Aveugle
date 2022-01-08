@@ -32,7 +32,7 @@ public class UserService implements ServiceInterface {
     System.out.println(req.getType());
     String channelName = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
-    User user = UserRepository.createAndConnectUser(pseudo, channelName);
+    User user = UserRepository.createAndConnectUser(pseudo, channelName, client);
     if (user == null) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
@@ -56,13 +56,14 @@ public class UserService implements ServiceInterface {
 
     String channel = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
-    boolean deleted = UserRepository.disconnectUser(channel, pseudo);
+    boolean deleted = UserRepository.disconnectUser(pseudo, channel);
     if (!deleted) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
       result.put("disconnectedUser", pseudo);
+      result.put("channelName", channel);
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -102,11 +103,10 @@ public class UserService implements ServiceInterface {
 
   public void exit(Load req, Load res, AsynchronousSocketChannel client) {
     App.clients.remove(client);
-    System.out.println("Un client est parti :");
+    System.out.println("Un client est parti");
     res.setStatus(Status.OK);
     res.setRange(Range.EVERYONE);
   }
-
   public void run(Load req, Load res, AsynchronousSocketChannel client){
     switch (req.getType()) {
       case USER_CONNECT:

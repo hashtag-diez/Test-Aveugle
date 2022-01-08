@@ -25,7 +25,7 @@ import src.service.serviceinterface.ServiceInterface;
 
 public class ChannelService implements ServiceInterface {
 
-  public void createChannel(Load req, Load res) {
+  public void createChannel(Load req, Load res, AsynchronousSocketChannel client) {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
@@ -37,7 +37,7 @@ public class ChannelService implements ServiceInterface {
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      Channel channel = ChannelRepository.addChannel(channelName, adminName, categorieName);
+      Channel channel = ChannelRepository.addChannel(channelName, adminName, categorieName, client);
       result.put("channelName", channel.getChannelName());
       res.setRange(Range.EVERYONE);
     }
@@ -134,11 +134,11 @@ public class ChannelService implements ServiceInterface {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
 
     String categorieName = req.getData().get("params").get("categorieName");
-    int nbQuestions = Integer.parseInt(req.getData().get("params").get("nbQuestions"));
+    String channelName = req.getData().get("params").get("channelName");
 
-    List<Image> images = CategorieRepository.getXRandomImages(nbQuestions, categorieName);
+    Image image = CategorieRepository.getRandomImage(channelName, categorieName);
 
-    if (images.isEmpty()) {
+    if (image==null) {
       Map<String, String> result = new HashMap<String, String>();
       res.setStatus(Status.ERROR);
       System.out.println("Pas d'images");
@@ -146,17 +146,12 @@ public class ChannelService implements ServiceInterface {
       data.put("result", result);
     } else {
       res.setStatus(Status.OK);
-      int idImage = 1;
-      for (Image image : images) {
-        Map<String, String> imageData = new HashMap<String, String>();
-        imageData.put("response", image.getResponse());
-        imageData.put("image", image.getImg());
-        System.out.println(image.getImg().length());
-        data.put("image" + idImage, imageData);
-        idImage++;
-      }
+      Map<String, String> imageData = new HashMap<String, String>();
+      imageData.put("response", image.getResponse());
+      imageData.put("image", image.getImg());
+      data.put("result", imageData);
     }
-    res.setRange(Range.ONLY_CLIENT);
+    res.setRange(Range.ONLY_PLAYERS);
     res.setData(data);
   }
 
@@ -164,7 +159,7 @@ public class ChannelService implements ServiceInterface {
     switch (req.getType()) {
       case CHANNEL_CREATE:
         System.out.println("Un client veut creer un channel!");
-        createChannel(req, res);
+        createChannel(req, res, client);
         break;
       case CHANNEL_DELETE:
         System.out.println("Un client veut supprimer un channel!");
@@ -183,8 +178,6 @@ public class ChannelService implements ServiceInterface {
         channelQuestions(req, res);
         break;
       default:
-        System.out.println("Un client veut creer un channel!");
-        createChannel(req, res);
         break;
     }
   }
