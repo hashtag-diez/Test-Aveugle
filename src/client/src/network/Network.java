@@ -23,6 +23,16 @@ public class Network {
 
     public static void setConnexion() {
         //TODO méthode de connexion au server (lance la connexion dans un thread pour permetter l'exécution parallèle des affichages)
+        Thread networkThread = new Thread() {
+            public void run() {
+                try {
+                    new UserConnection("").run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        networkThread.start();
     }
 
     public static ArrayList<Game> getGames() {
@@ -54,13 +64,13 @@ public class Network {
 
     public static void pushGame(String title, Theme theme, String adminName, int nbTours) {
         //TODO push la nouvelle partie vers le serveur
-                
+
         //à supprimer: l'appel suivant simule le retour du serveur
         receiveGame(title, theme, adminName, nbTours);
     }
 
     public static void receiveGame(Map<String, Map<String, String>> data) {
-        String title = data.get("result").get("title");
+        String title = data.get("result").get("channelName");
 
         String themeName = data.get("result").get("categorieName"); // ??
         Theme theme = system.getThemeByName(themeName);
@@ -81,17 +91,18 @@ public class Network {
 
     public static void hasJoinedGame(Map<String, Map<String, String>> data) {
         // méthode de réception d'une nouvelle connexion à une partie
-        String player = data.get("result").get("pseudo");
+        String player = data.get("result").get("userName");
 
-        String gameName = data.get("result").get("gameName"); // ??
+        String gameName = data.get("result").get("channelName"); // ??
         Game game = system.getGameByName(gameName);
         
         system.hasJoinedGame(player, game);
     }
 
-    public static void startGame() {
+    public static void startGame(Map<String, Map<String, String>> data) {
         //TODO méthode de notification de jeu lancé par l'administrateur
-
+        
+        /*
         //à supprimer: simulation du retour back
         String base64Image = "";
 		File file = new File("src/client/img/logo.png");
@@ -103,9 +114,24 @@ public class Network {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+<<<<<<< HEAD
         String serverInstant = Instant.now().plus(4, ChronoUnit.SECONDS).toString();
+=======
+
+        String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
+>>>>>>> 204e10a (correct some things)
         Question q = new Question(base64Image, serverInstant, "test");
-        gameStarted(q);
+ gameStarted(q);
+
+ //theme
+ 
+*/
+        String title = data.get("result").get("title");
+
+        String themeName = data.get("result").get("categorieName"); // ??
+        Theme theme = system.getThemeByName(themeName);
+
+       
     }
 
     public static void gameStarted(Question question) {
@@ -188,10 +214,10 @@ public class Network {
 
     public static void receiveDeconnection(Map<String, Map<String, String>> data) {
         // réception d'un message de déconnexion, si isAdmin: la partie est supprimée, affichage page erreur
-        String gameName = data.get("result").get("gameName"); //??
+        String gameName = data.get("result").get("channelName"); 
         Game game = system.getGameByName(gameName);
 
-        String player = data.get("result").get("pseudo");
+        String player = data.get("result").get("disconnectedUser");
 
         Boolean isAdmin = Boolean.parseBoolean(data.get("result").get("isAdmin"));
 

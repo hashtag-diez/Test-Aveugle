@@ -39,6 +39,7 @@ public class UserService implements ServiceInterface {
     } else {
       res.setStatus(Status.OK);
       result.put("userName", user.getPseudo());
+      //result.put("channelName", channelName);
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -88,8 +89,10 @@ public class UserService implements ServiceInterface {
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      result.put("psuedo", pseudo);
+      result.put("pseudo", pseudo);
       result.put("userAnswer", userAnswer);
+      // besoin de result.put("channelName", channelName);
+      // Pas besoin de trueOrFalse
       if (userAnswer == questionResponse) {
         result.put("trueOrFalse", "true");
       } else {
