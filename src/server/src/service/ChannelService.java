@@ -44,7 +44,7 @@ public class ChannelService implements ServiceInterface {
       result.put("channelName", channel.getChannelName());
       result.put("caregorieName", channel.getCategorie().getCategoryName());
       result.put("adminName", channel.getChannelAdmin().getPseudo());
-      result.put("nbTours", String.valueOf(channel.getNbTours()))
+      result.put("nbTours", String.valueOf(channel.getNbTours()));
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -79,12 +79,13 @@ public class ChannelService implements ServiceInterface {
       List<User> players = channel.getChannelParticipants();
       channelData.put("categorie", channel.getCategorie().getCategoryName());
       channelData.put("admin", channel.getChannelAdmin().getPseudo());
+      channelData.put("nbTours", channel.getNbTours() + "");
       System.out.println(players.size());
-      int i = 0;
+      String users = "";
       for(User player : players){
-        channelData.put("user"+i, player.getPseudo());
-        i++;
+        users += player.getPseudo() + ",";
       }
+      channelData.put("users", users);
       data.put(channel.getChannelName(), channelData);
     }
     res.setData(data);

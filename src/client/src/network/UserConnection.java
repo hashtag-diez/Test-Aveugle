@@ -9,11 +9,6 @@ import java.util.concurrent.Executors;
 import java.nio.channels.AsynchronousSocketChannel;
 import src.utils.Serialization;
 
-import src.model.Load;
-import src.model.Type;
-import src.model.Status;
-import src.model.Channel;
-
 import java.util.Map;
 import java.util.Scanner;
 import java.util.HashMap;
@@ -135,43 +130,43 @@ public class UserConnection {
     scanner.close();
   }
 
-  public void sendRequest(String line) throws IOException, ExecutionException, InterruptedException {
+  public static void sendRequest(String line) throws IOException, ExecutionException, InterruptedException {
     Map<String, Map<String, String>> request = outputParser(line);
     socket.write(ByteBuffer.wrap(Serialization.serializeMap(request))).get();
   }
 
   public void handleResponse(ByteBuffer buffer) throws ClassNotFoundException, IOException {
     Map<String, Map<String, String>> response = Serialization.deserializeMap(buffer.flip().array());
-    if (response.get("headers").get("Status").equals("OK")) {
-      switch (response.getType()) {
-        case CHANNEL_CREATE:
+    if (response.get("header").get("status").equals("OK")) {
+      switch (response.get("header").get("type")) {
+        case "CHANNEL_CREATE":
           Network.receiveGame(response.getData()); // ok
           break;
-        case CHANNEL_DELETE:
+        case "CHANNEL_DELETE":
           //TODO
           break;
-        case CHANNEL_START:
+        case "CHANNEL_START":
           Network.gameStarted(response.getData()); // TODO
           break;
-        case CHANNEL_QUESTIONS:
+        case "CHANNEL_QUESTIONS":
           // TODO ??
           break;
-        case GET_CHANNELS:
+        case "GET_CHANNELS":
           // TODO: function that gets names of games and has list of players
           break;
-        case USER_CONNECT:
+        case "USER_CONNECT":
           Network.hasJoinedGame(response.getData()); // ok
           break;
-        case USER_DISCONNECT:
+        case "USER_DISCONNECT":
           Network.receiveDeconnection(response.getData()); // ok
           break;
-        case USER_ANSWER:
+        case "USER_ANSWER":
           Network.receiveAnswer(response.getData()); // ok
           break;
-        case SCORE_REFRESH:
+        case "SCORE_REFRESH":
           Network.scoreRefresh(response.getData()); // TODO
           break;
-        case EXIT:
+        case "EXIT":
           // TODO
           break;
         default:
