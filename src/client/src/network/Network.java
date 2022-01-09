@@ -20,7 +20,6 @@ import src.ihm.model.*;
 
 public class Network {
     private static SystemTestAveugle system = SystemTestAveugle.getSystem();
-    private static ArrayList<Theme> themes = system.getThemes();
     private static boolean hasReceivedGames = false;
     private static ArrayList<Game> games;
 
@@ -110,6 +109,7 @@ public class Network {
     public static void startGame(Game game) {
         String request = "CHANNEL_START";
         request += " " + game.getName();
+        request += " " + game.getTheme().getName();
         try {
             UserConnection.sendRequest(request);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -117,12 +117,14 @@ public class Network {
         }
     }
 
-    public static void gameStarted(Question question) {
-        String title = data.get("result").get("title");
-        String themeName = data.get("result").get("categorieName"); 
-        Theme theme = system.getThemeByName(themeName);
-
-        system.gameStarted(question);
+    public static void gameStarted(Map<String, Map<String, String>> data) {
+        Map<String, String> results = data.get("results");
+        String reponse = results.get("response");
+        String image = results.get("image");
+        String game = results.get("channelName");
+        String startTime = results.get("startTime");
+        Question question = new Question(image, startTime, reponse);
+        system.gameStarted(question, game);
     }
 
     public static void sendAnswer(String text, Game game, String player, boolean isLastTurn) {

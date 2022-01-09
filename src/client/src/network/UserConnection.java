@@ -11,6 +11,7 @@ import src.utils.Serialization;
 
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import java.nio.ByteBuffer;
@@ -32,7 +33,7 @@ public class UserConnection {
     }
   }
 
-  public Map<String, Map<String, String>> outputParser(String line) {
+  public static Map<String, Map<String, String>> outputParser(String line) {
     Map<String, Map<String, String>> request = new HashMap<String, Map<String, String>>();
     Map<String, String> type = new HashMap<String, String>();
     Map<String, String> params = new HashMap<String, String>();
@@ -60,6 +61,7 @@ public class UserConnection {
         System.out.println("On veut commencer le jeu!");
         type.put("type", command[0]);
         params.put("channelName", command[1]);
+        params.put("categorieName", command[2]);
         request.put("header", type);
         request.put("params", params);
         break;
@@ -146,7 +148,7 @@ public class UserConnection {
           //TODO
           break;
         case "CHANNEL_START":
-          Network.gameStarted(response.getData()); // TODO
+          Network.gameStarted(response); // TODO
           break;
         case "CHANNEL_QUESTIONS":
           // TODO ??

@@ -104,7 +104,13 @@ public class SystemTestAveugle {
         Network.startGame(currentGame);
     }
 
-    public void gameStarted(Question question) {
+    public void gameStarted(Question question, String gameName) {
+        if(currentGame == null || !currentGame.getName().equals(gameName)) {
+            Game game = getGameByName(gameName);
+            if(game != null) games.remove(game);
+            app.updateGameList();
+            return;
+        }
         currentGame.setStarted(true);
         currentGame.setCurrentQuestion(question);
         app.startGame();
