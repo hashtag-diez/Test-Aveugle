@@ -60,9 +60,6 @@ public class SystemTestAveugle {
         Game newGame = new Game(title, theme, adminName, nbTours, false);
         if(currentPlayer != null && currentPlayer.getGame().equals(title)){
             newGame = new Game(title, theme, adminName, nbTours, true);
-            //à supprimer: pour test du lancement
-            newGame.addPlayer("Annie", false);
-            //
             games.add(newGame);
             app.updateGameList();
             currentGame = newGame;
@@ -86,9 +83,11 @@ public class SystemTestAveugle {
 
     public ArrayList<Theme> setThemeList() {
         ArrayList<Theme> res = new ArrayList<>();
-        res.add(new Theme("Personnages", "#6df0ea"));
+        res.add(new Theme("Acteurs", "#6df0ea"));
         res.add(new Theme("Films", "#f34646"));
-        res.add(new Theme("Autres", "#6df073"));
+        res.add(new Theme("Drapeaux", "#6df073"));
+        res.add(new Theme("Chanteurs", "#ffc300"));
+        res.add(new Theme("Voitures", "#504848"));
         return res;
     }
 
@@ -101,10 +100,17 @@ public class SystemTestAveugle {
     }
 
     public void startGame() {
-        Network.startGame();
+        if(currentGame.getAdmin().equals(currentPlayer.getName()))
+        Network.startGame(currentGame);
     }
 
-    public void gameStarted(Question question) {
+    public void gameStarted(Question question, String gameName) {
+        if(currentGame == null || !currentGame.getName().equals(gameName)) {
+            Game game = getGameByName(gameName);
+            if(game != null) games.remove(game);
+            app.updateGameList();
+            return;
+        }
         currentGame.setStarted(true);
         currentGame.setCurrentQuestion(question);
         app.startGame();
@@ -120,6 +126,10 @@ public class SystemTestAveugle {
         Network.sendAnswer(text, currentGame, currentPlayer.getName(), currentGame.isLastTurn());
     }
 
+    public void sendEndOfClock() {
+        Network.sendEndOfClock(currentGame, currentPlayer.getName(), currentGame.isLastTurn());
+    }
+
     public void receiveAnswer(String text, String player) {
         String name = currentPlayer.getName().equals(player) ? "moi" : player;
         currentGame.addAnswer(name + " : " + text);
@@ -131,14 +141,15 @@ public class SystemTestAveugle {
     }
 
     public void receiveCorrectAnswer(String text, String player, boolean isClockEnd) {
-        for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
-            if(player.equals(currentGame.getPlayers().get(i).getName())) {
-                currentGame.getPlayers().get(i).addPoints();
-            }
-        }
         if(isClockEnd) {
             currentGame.addAnswer("Personne n'a trouvé ! ");
         } else {
+            app.killTime();
+            for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
+                if(player.equals(currentGame.getPlayers().get(i).getName())) {
+                    currentGame.getPlayers().get(i).addPoints();
+                }
+            }
             String name = currentPlayer.getName().equals(player) ? "moi" : player;
             currentGame.addAnswer(name + " : " + text);
             currentGame.addAnswer(player + " a trouvé ! ");
@@ -184,6 +195,10 @@ public class SystemTestAveugle {
         Network.deconnection(currentGame, currentPlayer.getName(), currentPlayer.isAdmin());
     }
 
+    public void killTime() {
+        app.killTime();
+    }
+
     public void receiveDeconnection(Game game, String player, boolean isAdmin) {
         if(isAdmin) {
             games.remove(currentGame);
@@ -204,11 +219,8 @@ public class SystemTestAveugle {
     }
 
     public void endGame() {
-        app.endGame();
         games.remove(currentGame);
-        currentGame = null;
-        currentPlayer = null;
-        app.updateGameList();
+        app.endGame();
     }
 
     public void joinGame(String pseudo, Game game) {
@@ -218,7 +230,8 @@ public class SystemTestAveugle {
     }
 
     public void hasJoinedGame(String player, Game game) {
-        if(currentPlayer != null && currentPlayer.getGame().equals(game.getName())){
+        if(game == null) return;
+        if(currentPlayer != null && currentPlayer.getGame().equals(game.getName()) && currentPlayer.getName().equals(player)){
             addPlayerInGameList(player, game, true);
             app.updateGameList();
             currentGame = game;
@@ -231,5 +244,11 @@ public class SystemTestAveugle {
 
     public void connexion() {
         Network.setConnexion();
+    }
+
+    public void deleteCurrentGame() {
+        app.updateGameList();
+        currentGame = null;
+        currentPlayer = null;
     }
 }

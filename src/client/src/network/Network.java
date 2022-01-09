@@ -6,6 +6,7 @@ package src.network;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -13,16 +14,16 @@ import java.util.Base64;
 //import java.util.HashMap;
 //import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import src.ihm.model.*;
 
 public class Network {
     private static SystemTestAveugle system = SystemTestAveugle.getSystem();
-    private static ArrayList<Theme> themes = system.getThemes();
+    private static boolean hasReceivedGames = false;
+    private static ArrayList<Game> games;
 
-    public static void setConnexion() {
-        // TODO méthode de connexion au server (lance la connexion dans un thread pour
-        // permetter l'exécution parallèle des affichages)
+    public static void setConnexion() { //OK
         Thread networkThread = new Thread() {
             public void run() {
                 try {
@@ -36,123 +37,143 @@ public class Network {
     }
 
     public static ArrayList<Game> getGames() {
-        // TODO résupère la liste des parties disponibles: /!\ méthode synchrone: doit
-        // envoyer la requête et se mettre en attente jusqu'à recevoir la bonne réponse
-
-        ArrayList<Game> games = new ArrayList<>();
-        // à supprimer plus tard:
-        games.add(new Game("Partie1", themes.get(0), "Michel", 25, false));
-        games.add(new Game("Partie2", themes.get(1), "Richard", 10, false));
-        games.add(new Game("Partie3", themes.get(2), "Agathe", 15, false));
-        games.get(0).addPlayer("Roro", false);
-        games.get(0).addPlayer("Roro", false);
-        games.get(0).addPlayer("Roro", false);
-        games.get(0).addPlayer("Roro", false);
-        games.get(0).addPlayer("Roro", false);
-        games.get(0).addPlayer("Roro", false);
-        games.get(0).addPlayer("Roro", false);
-        games.get(0).addPlayer("Roro", false);
-        games.get(0).addPlayer("Roro", false);
-        games.get(1).addPlayer("Riri", false);
-        games.get(1).addPlayer("Fifi", false);
-        games.get(1).addPlayer("Loulou", false);
-        //
-
+        while(!hasReceivedGames) {}
         return games;
     }
 
-    public static void pushGame(String title, Theme theme, String adminName, int nbTours) {
-        // TODO push la nouvelle partie vers le serveur
+    public static void receiveGameList(Map<String, Map<String, String>> data) {
+        games = new ArrayList<>();
+        for(Map.Entry<String, Map<String, String>> entry : data.entrySet()) {
+            Map<String,String> values = entry.getValue();
+            String name = entry.getKey();
+            String theme = values.get("categorie");
+            String adminName = values.get("admin");
+            int tours = Integer.parseInt(values.get("nbTours"));
+            Game game = new Game(name, system.getThemeByName(theme), adminName, tours, false);
+            String[] players = values.get("users").split(",");
+            for(String playerName : players) {
+                if(!playerName.isEmpty()){
+                    Player p = new Player(playerName, playerName.equals(adminName));
+                    p.setLocal(false);
+                    p.setGame(name);
+                    game.addPlayer(p);
+                }
+            }
+            games.add(game);
+        }
+        hasReceivedGames = true;
+    }
 
-        // à supprimer: l'appel suivant simule le retour du serveur
-        receiveGame(title, theme, adminName, nbTours);
+    public static void pushGame(String title, Theme theme, String adminName, int nbTours) {
+        String request = "CHANNEL_CREATE";
+        request += " " + title;
+        request += " " + adminName;
+        request += " " + theme.getName();
+        request += " " + nbTours;
+        try {
+            UserConnection.sendRequest(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void receiveGame(Map<String, Map<String, String>> data) {
         String title = data.get("result").get("channelName");
-        String themeName = data.get("result").get("categorieName");
+        String themeName = data.get("result").get("categorieName"); 
+        Theme theme = system.getThemeByName(themeName);
         String adminName = data.get("result").get("adminName");
         int nbTours = Integer.parseInt(data.get("result").get("nbTours"));
-
-        Theme theme = system.getThemeByName(themeName);
 
         system.receiveGame(title, theme, adminName, nbTours);
     }
 
     public static void joinGame(String pseudo, Game game) {
-        // TODO notifier le server que l'utilisateur à rejoint la partie Game
-        // /!\ le serveur doit notifier TOUS LES UTILISATEURS
-
-        // à supprimer: simulation du retour du back
-        hasJoinedGame(pseudo, game);
+        String request = "USER_CONNECT";
+        request += " " + game.getName();
+        request += " " + pseudo;
+        try {
+            UserConnection.sendRequest(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void hasJoinedGame(Map<String, Map<String, String>> data) {
-        // méthode de réception d'une nouvelle connexion à une partie
         String player = data.get("result").get("userName");
-        String gameName = data.get("result").get("channelName");
+        String gameName = data.get("result").get("channelName"); 
         Game game = system.getGameByName(gameName);
-
+        
         system.hasJoinedGame(player, game);
     }
 
-    public static void startGame(Map<String, Map<String, String>> data) {
-        // TODO méthode de notification de jeu lancé par l'administrateur
-        // à supprimer: simulation du retour back
-        String base64Image = "";
-        File file = new File("src/client/img/logo.png");
-        try (FileInputStream imageInFile = new FileInputStream(file)) {
-            // Reading a Image file from file system
-            byte imageData[] = new byte[(int) file.length()];
-            imageInFile.read(imageData);
-            base64Image = Base64.getEncoder().encodeToString(imageData);
-        } catch (Exception e) {
-            System.out.println(e);
+    public static void startGame(Game game) {
+        String request = "CHANNEL_START";
+        request += " " + game.getName();
+        request += " " + game.getTheme().getName();
+        try {
+            UserConnection.sendRequest(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
         }
-
-        String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
-        Question q = new Question(base64Image, serverInstant, "test");
-        gameStarted(q);
-
     }
 
-    public static void gameStarted(Question question) {
-        system.gameStarted(question);
+    public static void gameStarted(Map<String, Map<String, String>> data) {
+        Map<String, String> results = data.get("results");
+        String reponse = results.get("response");
+        String image = results.get("image");
+        String game = results.get("channelName");
+        String startTime = results.get("startTime");
+        Question question = new Question(image, startTime, reponse);
+        system.gameStarted(question, game);
     }
 
     public static void sendAnswer(String text, Game game, String player, boolean isLastTurn) {
-        // TODO send answer to server in game, then send back to all players
+        //TODO send answer to server in game, then send back to all players
 
-        // à supprimer: simulation du retour back
+        //à supprimer: simulation du retour back
         String base64Image = "";
-        File file = new File("src/client/img/logo_accueil.png");
-        try (FileInputStream imageInFile = new FileInputStream(file)) {
-            // Reading a Image file from file system
-            byte imageData[] = new byte[(int) file.length()];
-            imageInFile.read(imageData);
-            base64Image = Base64.getEncoder().encodeToString(imageData);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
+		File file = new File("src/client/img/logo_accueil.png");
+		try (FileInputStream imageInFile = new FileInputStream(file)) {
+			// Reading a Image file from file system
+			byte imageData[] = new byte[(int) file.length()];
+			imageInFile.read(imageData);
+			base64Image = Base64.getEncoder().encodeToString(imageData);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+        String serverInstant = Instant.now().plus(5, ChronoUnit.SECONDS).toString();
         Question nextQuestion = new Question(base64Image, serverInstant, "test");
-        if (game.getCurrentQuestion().isGoodAnswer(text)) {
+        if(game.getCurrentQuestion().isGoodAnswer(text)) {
             scoreRefresh(text, game, player, nextQuestion, false, isLastTurn);
         } else {
             receiveAnswer(text, game, player);
         }
     }
 
-    public static void sendEndOfClock() {
-        // TODO notifier le serveur de la fin de l'horloge (USER_ANSWER vide avec
-        // isClockEnd à true)
+    public static void sendEndOfClock(Game game, String player, boolean isLastTurn) {
+        //TODO notifier le serveur de la fin de l'horloge (USER_ANSWER vide avec isClockEnd à true)
+
+        // à supprimer: simulation du retour back
+        String base64Image = "";
+		File file = new File("src/client/img/logo_accueil.png");
+		try (FileInputStream imageInFile = new FileInputStream(file)) {
+			// Reading a Image file from file system
+			byte imageData[] = new byte[(int) file.length()];
+			imageInFile.read(imageData);
+			base64Image = Base64.getEncoder().encodeToString(imageData);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+        String serverInstant = Instant.now().plus(2, ChronoUnit.SECONDS).toString();
+        Question nextQuestion = new Question(base64Image, serverInstant, "test");
+        scoreRefresh("", game, player, nextQuestion, true, isLastTurn);
     }
 
     public static void receiveAnswer(Map<String, Map<String, String>> data) {
         String text = data.get("result").get("userAnswer");
         String player = data.get("result").get("pseudo");
 
-        String gameName = data.get("result").get("channelName");
+        String gameName = data.get("result").get("gameName"); //??
         Game game = system.getGameByName(gameName);
 
         if (game.getName().equals(system.getCurrentGame().getName())) {
@@ -183,13 +204,13 @@ public class Network {
     }
 
     public static void receiveDeconnection(Map<String, Map<String, String>> data) {
-        // réception d'un message de déconnexion, si isAdmin: la partie est supprimée,
-        // affichage page erreur
-        String gameName = data.get("result").get("channelName");
-        String player = data.get("result").get("disconnectedUser");
-        Boolean isAdmin = Boolean.parseBoolean(data.get("result").get("deleted"));
-        
+        // réception d'un message de déconnexion, si isAdmin: la partie est supprimée, affichage page erreur
+        String gameName = data.get("result").get("channelName"); 
         Game game = system.getGameByName(gameName);
+
+        String player = data.get("result").get("disconnectedUser");
+
+        Boolean isAdmin = Boolean.parseBoolean(data.get("result").get("isAdmin"));
 
         system.receiveDeconnection(game, player, isAdmin);
     }

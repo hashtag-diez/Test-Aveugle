@@ -78,6 +78,10 @@ public class Game {
         players.add(player);
     }
 
+    public void addPlayer(Player p) {
+        players.add(p);
+    }
+
     public void quitGame(Player player) {
         players.remove(player);
     }
