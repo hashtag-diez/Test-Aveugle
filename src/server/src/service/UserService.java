@@ -93,6 +93,7 @@ public class UserService implements ServiceInterface {
       result.put("pseudo", pseudo);
       result.put("userAnswer", userAnswer);
       if ((userAnswer == questionResponse) && !ChannelRepository.isFound(channelName)) {
+        ChannelRepository.setFound(channelName, true);
         result.put("trueOrFalse", "true");
       } else {
         result.put("trueOrFalse", "false");

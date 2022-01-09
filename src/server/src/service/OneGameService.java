@@ -42,7 +42,7 @@ public class OneGameService implements ServiceInterface {
     Instant startTime = Instant.now().plus(6, ChronoUnit.SECONDS);
     Image image = CategorieRepository.getRandomImage(channelName, categorieName);
 
-    if(channelName.equals("") || startTime.equals("")){
+    if(channelName.equals("") || startTime == null){
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     }else if(!winnerUser.equals("")){
@@ -51,10 +51,11 @@ public class OneGameService implements ServiceInterface {
         res.setStatus(Status.ERROR);
         result.put("errorMessage", "Il manque des informations, veuillez réessayer");
       }else{
+        ChannelRepository.setFound(channelName, true);
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
         Duration d = Duration.between(Instant.now(), startTime);
         ses.schedule(() -> {
-          ChannelRepository.resetFound(channelName);
+          ChannelRepository.setFound(channelName, false);
         }, d.toSeconds(), TimeUnit.SECONDS);
         System.out.println("UPDATE");
         res.setStatus(Status.OK);

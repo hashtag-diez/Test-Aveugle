@@ -76,18 +76,12 @@ public class ChannelRepository {
     public static boolean isFound(String channelName){
         for(Channel c : App.rooms){
             if(c.getChannelName().equals(channelName)){ 
-                if(c.isFound()){
-                    return true;
-                }
-                else{
-                    c.setFound(true);
-                    return false;
-                }
+                return c.isFound();
             }
         }
         return false;
     }
-    public static void resetFound(String channelName){
+    public static void setFound(String channelName, boolean found){
         for(Channel c : App.rooms){
             if(c.getChannelName().equals(channelName)){ 
                 c.setFound(false);
