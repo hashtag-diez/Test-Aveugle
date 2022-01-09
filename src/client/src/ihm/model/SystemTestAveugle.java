@@ -60,9 +60,6 @@ public class SystemTestAveugle {
         Game newGame = new Game(title, theme, adminName, nbTours, false);
         if(currentPlayer != null && currentPlayer.getGame().equals(title)){
             newGame = new Game(title, theme, adminName, nbTours, true);
-            //à supprimer: pour test du lancement
-            newGame.addPlayer("Annie", false);
-            //
             games.add(newGame);
             app.updateGameList();
             currentGame = newGame;
@@ -226,7 +223,8 @@ public class SystemTestAveugle {
     }
 
     public void hasJoinedGame(String player, Game game) {
-        if(currentPlayer != null && currentPlayer.getGame().equals(game.getName())){
+        if(game == null) return;
+        if(currentPlayer != null && currentPlayer.getGame().equals(game.getName()) && currentPlayer.getName().equals(player)){
             addPlayerInGameList(player, game, true);
             app.updateGameList();
             currentGame = game;

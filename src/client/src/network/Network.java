@@ -80,10 +80,8 @@ public class Network {
 
     public static void receiveGame(Map<String, Map<String, String>> data) {
         String title = data.get("result").get("channelName");
-
-        String themeName = data.get("result").get("categorieName"); // ??
+        String themeName = data.get("result").get("categorieName"); 
         Theme theme = system.getThemeByName(themeName);
-
         String adminName = data.get("result").get("adminName");
         int nbTours = Integer.parseInt(data.get("result").get("nbTours"));
 
@@ -91,18 +89,19 @@ public class Network {
     }
 
     public static void joinGame(String pseudo, Game game) {
-        //TODO notifier le server que l'utilisateur à rejoint la partie Game
-        // /!\ le serveur doit notifier TOUS LES UTILISATEURS
-    
-        //à supprimer: simulation du retour du back
-        hasJoinedGame(pseudo, game);
+        String request = "USER_CONNECT";
+        request += " " + game.getName();
+        request += " " + pseudo;
+        try {
+            UserConnection.sendRequest(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void hasJoinedGame(Map<String, Map<String, String>> data) {
-        // méthode de réception d'une nouvelle connexion à une partie
         String player = data.get("result").get("userName");
-
-        String gameName = data.get("result").get("channelName"); // ??
+        String gameName = data.get("result").get("channelName"); 
         Game game = system.getGameByName(gameName);
         
         system.hasJoinedGame(player, game);

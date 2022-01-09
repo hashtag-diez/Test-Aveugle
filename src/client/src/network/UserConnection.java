@@ -38,7 +38,7 @@ public class UserConnection {
     Map<String, String> params = new HashMap<String, String>();
     String[] command = line.split(" ");
     switch (command[0]) {
-      case "CHANNEL_CREATE":
+      case "CHANNEL_CREATE"://OK
         System.out.println("On veut créer une room !");
         type.put("type", command[0]);
         params.put("channelName", command[1]);
@@ -140,7 +140,7 @@ public class UserConnection {
     if (response.get("header").get("status").equals("OK")) {
       switch (response.get("header").get("type")) {
         case "CHANNEL_CREATE":
-          Network.receiveGame(response.getData()); // ok
+          Network.receiveGame(response);
           break;
         case "CHANNEL_DELETE":
           //TODO
@@ -155,7 +155,7 @@ public class UserConnection {
           // TODO: function that gets names of games and has list of players
           break;
         case "USER_CONNECT":
-          Network.hasJoinedGame(response.getData()); // ok
+          Network.hasJoinedGame(response); // ok
           break;
         case "USER_DISCONNECT":
           Network.receiveDeconnection(response.getData()); // ok
