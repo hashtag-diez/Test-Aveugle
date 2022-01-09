@@ -103,7 +103,7 @@ public class ChannelService implements ServiceInterface {
     String channelName = req.getData().get("params").get("channelName");
     String categorieName = req.getData().get("params").get("categorieName");
     Image image = CategorieRepository.getRandomImage(channelName, categorieName);
-    String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
+    String startTime = Instant.now().plus(3, ChronoUnit.SECONDS).toString();
 
     if (channelName.equals("")) {
       res.setStatus(Status.ERROR);
@@ -115,7 +115,6 @@ public class ChannelService implements ServiceInterface {
       result.put("image", image.getImg());
       result.put("channelName", channelName); // may be no need
       result.put("startTime", startTime);
-      // TODO : envoyer premier question avec
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -143,7 +142,6 @@ public class ChannelService implements ServiceInterface {
     data.put("result", result);
     res.setData(data);
   }
-  // voir avecZEID -> mettre ca dans channelStart
   public void channelQuestions(Load req, Load res) {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
 

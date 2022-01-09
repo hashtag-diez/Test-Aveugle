@@ -39,7 +39,7 @@ public class UserConnection {
     Map<String, String> params = new HashMap<String, String>();
     String[] command = line.split(" ");
     switch (command[0]) {
-      case "CHANNEL_CREATE"://OK
+      case "CHANNEL_CREATE":
         System.out.println("On veut créer une room !");
         type.put("type", command[0]);
         params.put("channelName", command[1]);
@@ -50,7 +50,7 @@ public class UserConnection {
         request.put("params", params);
         break;
       case "CHANNEL_DELETE":
-        System.out.println("On veut quitter une room !");
+        System.out.println("On veut supprimer une partie !");
         type.put("type", command[0]);
         params.put("channelName", command[1]);
         params.put("adminName", command[2]);
@@ -82,19 +82,11 @@ public class UserConnection {
         request.put("params", params);
         break;
       case "USER_ANSWER":
-        System.out.println("On veut se connecter à une room !");
+        System.out.println("On veut envoyer sa réponse !");
         type.put("type", command[0]);
         params.put("questionResponse", command[1]);
         params.put("userAnswer", String.join(" ", Arrays.copyOfRange(command, 3, command.length)));
         params.put("pseudo", command[2]);
-        request.put("header", type);
-        request.put("params", params);
-        break;
-      case "CHANNEL_QUESTIONS":
-        System.out.println("On veut la liste des images pour la catégorie " + command[1]);
-        type.put("type", command[0]);
-        params.put("categorieName", command[1]);
-        params.put("channelName", command[2]);
         request.put("header", type);
         request.put("params", params);
         break;
@@ -108,6 +100,14 @@ public class UserConnection {
         type.put("type", command[0]);
         params.put("channelName", command[1]);
         params.put("pseudo", command[2]);
+        request.put("header", type);
+        request.put("params", params);
+        break;
+      case "END_OF_CLOCK" :
+        System.out.println("On veut rafraichir le score à la fin du temps!");
+        type.put("type", "SCORE_REFRESH");
+        params.put("channelName", command[1]);
+        params.put("pseudo", "");
         request.put("header", type);
         request.put("params", params);
         break;
@@ -142,31 +142,36 @@ public class UserConnection {
     if (response.get("header").get("status").equals("OK")) {
       switch (response.get("header").get("type")) {
         case "CHANNEL_CREATE":
+          System.out.println("On reçoit un nouveau channel !");
           Network.receiveGame(response);
           break;
         case "CHANNEL_DELETE":
-          //TODO
+          System.out.println("On reçoit une suppression de channel !");
+          Network.receiveDeletion(response);
           break;
         case "CHANNEL_START":
+          System.out.println("On reçoit un début de partie !");
           Network.gameStarted(response); // TODO
           break;
-        case "CHANNEL_QUESTIONS":
-          // TODO ??
-          break;
         case "GET_CHANNELS":
-          // TODO: function that gets names of games and has list of players
+          System.out.println("On reçoit tous les channels !");
+          Network.receiveGameList(response);
           break;
         case "USER_CONNECT":
+          System.out.println("On un nouveau joueur !");
           Network.hasJoinedGame(response); // ok
           break;
         case "USER_DISCONNECT":
-          Network.receiveDeconnection(response.getData()); // ok
+          System.out.println("Un joueur s'est déconnecté!");
+          Network.receiveDeconnection(response); // ok
           break;
         case "USER_ANSWER":
-          Network.receiveAnswer(response.getData()); // ok
+          System.out.println("On reçoit un réponse!");
+          Network.receiveAnswer(response); // ok
           break;
         case "SCORE_REFRESH":
-          Network.scoreRefresh(response.getData()); // TODO
+          System.out.println("On reçoit le score et une nouvelle question!");
+          Network.scoreRefresh(response); //
           break;
         case "EXIT":
           // TODO

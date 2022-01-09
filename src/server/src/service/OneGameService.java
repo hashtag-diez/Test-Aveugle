@@ -55,10 +55,15 @@ public class OneGameService implements ServiceInterface {
         result.put("startTime", startTime);
         result.put("response", image.getResponse());
         result.put("image", image.getImg());
+        result.put("isEndOfClock", "false");
       }
     }else{
       res.setStatus(Status.OK);
       res.setRange(Range.ONLY_PLAYERS);
+      result.put("startTime", startTime);
+      result.put("response", image.getResponse());
+      result.put("image", image.getImg());
+      result.put("isEndOfClock", "true");
     }
     data.put("result", result);
     res.setData(data);

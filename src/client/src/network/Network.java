@@ -4,16 +4,8 @@
 
 package src.network;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-//import java.util.HashMap;
-//import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -129,13 +121,7 @@ public class Network {
     }
 
     public static void sendAnswer(String text, Game game, String player, boolean isLastTurn) {
-        List<String> answers = game.getAnswers();
-        int i = answers.size() - 1;
-        while(answers.get(i).split(" : ")[0] != player){
-            i--;
-        }
-
-        String line = "USER_ANSWER "+ game.getCurrentQuestion().getResponse() + " " + answers.get(i).split(" : ")[1] + " " + player;
+        String line = "USER_ANSWER "+ game.getCurrentQuestion().getResponse() + " " + text + " " + player;
         try {
             UserConnection.sendRequest(line);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -143,65 +129,68 @@ public class Network {
         }
     }
 
-    public static void sendEndOfClock(Game game, String player, boolean isLastTurn) {
-        //TODO notifier le serveur de la fin de l'horloge (USER_ANSWER vide avec isClockEnd à true)
-
-        String line = "USER_ANSWER ";
+    public static void sendEndOfClock(Game game) {
+        String line = "END_OF_CLOCK " + game.getName();
         try {
             UserConnection.sendRequest(line);
         } catch (IOException | ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-
-        // à supprimer: simulation du retour back
-        /*String base64Image = "";
-		File file = new File("src/client/img/logo_accueil.png");
-		try (FileInputStream imageInFile = new FileInputStream(file)) {
-			// Reading a Image file from file system
-			byte imageData[] = new byte[(int) file.length()];
-			imageInFile.read(imageData);
-			base64Image = Base64.getEncoder().encodeToString(imageData);
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-        String serverInstant = Instant.now().plus(2, ChronoUnit.SECONDS).toString();
-        Question nextQuestion = new Question(base64Image, serverInstant, "test");
-        scoreRefresh("", game, player, nextQuestion, true, isLastTurn);*/
     }
 
     public static void receiveAnswer(Map<String, Map<String, String>> data) {
         String text = data.get("result").get("userAnswer");
         String player = data.get("result").get("pseudo");
-
-        String gameName = data.get("result").get("gameName"); //??
+        String gameName = data.get("result").get("gameName"); 
+        String isCorrect = data.get("result").get("trueOrFalse");
         Game game = system.getGameByName(gameName);
 
         if (game.getName().equals(system.getCurrentGame().getName())) {
-            system.receiveAnswer(text, player);
-        }
-    }
-
-    public static void scoreRefresh(String text, Game game, String player, Question nextQuestion, boolean isClockEnd,
-            boolean isLastTurn) {
-        // TODO réception d'un score refresh (fin du tour, incrémentation du score)
-
-        if (game.getName().equals(system.getCurrentGame().getName())) {
-            system.receiveCorrectAnswer(text, player, isClockEnd);
-            if (!isLastTurn) {
-                system.setNextQuestion(nextQuestion);
+            if(isCorrect.equals("true") && system.getCurrentPlayer().isAdmin()){
+                sendScoreRefresh(gameName, system.getCurrentPlayer().getName());
             } else {
-                system.endGame();
+                system.receiveAnswer(text, player);
             }
         }
     }
 
-    public static void deconnection(Game game, String player, boolean isAdmin) {
-        String line;
-        if(isAdmin){
-            line = "CHANNEL_DELETE "+ game.getName() + " " + player;
-        }else{
-            line = "USER_DISCONNECT "+ game.getName() + " " + player;
+    public static void sendScoreRefresh(String channelName, String pseudo) {
+        String request = "SCORE_REFRESH";
+        request += " " + channelName;
+        request += " " + pseudo;
+        try {
+            UserConnection.sendRequest(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
         }
+    }
+
+    public static void scoreRefresh(Map<String,Map<String,String>> data) {
+        Map<String,String> res = data.get("result");
+        String clockStatus = res.get("isEndOfClock");
+        boolean isClockEnd = clockStatus.equals("true");
+        String reponse = res.get("response");
+        String image = res.get("image");
+        String game = res.get("channelName");
+        String startTime = res.get("startTime");
+        if(isClockEnd) {
+            system.receiveCorrectAnswer(reponse, null, true);
+        } else {
+            String player = res.get("winnerUser");
+            if (game.equals(system.getCurrentGame().getName())) {
+                system.receiveCorrectAnswer(reponse, player, false);
+            }
+        }
+        Question question = new Question(image, startTime, reponse);
+        if (!system.isLastTurn()) {
+            system.setNextQuestion(question);
+        } else {
+            system.endGame();
+        }
+    }
+
+    public static void deconnection(Game game, String player, boolean isAdmin) {
+        String line = "USER_DISCONNECT "+ game.getName() + " " + player + " " + isAdmin;
         try {
             UserConnection.sendRequest(line);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -219,5 +208,9 @@ public class Network {
         Boolean isAdmin = Boolean.parseBoolean(data.get("result").get("isAdmin"));
 
         system.receiveDeconnection(game, player, isAdmin);
+    }
+
+    public static void receiveDeletion(Map<String, Map<String, String>> data){
+        system.deleteGame(data.get("result").get("channelName"));
     }
 }

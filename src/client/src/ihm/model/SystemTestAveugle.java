@@ -101,7 +101,7 @@ public class SystemTestAveugle {
 
     public void startGame() {
         if(currentGame.getAdmin().equals(currentPlayer.getName()))
-        Network.startGame(currentGame);
+            Network.startGame(currentGame);
     }
 
     public void gameStarted(Question question, String gameName) {
@@ -126,8 +126,13 @@ public class SystemTestAveugle {
         Network.sendAnswer(text, currentGame, currentPlayer.getName(), currentGame.isLastTurn());
     }
 
+    public boolean isLastTurn() {
+        if(currentGame != null) return currentGame.isLastTurn();
+        return false;
+    }
+
     public void sendEndOfClock() {
-        Network.sendEndOfClock(currentGame, currentPlayer.getName(), currentGame.isLastTurn());
+        Network.sendEndOfClock(currentGame);
     }
 
     public void receiveAnswer(String text, String player) {
@@ -216,6 +221,20 @@ public class SystemTestAveugle {
             }
             app.updateGameList();
         }
+    }
+
+    public void deleteGame(String name) {
+        if(currentGame != null && currentGame.getName().equals(name)) {
+                games.remove(currentGame);
+                currentPlayer = null;
+                currentGame = null;
+                app.goToError();
+        }
+        else {
+            Game game = getGameByName(name);
+            games.remove(game);
+        }
+        app.updateGameList();
     }
 
     public void endGame() {

@@ -88,7 +88,7 @@ public class UserService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("channelName");
-    String questionResponse = req.getData().get("params").get("questionResponse"); // how, may be smth else
+    String questionResponse = req.getData().get("params").get("questionResponse");
     String userAnswer = req.getData().get("params").get("userAnswer");
     String pseudo = req.getData().get("params").get("pseudo");
 
