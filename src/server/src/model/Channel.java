@@ -12,6 +12,7 @@ public class Channel {
     private List<String> answeredQuestions;
     private Categorie categorie;
     private boolean isStarted;
+    private boolean found; 
 
     public Channel(String name, User admin, Categorie categorie){
         this.name = name;
@@ -21,9 +22,16 @@ public class Channel {
         this.participants = new ArrayList<>();
         answeredQuestions = new ArrayList<String> ();
         participants.add(admin);
+        this.found = false;
     }
     public void addUser(User user){
         participants.add(user);
+    }
+    public boolean isFound() {
+        return found;
+    }
+    public void setFound(boolean found) {
+        this.found = found;
     }
     public List<String> getAnsweredQuestions() {
         return answeredQuestions;

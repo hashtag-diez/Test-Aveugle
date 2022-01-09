@@ -19,7 +19,6 @@ public class ChannelRepository {
         }
         return null;
     }
-    
     public static void addParticipant(User user, String channel){
         Channel c = getChannelByName(channel);
         if(c != null && user != null) {
@@ -74,6 +73,27 @@ public class ChannelRepository {
         }
     }
 
+    public static boolean isFound(String channelName){
+        for(Channel c : App.rooms){
+            if(c.getChannelName().equals(channelName)){ 
+                if(c.isFound()){
+                    return true;
+                }
+                else{
+                    c.setFound(true);
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+    public static void resetFound(String channelName){
+        for(Channel c : App.rooms){
+            if(c.getChannelName().equals(channelName)){ 
+                c.setFound(false);
+            }
+        }
+    }
     public static Channel getChannelByName(String channelName){
         for(Channel c : App.rooms){
             if(c.getChannelName().equals(channelName)) return c;

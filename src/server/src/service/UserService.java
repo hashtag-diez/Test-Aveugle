@@ -10,6 +10,7 @@ import java.util.Map;
 
 import src.model.Load;
 import src.model.User;
+import src.repository.ChannelRepository;
 import src.repository.UserRepository;
 import src.model.Status;
 import src.model.Range;
@@ -79,6 +80,7 @@ public class UserService implements ServiceInterface {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
+    String channelName = req.getData().get("params").get("channelName");
     String questionResponse = req.getData().get("params").get("questionResponse"); // how, may be smth else
     String userAnswer = req.getData().get("params").get("userAnswer");
     String pseudo = req.getData().get("params").get("pseudo");
@@ -88,9 +90,9 @@ public class UserService implements ServiceInterface {
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      result.put("psuedo", pseudo);
+      result.put("pseudo", pseudo);
       result.put("userAnswer", userAnswer);
-      if (userAnswer == questionResponse) {
+      if ((userAnswer == questionResponse) && !ChannelRepository.isFound(channelName)) {
         result.put("trueOrFalse", "true");
       } else {
         result.put("trueOrFalse", "false");

@@ -4,7 +4,10 @@ import src.service.serviceinterface.ServiceInterface;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -14,6 +17,7 @@ import src.model.Load;
 import src.model.Range;
 import src.model.Status;
 import src.repository.CategorieRepository;
+import src.repository.ChannelRepository;
 import src.repository.OneGameRepository;
 
 import java.nio.channels.AsynchronousSocketChannel;
@@ -35,7 +39,7 @@ public class OneGameService implements ServiceInterface {
     String channelName = req.getData().get("params").get("channelName");
     String categorieName = req.getData().get("params").get("categorieName");
     String winnerUser = req.getData().get("params").get("pseudo"); // user that found a correct answer
-    String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
+    Instant startTime = Instant.now().plus(6, ChronoUnit.SECONDS);
     Image image = CategorieRepository.getRandomImage(channelName, categorieName);
 
     if(channelName.equals("") || startTime.equals("")){
@@ -47,12 +51,17 @@ public class OneGameService implements ServiceInterface {
         res.setStatus(Status.ERROR);
         result.put("errorMessage", "Il manque des informations, veuillez réessayer");
       }else{
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        Duration d = Duration.between(Instant.now(), startTime);
+        ses.schedule(() -> {
+          ChannelRepository.resetFound(channelName);
+        }, d.toSeconds(), TimeUnit.SECONDS);
         System.out.println("UPDATE");
         res.setStatus(Status.OK);
         res.setRange(Range.ONLY_PLAYERS);
         result.put("winnerUser", winnerUser);
         result.put("userNewScore", String.valueOf(user.getScore()));
-        result.put("startTime", startTime);
+        result.put("startTime", startTime.toString());
         result.put("response", image.getResponse());
         result.put("image", image.getImg());
       }
