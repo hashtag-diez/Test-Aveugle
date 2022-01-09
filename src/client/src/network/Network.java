@@ -26,9 +26,11 @@ public class Network {
 
         ArrayList<Game> games = new ArrayList<>();
         //à supprimer plus tard:
-        games.add(new Game("Partie1", themes.get(0), "Michel", 25, false));
+        games.add(new Game("Partie1", themes.get(0), "Michel", 20, false));
         games.add(new Game("Partie2", themes.get(1), "Richard", 10, false));
         games.add(new Game("Partie3", themes.get(2), "Agathe", 15, false));
+        games.add(new Game("Partie4", themes.get(3), "Agathe", 15, false));
+        games.add(new Game("Partie5", themes.get(4), "Agathe", 15, false));
         games.get(0).addPlayer("Roro", false);
         games.get(0).addPlayer("Roro", false);
         games.get(0).addPlayer("Roro", false);
@@ -88,7 +90,7 @@ public class Network {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-        String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
+        String serverInstant = Instant.now().plus(4, ChronoUnit.SECONDS).toString();
         Question q = new Question(base64Image, serverInstant, "test");
         gameStarted(q);
     }
@@ -111,7 +113,7 @@ public class Network {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-        String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
+        String serverInstant = Instant.now().plus(5, ChronoUnit.SECONDS).toString();
         Question nextQuestion = new Question(base64Image, serverInstant, "test");
         if(game.getCurrentQuestion().isGoodAnswer(text)) {
             scoreRefresh(text, game, player, nextQuestion, false, isLastTurn);
@@ -120,8 +122,23 @@ public class Network {
         }
     }
 
-    public static void sendEndOfClock() {
+    public static void sendEndOfClock(Game game, String player, boolean isLastTurn) {
         //TODO notifier le serveur de la fin de l'horloge (USER_ANSWER vide avec isClockEnd à true)
+
+        //à supprimer: simulation du retour back
+        String base64Image = "";
+		File file = new File("src/client/img/logo_accueil.png");
+		try (FileInputStream imageInFile = new FileInputStream(file)) {
+			// Reading a Image file from file system
+			byte imageData[] = new byte[(int) file.length()];
+			imageInFile.read(imageData);
+			base64Image = Base64.getEncoder().encodeToString(imageData);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+        String serverInstant = Instant.now().plus(2, ChronoUnit.SECONDS).toString();
+        Question nextQuestion = new Question(base64Image, serverInstant, "test");
+        scoreRefresh("", game, player, nextQuestion, true, isLastTurn);
     }
 
     public static void receiveAnswer(String text, Game game, String player) {

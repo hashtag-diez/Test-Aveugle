@@ -3,15 +3,22 @@ package src.ihm.controller;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.time.Duration;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -36,7 +43,10 @@ public class InGameController implements Initializable{
     private ListView<String> scoreList;
 
     @FXML
-    private ProgressIndicator timer;
+    private Label timeLabel;
+
+    @FXML
+    private ProgressBar timer;
 
     @FXML
     private Label tourLabel;
@@ -45,7 +55,7 @@ public class InGameController implements Initializable{
     private Label answerLabel;
     
     @FXML
-    void enterAnswer(KeyEvent event) {
+    public synchronized void enterAnswer(KeyEvent event) {
         if(event.getCode() == KeyCode.ENTER) {
             String response = responseInput.getText();
             if(!response.isEmpty()) {
@@ -60,6 +70,7 @@ public class InGameController implements Initializable{
     private double imageY;
     private double a;
     private double b;
+    private volatile boolean killTime;
     private SystemTestAveugle system = SystemTestAveugle.getSystem();
 
     @Override
@@ -74,8 +85,8 @@ public class InGameController implements Initializable{
         nbQuestions = currentGame.getNbTours();
         tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);
 
-        answerLabel.setText(currentQuestion.getResponse());
         answerLabel.setVisible(false);
+        image.setVisible(false);
 
         responseList.getItems().addAll(currentGame.getAnswers());        
 
@@ -89,7 +100,7 @@ public class InGameController implements Initializable{
 
         setSortedTable(currentGame.getPlayers());
 
-        setTimer(currentQuestion.getStartingDate());
+        setTimer(currentQuestion.getStartingDate(), currentQuestion.getResponse());
     }
 
     public void setImage(Image newImage) {
@@ -101,41 +112,108 @@ public class InGameController implements Initializable{
         image.setX(imageX + (a - x * applicableRatio)/2);
         image.setY(imageY + (b - y * applicableRatio)/2);
         image.setImage(newImage);
-        image.setVisible(false);
     }
 
     public void setSortedTable(ArrayList<Player> players) {
-        playerList.getItems().clear();
-        scoreList.getItems().clear();
-        //trie la liste des joueurs en fonction de leur score
-        ArrayList<Player> tempList = new ArrayList<>(players);
-        while(tempList.size() > 0) {
-            Player highScorePlayer = tempList.get(0);
-            for(Player p : tempList) {
-                if(p.getPoints() > highScorePlayer.getPoints()) highScorePlayer = p;
+        Platform.runLater(new Runnable() {
+            public void run() {
+                playerList.getItems().clear();
+                scoreList.getItems().clear();
+                //trie la liste des joueurs en fonction de leur score
+                ArrayList<Player> tempList = new ArrayList<>(players);
+                while(tempList.size() > 0) {
+                    Player highScorePlayer = tempList.get(0);
+                    for(Player p : tempList) {
+                        if(p.getPoints() > highScorePlayer.getPoints()) highScorePlayer = p;
+                    }
+                    tempList.remove(highScorePlayer);
+                    playerList.getItems().add(highScorePlayer);
+                    scoreList.getItems().add(highScorePlayer.getPoints() + " pts");
+                }
             }
-            tempList.remove(highScorePlayer);
-            playerList.getItems().add(highScorePlayer);
-            scoreList.getItems().add(highScorePlayer.getPoints() + " pts");
-        }
+        });
     }
 
-    public void setTimer(String startTime) {
-        //TODO
-        image.setVisible(true);
+    public void setTimer(String startTime, String reponse) {
+        Instant thisTime = Instant.now();
+        Instant serverParsedInstant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(startTime));
+        Duration d = Duration.between(thisTime, serverParsedInstant);
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        Runnable countdown = () -> {
+            killTime = false;
+            int timeLeft = 30;
+            final int actualTimeLeft = timeLeft;
+            Platform.runLater(new Runnable() {
+                public void run() {
+                    if (!killTime) {
+                        timeLabel.setText(actualTimeLeft + "s"); 
+                        responseInput.setDisable(false);
+                        image.setVisible(true);
+                        answerLabel.setText("La réponse est: \n" + reponse);
+                        answerLabel.setVisible(false);
+                    }
+                }
+            });
+            while(!killTime && timeLeft > 0){
+                try {
+                    if(!killTime) TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    timeLeft--;
+                    final int nowTimeLeft = timeLeft;
+                    Platform.runLater(new Runnable() {
+                        public void run() {
+                            if(!killTime && nowTimeLeft >= 0){
+                                showTime(nowTimeLeft);
+                            }
+                        }
+                    });
+                }
+            }
+            if(!killTime){ 
+                system.sendEndOfClock();
+            }
+        };
+        resetShowTime();
+        ses.schedule(countdown, d.toSeconds() , TimeUnit.SECONDS);
     }
 
-    public void killTime() {
-        //TODO arrête le timer
+    public synchronized void killTime() {
+        killTime = true;
+        resetShowTime();
+    }
+
+    public synchronized void showTime(int timeLeft) {
+        timeLabel.setText(timeLeft + "s");
+        timer.setProgress((double)(30 - timeLeft) / 30);
+    }
+
+    public void resetShowTime() {
+        Platform.runLater(new Runnable(){
+            public void run() {
+                timer.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+                timeLabel.setText("...");
+            }
+        });
     }
 
     public void updateAnswers() {
-        //if(time)killTime();
-        Game currentGame = system.getCurrentGame();
-        ArrayList<String> answers = currentGame.getAnswers();
-        responseList.getItems().clear();
-        responseList.getItems().addAll(answers);  
-        if(answers.size() > 0 ) responseList.scrollTo(answers.size() - 1);     
+        Platform.runLater(new Runnable(){
+            public void run() {
+                Game currentGame = system.getCurrentGame();
+                ArrayList<String> answers = currentGame.getAnswers();
+                responseList.getItems().clear();
+                responseList.getItems().addAll(answers);  
+                if(answers.size() > 0 ) responseList.scrollTo(answers.size() - 1);  
+            }
+        });
+    }
+
+    public synchronized void endGame() {
+        killTime();
+        image.setVisible(false);
+        answerLabel.setVisible(true);
     }
 
     public void updateScore() {
@@ -143,25 +221,27 @@ public class InGameController implements Initializable{
     }
 
     public void updateGame() {
-        answerLabel.setVisible(true);
         Game currentGame = system.getCurrentGame();
         Question currentQuestion = currentGame.getCurrentQuestion();
-
-        tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);
-
-        try {
-            FileInputStream imageInFile = new FileInputStream("src/client/img/image.jpg");
-            Image newImage = new Image(imageInFile);
-            setImage(newImage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        setSortedTable(currentGame.getPlayers());
-
-        answerLabel.setText(currentQuestion.getResponse());
-        answerLabel.setVisible(false);
-
-        setTimer(currentQuestion.getStartingDate());
+        Platform.runLater(new Runnable(){
+            public void run() {
+                image.setVisible(false);
+                answerLabel.setVisible(true);
+                tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);
+                responseInput.setDisable(true);
+                try {
+                    FileInputStream imageInFile = new FileInputStream("src/client/img/image.jpg");
+                    Image newImage = new Image(imageInFile);
+                    setImage(newImage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        
+                setSortedTable(currentGame.getPlayers());
+        
+                setTimer(currentQuestion.getStartingDate(), currentQuestion.getResponse());
+            }
+        });
+       
     }
 }

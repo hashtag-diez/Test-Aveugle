@@ -60,12 +60,19 @@ public class App extends Application {
         gameSceneController.updateGameInSession();
     }
 
+    public void killTime() {
+        if(gameSceneController != null) {
+            gameSceneController.killTime();
+        } 
+    }
+
     public void goToGame() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("view/GameScene.fxml"));
             gameScene = new Scene(loader.load());
             gameSceneController = loader.getController();
-            stage.centerOnScreen();
+            stage.setX(300);
+            stage.setY(25);
             stage.setScene(gameScene);
             stage.show();
         } catch (IOException e) {

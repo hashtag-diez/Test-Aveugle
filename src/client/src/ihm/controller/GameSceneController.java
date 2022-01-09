@@ -86,11 +86,19 @@ public class GameSceneController implements Initializable {
         }
     }
 
+    public void killTime() {
+        if(inGameController != null) {
+            inGameController.killTime();
+        }
+    }
+
     public void endGame() {
         try {
+            inGameController.endGame();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/EndGameView.fxml"));
             Pane createPane = (Pane) loader.load();
             gamePane.setCenter(createPane);
+            system.deleteCurrentGame();
         } catch (IOException e) {
             e.printStackTrace();
         }
