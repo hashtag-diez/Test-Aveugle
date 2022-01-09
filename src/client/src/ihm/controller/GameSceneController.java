@@ -86,6 +86,12 @@ public class GameSceneController implements Initializable {
         }
     }
 
+    public void killTime() {
+        if(inGameController != null) {
+            inGameController.updateGame();
+        }
+    }
+
     public void endGame() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/EndGameView.fxml"));

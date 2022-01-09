@@ -113,6 +113,10 @@ public class SystemTestAveugle {
         Network.sendAnswer(text, currentGame, currentPlayer.getName(), currentGame.isLastTurn());
     }
 
+    public void sendEndOfClock() {
+        Network.sendEndOfClock(currentGame, currentPlayer.getName(), currentGame.isLastTurn());
+    }
+
     public void receiveAnswer(String text, String player) {
         String name = currentPlayer.getName().equals(player) ? "moi" : player;
         currentGame.addAnswer(name + " : " + text);
@@ -124,14 +128,14 @@ public class SystemTestAveugle {
     }
 
     public void receiveCorrectAnswer(String text, String player, boolean isClockEnd) {
-        for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
-            if(player.equals(currentGame.getPlayers().get(i).getName())) {
-                currentGame.getPlayers().get(i).addPoints();
-            }
-        }
         if(isClockEnd) {
             currentGame.addAnswer("Personne n'a trouvé ! ");
         } else {
+            for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
+                if(player.equals(currentGame.getPlayers().get(i).getName())) {
+                    currentGame.getPlayers().get(i).addPoints();
+                }
+            }
             String name = currentPlayer.getName().equals(player) ? "moi" : player;
             currentGame.addAnswer(name + " : " + text);
             currentGame.addAnswer(player + " a trouvé ! ");
@@ -175,6 +179,10 @@ public class SystemTestAveugle {
 
     public void deconnection() {
         Network.deconnection(currentGame, currentPlayer.getName(), currentPlayer.isAdmin());
+    }
+
+    public void killTime() {
+        app.killTime();
     }
 
     public void receiveDeconnection(Game game, String player, boolean isAdmin) {
