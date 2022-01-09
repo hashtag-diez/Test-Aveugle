@@ -100,7 +100,8 @@ public class SystemTestAveugle {
     }
 
     public void startGame() {
-        Network.startGame();
+        if(currentGame.getAdmin().equals(currentPlayer.getName()))
+        Network.startGame(currentGame);
     }
 
     public void gameStarted(Question question) {

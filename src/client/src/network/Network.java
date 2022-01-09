@@ -107,38 +107,21 @@ public class Network {
         system.hasJoinedGame(player, game);
     }
 
-    public static void startGame(Map<String, Map<String, String>> data) {
-        //TODO méthode de notification de jeu lancé par l'administrateur
-        
-        /*
-        //à supprimer: simulation du retour back
-        String base64Image = "";
-		File file = new File("src/client/img/logo.png");
-		try (FileInputStream imageInFile = new FileInputStream(file)) {
-			// Reading a Image file from file system
-			byte imageData[] = new byte[(int) file.length()];
-			imageInFile.read(imageData);
-			base64Image = Base64.getEncoder().encodeToString(imageData);
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
-        String serverInstant = Instant.now().plus(12, ChronoUnit.SECONDS).toString();
-        Question q = new Question(base64Image, serverInstant, "test");
- gameStarted(q);
-
- //theme
- 
-*/
-        String title = data.get("result").get("title");
-
-        String themeName = data.get("result").get("categorieName"); // ??
-        Theme theme = system.getThemeByName(themeName);
-
-       
+    public static void startGame(Game game) {
+        String request = "CHANNEL_START";
+        request += " " + game.getName();
+        try {
+            UserConnection.sendRequest(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void gameStarted(Question question) {
+        String title = data.get("result").get("title");
+        String themeName = data.get("result").get("categorieName"); 
+        Theme theme = system.getThemeByName(themeName);
+
         system.gameStarted(question);
     }
 
