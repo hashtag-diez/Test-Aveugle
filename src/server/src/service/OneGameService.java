@@ -8,7 +8,6 @@ import java.util.Map;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import src.model.User;
 import src.model.Image;
 import src.model.Load;
 import src.model.Range;
@@ -38,32 +37,19 @@ public class OneGameService implements ServiceInterface {
     String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
     Image image = CategorieRepository.getRandomImage(channelName, categorieName);
 
-    if(channelName.equals("") || startTime.equals("")){
+    if(channelName.equals("")){
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
-    }else if(!winnerUser.equals("")){
-      User user = OneGameRepository.scored(winnerUser, channelName);
-      if(user == null){
-        res.setStatus(Status.ERROR);
-        result.put("errorMessage", "Il manque des informations, veuillez réessayer");
-      }else{
-        System.out.println("UPDATE");
-        res.setStatus(Status.OK);
-        res.setRange(Range.ONLY_PLAYERS);
-        result.put("winnerUser", winnerUser);
-        result.put("userNewScore", String.valueOf(user.getScore()));
-        result.put("startTime", startTime);
-        result.put("response", image.getResponse());
-        result.put("image", image.getImg());
-        result.put("isEndOfClock", "false");
-      }
     }else{
       res.setStatus(Status.OK);
       res.setRange(Range.ONLY_PLAYERS);
       result.put("startTime", startTime);
       result.put("response", image.getResponse());
       result.put("image", image.getImg());
-      result.put("isEndOfClock", "true");
+      result.put("winnerUser", winnerUser);
+      if(!winnerUser.equals("none")){
+        OneGameRepository.scored(winnerUser, channelName);
+      }
     }
     data.put("result", result);
     res.setData(data);

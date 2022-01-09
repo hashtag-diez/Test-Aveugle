@@ -44,7 +44,7 @@ public class UserConnection {
         type.put("type", command[0]);
         params.put("channelName", command[1]);
         params.put("adminName", command[2]);
-        params.put("categorieName", command[3]);
+        params.put("categorieName", command[3].toLowerCase());
         params.put("nbTours", command[4]);
         request.put("header", type);
         request.put("params", params);
@@ -100,14 +100,7 @@ public class UserConnection {
         type.put("type", command[0]);
         params.put("channelName", command[1]);
         params.put("pseudo", command[2]);
-        request.put("header", type);
-        request.put("params", params);
-        break;
-      case "END_OF_CLOCK" :
-        System.out.println("On veut rafraichir le score à la fin du temps!");
-        type.put("type", "SCORE_REFRESH");
-        params.put("channelName", command[1]);
-        params.put("pseudo", "");
+        params.put("categorieName", command[3]);
         request.put("header", type);
         request.put("params", params);
         break;
@@ -172,9 +165,6 @@ public class UserConnection {
         case "SCORE_REFRESH":
           System.out.println("On reçoit le score et une nouvelle question!");
           Network.scoreRefresh(response); //
-          break;
-        case "EXIT":
-          // TODO
           break;
         default:
           break;

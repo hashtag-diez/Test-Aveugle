@@ -70,7 +70,6 @@ public class UserService implements ServiceInterface {
       res.setStatus(Status.OK);
       result.put("disconnectedUser", pseudo);
       result.put("channelName", channel.getChannelName());
-      result.put("categorieName", channel.getCategorie().getCategoryName());
       result.put("isAdmin", String.valueOf(isUserAdmin));
       res.setRange(Range.EVERYONE);
     }

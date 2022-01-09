@@ -6,6 +6,7 @@ import src.ihm.controller.GameSceneController;
 import src.ihm.controller.MainSceneController;
 import src.ihm.model.SystemTestAveugle;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -67,6 +68,8 @@ public class App extends Application {
     }
 
     public void goToGame() {
+
+    Platform.runLater(() -> {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("view/GameScene.fxml"));
             gameScene = new Scene(loader.load());
@@ -78,6 +81,7 @@ public class App extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    });
     }
 
     public void goToMenu() {

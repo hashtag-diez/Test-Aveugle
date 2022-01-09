@@ -172,7 +172,7 @@ public class InGameController implements Initializable{
                 }
             }
             if(!killTime){ 
-                system.sendEndOfClock();
+                system.sendScoreRefresh(system.getCurrentGame().getName(), "none", system.getCurrentGame().getTheme().getName());
             }
         };
         resetShowTime();

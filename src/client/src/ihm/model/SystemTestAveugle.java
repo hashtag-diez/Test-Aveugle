@@ -33,6 +33,7 @@ public class SystemTestAveugle {
         if(games == null) {
             games = Network.getGames();
         }
+        System.out.println("On a les games");
         return games;
     }
 
@@ -72,7 +73,7 @@ public class SystemTestAveugle {
 
     public Theme getThemeByName(String name) {
         for(Theme t : themes) {
-            if(t.getName().equals(name)) return t;
+            if(t.getName().toLowerCase().equals(name)) return t;
         }
         return null;
     }
@@ -100,7 +101,7 @@ public class SystemTestAveugle {
     }
 
     public void startGame() {
-        if(currentGame.getAdmin().equals(currentPlayer.getName()))
+        if(currentGame.getAdmin().getName().equals(currentPlayer.getName()))
             Network.startGame(currentGame);
     }
 
@@ -114,6 +115,7 @@ public class SystemTestAveugle {
         currentGame.setStarted(true);
         currentGame.setCurrentQuestion(question);
         app.startGame();
+        System.out.println("ZEID : On est arrivé jusque là ?");
     }
 
     public void setNextQuestion(Question question) {
@@ -131,8 +133,8 @@ public class SystemTestAveugle {
         return false;
     }
 
-    public void sendEndOfClock() {
-        Network.sendEndOfClock(currentGame);
+    public void sendScoreRefresh(String channelName, String pseudo, String categString) {
+        Network.sendScoreRefresh(channelName, pseudo, categString);
     }
 
     public void receiveAnswer(String text, String player) {
@@ -252,12 +254,12 @@ public class SystemTestAveugle {
         if(game == null) return;
         if(currentPlayer != null && currentPlayer.getGame().equals(game.getName()) && currentPlayer.getName().equals(player)){
             addPlayerInGameList(player, game, true);
-            app.updateGameList();
             currentGame = game;
             app.goToGame();
-            return;
         }
-        addPlayerInGameList(player, game, false);
+        else{
+            addPlayerInGameList(player, game, false);
+        }
         app.updateGameList();
     }
 

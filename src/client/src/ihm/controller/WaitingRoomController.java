@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -61,19 +62,21 @@ public class WaitingRoomController implements Initializable {
     }
 
     public void updatePlayerList() {
-        Game game = system.getCurrentGame();
-        ArrayList<Player> players = game.getPlayers();
-        Player player = system.getCurrentPlayer();
-        playerList.getItems().clear();
-        nbPlayerLabel.setText(players.size() + "/10");
-        if(player.isAdmin()) {
-            if(players.size() <= 1) {
-                messageLabel.setText("En attente d'autres joueurs !");
-                waitingActionButton.setDisable(true);
-            } else {
-                messageLabel.setText("Prêt à démarrer !");
-                waitingActionButton.setDisable(false);
+        Platform.runLater(() -> {
+            Game game = system.getCurrentGame();
+            ArrayList<Player> players = game.getPlayers();
+            Player player = system.getCurrentPlayer();
+            playerList.getItems().clear();
+            nbPlayerLabel.setText(players.size() + "/10");
+            if(player.isAdmin()) {
+                if(players.size() <= 1) {
+                    messageLabel.setText("En attente d'autres joueurs !");
+                    waitingActionButton.setDisable(true);
+                } else {
+                    messageLabel.setText("Prêt à démarrer !");
+                    waitingActionButton.setDisable(false);
+                }
             }
-        }
+        });
     }
 }

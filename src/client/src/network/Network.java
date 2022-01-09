@@ -36,24 +36,29 @@ public class Network {
 
     public static void receiveGameList(Map<String, Map<String, String>> data) {
         games = new ArrayList<>();
-        for(Map.Entry<String, Map<String, String>> entry : data.entrySet()) {
-            Map<String,String> values = entry.getValue();
-            String name = entry.getKey();
-            String theme = values.get("categorie");
-            String adminName = values.get("admin");
-            int tours = Integer.parseInt(values.get("nbTours"));
-            Game game = new Game(name, system.getThemeByName(theme), adminName, tours, false);
-            String[] players = values.get("users").split(",");
-            for(String playerName : players) {
-                if(!playerName.isEmpty()){
-                    Player p = new Player(playerName, playerName.equals(adminName));
-                    p.setLocal(false);
-                    p.setGame(name);
-                    game.addPlayer(p);
+        if(data.get("header").get("status").equals("OK")){
+            data.remove("header");
+            System.out.println("On mappe les games");
+            for(Map.Entry<String, Map<String, String>> entry : data.entrySet()) {
+                Map<String,String> values = entry.getValue();
+                String name = entry.getKey();
+                String theme = values.get("categorie");
+                String adminName = values.get("admin");
+                int tours = Integer.parseInt(values.get("nbTours"));
+                Game game = new Game(name, system.getThemeByName(theme), adminName, tours, false);
+                String[] players = values.get("users").split(",");
+                for(String playerName : players) {
+                    if(!playerName.isEmpty() && !playerName.equals(adminName)){
+                        Player p = new Player(playerName, playerName.equals(adminName));
+                        p.setLocal(false);
+                        p.setGame(name);
+                        game.addPlayer(p);
+                    }
                 }
+                games.add(game);
             }
-            games.add(game);
         }
+        System.out.println("On a fini !");
         hasReceivedGames = true;
     }
 
@@ -117,20 +122,12 @@ public class Network {
         String game = results.get("channelName");
         String startTime = results.get("startTime");
         Question question = new Question(image, startTime, reponse);
+        System.out.println("GameStarted");
         system.gameStarted(question, game);
     }
 
     public static void sendAnswer(String text, Game game, String player, boolean isLastTurn) {
-        String line = "USER_ANSWER "+ game.getCurrentQuestion().getResponse() + " " + text + " " + player;
-        try {
-            UserConnection.sendRequest(line);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void sendEndOfClock(Game game) {
-        String line = "END_OF_CLOCK " + game.getName();
+        String line = "USER_ANSWER "+ game.getCurrentQuestion().getResponse() + " " + player  + " " + text;
         try {
             UserConnection.sendRequest(line);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -146,18 +143,18 @@ public class Network {
         Game game = system.getGameByName(gameName);
 
         if (game.getName().equals(system.getCurrentGame().getName())) {
+            system.receiveAnswer(text, player);
             if(isCorrect.equals("true") && system.getCurrentPlayer().isAdmin()){
-                sendScoreRefresh(gameName, system.getCurrentPlayer().getName());
-            } else {
-                system.receiveAnswer(text, player);
+                sendScoreRefresh(gameName, system.getCurrentPlayer().getName(), game.getTheme().getName());
             }
         }
     }
 
-    public static void sendScoreRefresh(String channelName, String pseudo) {
+    public static void sendScoreRefresh(String channelName, String pseudo, String categString) {
         String request = "SCORE_REFRESH";
         request += " " + channelName;
         request += " " + pseudo;
+        request += " " + categString;
         try {
             UserConnection.sendRequest(request);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -167,16 +164,14 @@ public class Network {
 
     public static void scoreRefresh(Map<String,Map<String,String>> data) {
         Map<String,String> res = data.get("result");
-        String clockStatus = res.get("isEndOfClock");
-        boolean isClockEnd = clockStatus.equals("true");
         String reponse = res.get("response");
         String image = res.get("image");
         String game = res.get("channelName");
         String startTime = res.get("startTime");
-        if(isClockEnd) {
+        String player = res.get("winnerUser");
+        if(player.equals("none")) {
             system.receiveCorrectAnswer(reponse, null, true);
         } else {
-            String player = res.get("winnerUser");
             if (game.equals(system.getCurrentGame().getName())) {
                 system.receiveCorrectAnswer(reponse, player, false);
             }
@@ -190,7 +185,7 @@ public class Network {
     }
 
     public static void deconnection(Game game, String player, boolean isAdmin) {
-        String line = "USER_DISCONNECT "+ game.getName() + " " + player + " " + isAdmin;
+        String line = "USER_DISCONNECT "+ game.getName() + " " + player;
         try {
             UserConnection.sendRequest(line);
         } catch (IOException | ExecutionException | InterruptedException e) {

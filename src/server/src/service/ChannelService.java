@@ -42,7 +42,7 @@ public class ChannelService implements ServiceInterface {
       res.setStatus(Status.OK);
       Channel channel = ChannelRepository.addChannel(channelName, adminName, categorieName, nbTours, client);
       result.put("channelName", channel.getChannelName());
-      result.put("caregorieName", channel.getCategorie().getCategoryName());
+      result.put("categorieName", channel.getCategorie().getCategoryName());
       result.put("adminName", channel.getChannelAdmin().getPseudo());
       result.put("nbTours", String.valueOf(channel.getNbTours()));
       res.setRange(Range.EVERYONE);
@@ -101,7 +101,7 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("channelName");
-    String categorieName = req.getData().get("params").get("categorieName");
+    String categorieName = req.getData().get("params").get("categorieName").toLowerCase();
     Image image = CategorieRepository.getRandomImage(channelName, categorieName);
     String startTime = Instant.now().plus(3, ChronoUnit.SECONDS).toString();
 
@@ -140,30 +140,6 @@ public class ChannelService implements ServiceInterface {
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
-    res.setData(data);
-  }
-  public void channelQuestions(Load req, Load res) {
-    Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
-
-    String categorieName = req.getData().get("params").get("categorieName");
-    String channelName = req.getData().get("params").get("channelName");
-
-    Image image = CategorieRepository.getRandomImage(channelName, categorieName);
-
-    if (image==null) {
-      Map<String, String> result = new HashMap<String, String>();
-      res.setStatus(Status.ERROR);
-      System.out.println("Pas d'images");
-      result.put("errorMessage", "Il manque des informations, veuillez réessayer");
-      data.put("result", result);
-    } else {
-      res.setStatus(Status.OK);
-      Map<String, String> imageData = new HashMap<String, String>();
-      imageData.put("response", image.getResponse());
-      imageData.put("image", image.getImg());
-      data.put("result", imageData);
-    }
-    res.setRange(Range.ONLY_PLAYERS);
     res.setData(data);
   }
 
