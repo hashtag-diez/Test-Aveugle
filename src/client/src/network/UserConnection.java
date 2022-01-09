@@ -141,9 +141,8 @@ public class UserConnection {
   }
 
   public void handleResponse(ByteBuffer buffer) throws ClassNotFoundException, IOException {
-    //change a map
-    Load response = Serialization.deserializeLoad(buffer.flip().array());
-    if (response.getStatus().equals(Status.OK)) {
+    Map<String, Map<String, String>> response = Serialization.deserializeMap(buffer.flip().array());
+    if (response.get("headers").get("Status").equals("OK")) {
       switch (response.getType()) {
         case CHANNEL_CREATE:
           Network.receiveGame(response.getData()); // ok

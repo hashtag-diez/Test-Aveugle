@@ -57,7 +57,7 @@ public class UserService implements ServiceInterface {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    String channelName = req.getData().get("params").get("NameName");
+    String channelName = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
     boolean deleted = UserRepository.disconnectUser(pseudo, channelName);
     boolean isUserAdmin =  UserRepository.isAdmin(pseudo, channelName);
