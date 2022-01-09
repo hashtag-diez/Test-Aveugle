@@ -115,28 +115,32 @@ public class InGameController implements Initializable{
     }
 
     public void setSortedTable(ArrayList<Player> players) {
-        playerList.getItems().clear();
-        scoreList.getItems().clear();
-        //trie la liste des joueurs en fonction de leur score
-        ArrayList<Player> tempList = new ArrayList<>(players);
-        while(tempList.size() > 0) {
-            Player highScorePlayer = tempList.get(0);
-            for(Player p : tempList) {
-                if(p.getPoints() > highScorePlayer.getPoints()) highScorePlayer = p;
+        Platform.runLater(new Runnable() {
+            public void run() {
+                playerList.getItems().clear();
+                scoreList.getItems().clear();
+                //trie la liste des joueurs en fonction de leur score
+                ArrayList<Player> tempList = new ArrayList<>(players);
+                while(tempList.size() > 0) {
+                    Player highScorePlayer = tempList.get(0);
+                    for(Player p : tempList) {
+                        if(p.getPoints() > highScorePlayer.getPoints()) highScorePlayer = p;
+                    }
+                    tempList.remove(highScorePlayer);
+                    playerList.getItems().add(highScorePlayer);
+                    scoreList.getItems().add(highScorePlayer.getPoints() + " pts");
+                }
             }
-            tempList.remove(highScorePlayer);
-            playerList.getItems().add(highScorePlayer);
-            scoreList.getItems().add(highScorePlayer.getPoints() + " pts");
-        }
+        });
     }
 
     public void setTimer(String startTime, String reponse) {
-        killTime = false;
         Instant thisTime = Instant.now();
         Instant serverParsedInstant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(startTime));
         Duration d = Duration.between(thisTime, serverParsedInstant);
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
         Runnable countdown = () -> {
+            killTime = false;
             int timeLeft = 10;
             final int actualTimeLeft = timeLeft;
             Platform.runLater(new Runnable() {
@@ -148,6 +152,7 @@ public class InGameController implements Initializable{
                         answerLabel.setText("La réponse est: \n" + reponse);
                         answerLabel.setVisible(false);
                     }
+                    System.out.println("Début de la question");
                 }
             });
             while(!killTime && timeLeft > 0){
@@ -160,13 +165,19 @@ public class InGameController implements Initializable{
                     final int nowTimeLeft = timeLeft;
                     Platform.runLater(new Runnable() {
                         public void run() {
-                            if(!killTime && nowTimeLeft >= 0) showTime(nowTimeLeft);
+                            if(!killTime && nowTimeLeft >= 0){
+                                showTime(nowTimeLeft);
+                            }
+                            System.out.println("Une seconde est passée");
                         }
                     });
                 }
             }
-            if(!killTime) system.sendEndOfClock();
-            ses.shutdown();
+            System.out.println("Fin de la question");
+            if(!killTime){ 
+                System.out.println("Personne n'a trouvé");
+                system.sendEndOfClock();
+            }
         };
         resetShowTime();
         ses.schedule(countdown, d.toSeconds() , TimeUnit.SECONDS);
@@ -183,16 +194,24 @@ public class InGameController implements Initializable{
     }
 
     public void resetShowTime() {
-        timer.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-        timeLabel.setText("...");
+        Platform.runLater(new Runnable(){
+            public void run() {
+                timer.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+                timeLabel.setText("...");
+            }
+        });
     }
 
     public void updateAnswers() {
-        Game currentGame = system.getCurrentGame();
-        ArrayList<String> answers = currentGame.getAnswers();
-        responseList.getItems().clear();
-        responseList.getItems().addAll(answers);  
-        if(answers.size() > 0 ) responseList.scrollTo(answers.size() - 1);     
+        Platform.runLater(new Runnable(){
+            public void run() {
+                Game currentGame = system.getCurrentGame();
+                ArrayList<String> answers = currentGame.getAnswers();
+                responseList.getItems().clear();
+                responseList.getItems().addAll(answers);  
+                if(answers.size() > 0 ) responseList.scrollTo(answers.size() - 1);  
+            }
+        });
     }
 
     public void updateScore() {
@@ -201,23 +220,26 @@ public class InGameController implements Initializable{
 
     public void updateGame() {
         System.out.println("update game appelé");
-        image.setVisible(false);
-        answerLabel.setVisible(true);
         Game currentGame = system.getCurrentGame();
         Question currentQuestion = currentGame.getCurrentQuestion();
-
-        tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);
-
-        try {
-            FileInputStream imageInFile = new FileInputStream("src/client/img/image.jpg");
-            Image newImage = new Image(imageInFile);
-            setImage(newImage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        setSortedTable(currentGame.getPlayers());
-
-        setTimer(currentQuestion.getStartingDate(), currentQuestion.getResponse());
+        Platform.runLater(new Runnable(){
+            public void run() {
+                image.setVisible(false);
+                answerLabel.setVisible(true);
+                tourLabel.setText((nbQuestions - currentGame.getNbTours() + 1) + "/" + nbQuestions);
+                try {
+                    FileInputStream imageInFile = new FileInputStream("src/client/img/image.jpg");
+                    Image newImage = new Image(imageInFile);
+                    setImage(newImage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        
+                setSortedTable(currentGame.getPlayers());
+        
+                setTimer(currentQuestion.getStartingDate(), currentQuestion.getResponse());
+            }
+        });
+       
     }
 }

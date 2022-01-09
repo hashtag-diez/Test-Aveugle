@@ -131,6 +131,7 @@ public class SystemTestAveugle {
         if(isClockEnd) {
             currentGame.addAnswer("Personne n'a trouvé ! ");
         } else {
+            app.killTime();
             for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
                 if(player.equals(currentGame.getPlayers().get(i).getName())) {
                     currentGame.getPlayers().get(i).addPoints();

@@ -151,7 +151,7 @@ public class Network {
         //TODO réception d'un score refresh (fin du tour, incrémentation du score)
 
         if(game.getName().equals(system.getCurrentGame().getName())){
-            system.killTime();
+            //system.killTime();
             system.receiveCorrectAnswer(text, player, isClockEnd);
             if(!isLastTurn) {
                 System.out.println("next appelé");
