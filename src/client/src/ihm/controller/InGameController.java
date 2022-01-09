@@ -152,7 +152,6 @@ public class InGameController implements Initializable{
                         answerLabel.setText("La réponse est: \n" + reponse);
                         answerLabel.setVisible(false);
                     }
-                    System.out.println("Début de la question");
                 }
             });
             while(!killTime && timeLeft > 0){
@@ -168,14 +167,11 @@ public class InGameController implements Initializable{
                             if(!killTime && nowTimeLeft >= 0){
                                 showTime(nowTimeLeft);
                             }
-                            System.out.println("Une seconde est passée");
                         }
                     });
                 }
             }
-            System.out.println("Fin de la question");
             if(!killTime){ 
-                System.out.println("Personne n'a trouvé");
                 system.sendEndOfClock();
             }
         };
@@ -219,7 +215,6 @@ public class InGameController implements Initializable{
     }
 
     public void updateGame() {
-        System.out.println("update game appelé");
         Game currentGame = system.getCurrentGame();
         Question currentQuestion = currentGame.getCurrentQuestion();
         Platform.runLater(new Runnable(){

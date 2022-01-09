@@ -82,7 +82,6 @@ public class GameSceneController implements Initializable {
     public void updateGame() {
         waitingRoomController.updatePlayerList();
         if(inGameController != null) {
-            System.out.println("J'appelle updateGame depuis updateGame de GameSceneController");
             inGameController.updateGame();
         }
     }
@@ -109,7 +108,6 @@ public class GameSceneController implements Initializable {
 
     public void updateGameInSession() {
         inGameController.updateScore();
-        System.out.println("J'appelle updateGame depuis updateGameInSession");
         inGameController.updateGame();
     }
 

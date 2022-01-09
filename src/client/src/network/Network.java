@@ -154,7 +154,6 @@ public class Network {
             //system.killTime();
             system.receiveCorrectAnswer(text, player, isClockEnd);
             if(!isLastTurn) {
-                System.out.println("next appelé");
                 system.setNextQuestion(nextQuestion);
             } else {
                 system.endGame();
