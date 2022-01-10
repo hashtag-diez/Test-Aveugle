@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import src.model.User;
 import src.model.Image;
 import src.model.Load;
 import src.model.Range;
@@ -37,38 +36,25 @@ public class OneGameService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("channelName");
-    String categorieName = req.getData().get("params").get("categorieName");
+    String categorieName = req.getData().get("params").get("categorieName").toLowerCase();
     String winnerUser = req.getData().get("params").get("pseudo"); // user that found a correct answer
     Instant startTime = Instant.now().plus(6, ChronoUnit.SECONDS);
     Image image = CategorieRepository.getRandomImage(channelName, categorieName);
 
-    if(channelName.equals("") || startTime == null){
+    if(channelName.equals("")){
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
-    }else if(!winnerUser.equals("")){
-      User user = OneGameRepository.scored(winnerUser, channelName);
-      if(user == null){
-        res.setStatus(Status.ERROR);
-        result.put("errorMessage", "Il manque des informations, veuillez réessayer");
-      }else{
-        ChannelRepository.setFound(channelName, true);
-        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        Duration d = Duration.between(Instant.now(), startTime);
-        ses.schedule(() -> {
-          ChannelRepository.setFound(channelName, false);
-        }, d.toSeconds(), TimeUnit.SECONDS);
-        System.out.println("UPDATE");
-        res.setStatus(Status.OK);
-        res.setRange(Range.ONLY_PLAYERS);
-        result.put("winnerUser", winnerUser);
-        result.put("userNewScore", String.valueOf(user.getScore()));
-        result.put("startTime", startTime.toString());
-        result.put("response", image.getResponse());
-        result.put("image", image.getImg());
-      }
     }else{
       res.setStatus(Status.OK);
       res.setRange(Range.ONLY_PLAYERS);
+      result.put("startTime", startTime.toString());
+      result.put("channelName", channelName);
+      result.put("response", image.getResponse());
+      result.put("image", image.getImg());
+      result.put("winnerUser", winnerUser);
+      if(!winnerUser.equals("none")){
+        OneGameRepository.scored(winnerUser, channelName);
+      }
     }
     data.put("result", result);
     res.setData(data);

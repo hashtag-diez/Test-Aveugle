@@ -2,6 +2,7 @@ package src.ihm.model;
 
 import java.util.ArrayList;
 
+import javafx.application.Platform;
 import src.ihm.App;
 import src.network.Network;
 
@@ -33,6 +34,7 @@ public class SystemTestAveugle {
         if(games == null) {
             games = Network.getGames();
         }
+        System.out.println("On a les games");
         return games;
     }
 
@@ -60,9 +62,6 @@ public class SystemTestAveugle {
         Game newGame = new Game(title, theme, adminName, nbTours, false);
         if(currentPlayer != null && currentPlayer.getGame().equals(title)){
             newGame = new Game(title, theme, adminName, nbTours, true);
-            //à supprimer: pour test du lancement
-            newGame.addPlayer("Annie", false);
-            //
             games.add(newGame);
             app.updateGameList();
             currentGame = newGame;
@@ -73,15 +72,24 @@ public class SystemTestAveugle {
         }
     }
 
+    public Theme getThemeByName(String name) {
+        for(Theme t : themes) {
+            if(t.getName().toLowerCase().equals(name)) return t;
+        }
+        return null;
+    }
+
     public ArrayList<Theme> getThemes() {
         return themes;
     }
 
     public ArrayList<Theme> setThemeList() {
         ArrayList<Theme> res = new ArrayList<>();
-        res.add(new Theme("Personnages", "#6df0ea"));
+        res.add(new Theme("Acteurs", "#6df0ea"));
         res.add(new Theme("Films", "#f34646"));
-        res.add(new Theme("Autres", "#6df073"));
+        res.add(new Theme("Drapeaux", "#6df073"));
+        res.add(new Theme("Chanteurs", "#ffc300"));
+        res.add(new Theme("Voitures", "#504848"));
         return res;
     }
 
@@ -94,29 +102,52 @@ public class SystemTestAveugle {
     }
 
     public void startGame() {
-        Network.startGame();
+        if(currentGame.getAdmin().getName().equals(currentPlayer.getName()))
+            Network.startGame(currentGame);
     }
 
-    public void gameStarted(Question question) {
-        currentGame.setStarted(true);
-        currentGame.setCurrentQuestion(question);
-        app.startGame();
+    public void gameStarted(Question question, String gameName) {
+        System.out.println("HELP");
+        if(currentGame == null || !currentGame.getName().equals(gameName)) {
+            Game game = getGameByName(gameName);
+            if(game != null) games.remove(game);
+            app.updateGameList();
+        }
+        else{
+            currentGame.setStarted(true);
+            currentGame.setCurrentQuestion(question);
+            app.startGame();
+            System.out.println("ZEID : On est arrivé jusque là ?");
+        }
+        
     }
 
     public void setNextQuestion(Question question) {
-        currentGame.setCurrentQuestion(question);
-        currentGame.decrementTours();
-        if(currentGame.isStarted()) app.updateGameInSession();
+        Platform.runLater(() -> {
+            currentGame.setCurrentQuestion(question);
+            currentGame.decrementTours();
+            if(currentGame.isStarted()) app.updateGameInSession();
+        });
     }
 
     public void sendAnswer(String text) {
         Network.sendAnswer(text, currentGame, currentPlayer.getName(), currentGame.isLastTurn());
     }
 
+    public boolean isLastTurn() {
+        if(currentGame != null) return currentGame.isLastTurn();
+        return false;
+    }
+
+    public void sendScoreRefresh(String channelName, String pseudo, String categString) {
+        Network.sendScoreRefresh(channelName, pseudo, categString);
+    }
+
     public void receiveAnswer(String text, String player) {
         String name = currentPlayer.getName().equals(player) ? "moi" : player;
         currentGame.addAnswer(name + " : " + text);
         app.updateAnswers();
+        System.out.println("Ca s'est bien passé !");
     }
 
     public void goToMenu() {
@@ -124,19 +155,21 @@ public class SystemTestAveugle {
     }
 
     public void receiveCorrectAnswer(String text, String player, boolean isClockEnd) {
-        for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
-            if(player.equals(currentGame.getPlayers().get(i).getName())) {
-                currentGame.getPlayers().get(i).addPoints();
+        Platform.runLater(() -> {
+            if(isClockEnd) {
+                currentGame.addAnswer("Personne n'a trouvé ! ");
+            } else {
+                app.killTime();
+                for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
+                    if(player.equals(currentGame.getPlayers().get(i).getName())) {
+                        currentGame.getPlayers().get(i).addPoints();
+                    }
+                }
+                String name = currentPlayer.getName().equals(player) ? "Vous avez " : player + " a ";  
+                currentGame.addAnswer(name + " trouvé ! ");
             }
-        }
-        if(isClockEnd) {
-            currentGame.addAnswer("Personne n'a trouvé ! ");
-        } else {
-            String name = currentPlayer.getName().equals(player) ? "moi" : player;
-            currentGame.addAnswer(name + " : " + text);
-            currentGame.addAnswer(player + " a trouvé ! ");
-        }
-        app.updateAnswers();
+            app.updateAnswers();
+        });
     }
 
 
@@ -177,6 +210,10 @@ public class SystemTestAveugle {
         Network.deconnection(currentGame, currentPlayer.getName(), currentPlayer.isAdmin());
     }
 
+    public void killTime() {
+        app.killTime();
+    }
+
     public void receiveDeconnection(Game game, String player, boolean isAdmin) {
         if(isAdmin) {
             games.remove(currentGame);
@@ -184,24 +221,40 @@ public class SystemTestAveugle {
             currentGame = null;
             app.goToError();
         } else {
-            removePlayerFromGame(game.getName(), player);
-            if(currentPlayer != null) {
-                if(player.equals(currentPlayer.getName())) {
-                    currentGame = null;
-                    currentPlayer = null;
-                    app.goToMenu();
-                } 
-            }
-            app.updateGameList();
+            System.out.println("Tu taille gamin");
+            Platform.runLater(() -> {
+                removePlayerFromGame(game.getName(), player);
+                if(currentPlayer != null) {
+                    if(player.equals(currentPlayer.getName())) {
+                        currentGame = null;
+                        currentPlayer = null;
+                        app.goToMenu();
+                    } 
+                }                
+                app.updateGameList();
+                app.refreshMenu();
+            });
+            
         }
     }
 
-    public void endGame() {
-        app.endGame();
-        games.remove(currentGame);
-        currentGame = null;
-        currentPlayer = null;
+    public void deleteGame(String name) {
+        if(currentGame != null && currentGame.getName().equals(name)) {
+                games.remove(currentGame);
+                currentPlayer = null;
+                currentGame = null;
+                app.goToError();
+        }
+        else {
+            Game game = getGameByName(name);
+            games.remove(game);
+        }
         app.updateGameList();
+    }
+
+    public void endGame() {
+        games.remove(currentGame);
+        app.endGame();
     }
 
     public void joinGame(String pseudo, Game game) {
@@ -211,18 +264,23 @@ public class SystemTestAveugle {
     }
 
     public void hasJoinedGame(String player, Game game) {
-        if(currentPlayer != null && currentPlayer.getGame().equals(game.getName())){
+        Platform.runLater(() -> {
+            if(game == null) return;
+            System.out.println("Tac");
             addPlayerInGameList(player, game, true);
-            app.updateGameList();
             currentGame = game;
+            app.updateGameList();
             app.goToGame();
-            return;
-        }
-        addPlayerInGameList(player, game, false);
-        app.updateGameList();
+        });
     }
 
     public void connexion() {
         Network.setConnexion();
+    }
+
+    public void deleteCurrentGame() {
+        app.updateGameList();
+        currentGame = null;
+        currentPlayer = null;
     }
 }

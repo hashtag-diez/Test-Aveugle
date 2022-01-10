@@ -32,13 +32,19 @@ public class ChannelService implements ServiceInterface {
     String channelName = req.getData().get("params").get("channelName");
     String adminName = req.getData().get("params").get("adminName");
     String categorieName = req.getData().get("params").get("categorieName");
-    if (channelName.equals("") || adminName.equals("") || categorieName.equals("")) {
+    String nbToursStr = req.getData().get("params").get("nbTours");
+
+    if (channelName.equals("") || adminName.equals("") || categorieName.equals("") || nbToursStr.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
+      int nbTours = Integer.parseInt(req.getData().get("params").get("nbTours"));
       res.setStatus(Status.OK);
-      Channel channel = ChannelRepository.addChannel(channelName, adminName, categorieName, client);
+      Channel channel = ChannelRepository.addChannel(channelName, adminName, categorieName, nbTours, client);
       result.put("channelName", channel.getChannelName());
+      result.put("categorieName", channel.getCategorie().getCategoryName());
+      result.put("adminName", channel.getChannelAdmin().getPseudo());
+      result.put("nbTours", String.valueOf(channel.getNbTours()));
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -49,8 +55,8 @@ public class ChannelService implements ServiceInterface {
    * return names of channels and present users
    * [
    * 0 {
-   * response: ...,
-   * image: (String with users id or name divided by ",")
+   * categorie: ...,
+   * channelUsers: (String with users id or name divided by ",")
    * }
    * ],
    * [
@@ -73,12 +79,13 @@ public class ChannelService implements ServiceInterface {
       List<User> players = channel.getChannelParticipants();
       channelData.put("categorie", channel.getCategorie().getCategoryName());
       channelData.put("admin", channel.getChannelAdmin().getPseudo());
+      channelData.put("nbTours", channel.getNbTours() + "");
       System.out.println(players.size());
-      int i = 0;
+      String users = "";
       for(User player : players){
-        channelData.put("user"+i, player.getPseudo());
-        i++;
+        users += player.getPseudo() + ",";
       }
+      channelData.put("users", users);
       data.put(channel.getChannelName(), channelData);
     }
     res.setData(data);
@@ -94,9 +101,9 @@ public class ChannelService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("channelName");
-    String categorieName = req.getData().get("params").get("categorieName");
+    String categorieName = req.getData().get("params").get("categorieName").toLowerCase();
     Image image = CategorieRepository.getRandomImage(channelName, categorieName);
-    String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
+    String startTime = Instant.now().plus(3, ChronoUnit.SECONDS).toString();
 
     if (channelName.equals("")) {
       res.setStatus(Status.ERROR);
@@ -105,12 +112,13 @@ public class ChannelService implements ServiceInterface {
       res.setStatus(Status.OK);
       ChannelRepository.start(channelName);
       result.put("response", image.getResponse());
+      System.out.println(image.getResponse());
       result.put("image", image.getImg());
       result.put("channelName", channelName); // may be no need
       result.put("startTime", startTime);
       res.setRange(Range.EVERYONE);
     }
-    data.put("result", result);
+    data.put("results", result);
     res.setData(data);
   }
 
@@ -121,13 +129,15 @@ public class ChannelService implements ServiceInterface {
     String channelName = req.getData().get("params").get("channelName");
     String adminName = req.getData().get("params").get("adminName");
     boolean deleted = ChannelRepository.deleteChannel(channelName, adminName);
+    Channel channel = ChannelRepository.getChannelByName(channelName);
 
-    if (!deleted) {
+    if (!deleted || channel == null || adminName.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
-      result.put("channelName", channelName); // may be no need
+      result.put("channelName", channel.getChannelName());
+      result.put("categorieName", channel.getCategorie().getCategoryName());
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);

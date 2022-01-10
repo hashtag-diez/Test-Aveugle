@@ -38,11 +38,11 @@ public class ChannelRepository {
         return false;
     }
 
-    public static Channel addChannel(String channel , String adminName, String categorie, AsynchronousSocketChannel client){
+    public static Channel addChannel(String channel , String adminName, String categorie, int nbTours, AsynchronousSocketChannel client){
         User user = new User(adminName, client);
         Categorie categ = CatalogueRepository.findCategorieByName(App.catalogue, categorie);
         System.out.println(categ.getCategoryName());
-        Channel c = new Channel(channel, user, categ);
+        Channel c = new Channel(channel, user, categ, nbTours);
         App.rooms.add(c);
         return c;
     }

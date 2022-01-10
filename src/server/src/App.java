@@ -89,9 +89,10 @@ public class App implements Callable<Boolean> {
 					Load request = new Load();
 					request.setType(Type.GET_CHANNELS);
 					Load response = new Load();
+					response.setType(Type.GET_CHANNELS);
 					router.run(request, response, client);
 					sendToOneClient(response, client);
-				} catch (Exception e) {
+				} catch(Exception e) {
 					failed(e, null);
 				}
 				try {
@@ -108,6 +109,7 @@ public class App implements Callable<Boolean> {
 		System.in.read();
 		return true;
 	}
+	
 	public static void main(String[] args) throws Exception {
 		new App().call();
 	}

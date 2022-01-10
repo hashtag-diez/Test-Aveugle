@@ -10,6 +10,10 @@ import java.util.Map;
 
 import src.model.Load;
 import src.model.User;
+<<<<<<< HEAD
+=======
+import src.model.Channel;
+>>>>>>> frontendNetwork
 import src.repository.ChannelRepository;
 import src.repository.UserRepository;
 import src.model.Status;
@@ -40,6 +44,7 @@ public class UserService implements ServiceInterface {
     } else {
       res.setStatus(Status.OK);
       result.put("userName", user.getPseudo());
+      result.put("channelName", channelName);
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -55,16 +60,20 @@ public class UserService implements ServiceInterface {
     Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     Map<String, String> result = new HashMap<String, String>();
 
-    String channel = req.getData().get("params").get("channelName");
+    String channelName = req.getData().get("params").get("channelName");
     String pseudo = req.getData().get("params").get("pseudo");
-    boolean deleted = UserRepository.disconnectUser(pseudo, channel);
+    boolean deleted = UserRepository.disconnectUser(pseudo, channelName);
+    boolean isUserAdmin =  UserRepository.isAdmin(pseudo, channelName);
+
     if (!deleted) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
+      Channel channel = ChannelRepository.getChannelByName(channelName);
       res.setStatus(Status.OK);
       result.put("disconnectedUser", pseudo);
-      result.put("channelName", channel);
+      result.put("channelName", channel.getChannelName());
+      result.put("isAdmin", String.valueOf(isUserAdmin));
       res.setRange(Range.EVERYONE);
     }
     data.put("result", result);
@@ -81,19 +90,19 @@ public class UserService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("channelName");
-    String questionResponse = req.getData().get("params").get("questionResponse"); // how, may be smth else
+    String questionResponse = req.getData().get("params").get("questionResponse");
     String userAnswer = req.getData().get("params").get("userAnswer");
     String pseudo = req.getData().get("params").get("pseudo");
 
-    if (userAnswer == null) {
+    if (userAnswer.equals("") || questionResponse.equals("") || channelName.equals("") || pseudo.equals("")) {
       res.setStatus(Status.ERROR);
       result.put("errorMessage", "Il manque des informations, veuillez réessayer");
     } else {
       res.setStatus(Status.OK);
       result.put("pseudo", pseudo);
       result.put("userAnswer", userAnswer);
-      if ((userAnswer == questionResponse) && !ChannelRepository.isFound(channelName)) {
-        ChannelRepository.setFound(channelName, true);
+      result.put("channelName", channelName);
+      if (userAnswer.toLowerCase().replaceAll(" ", "").equals(questionResponse)) {
         result.put("trueOrFalse", "true");
       } else {
         result.put("trueOrFalse", "false");

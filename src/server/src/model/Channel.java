@@ -12,13 +12,15 @@ public class Channel {
     private List<String> answeredQuestions;
     private Categorie categorie;
     private boolean isStarted;
-    private boolean found; 
+    private int nbTours;
+    private boolean found;
 
-    public Channel(String name, User admin, Categorie categorie){
+    public Channel(String name, User admin, Categorie categorie, int nbTours){
         this.name = name;
         this.admin = admin;
         this.isStarted = false;
         this.categorie = categorie;
+        this.nbTours = nbTours;
         this.participants = new ArrayList<>();
         answeredQuestions = new ArrayList<String> ();
         participants.add(admin);
@@ -55,6 +57,12 @@ public class Channel {
     public User getChannelAdmin(){return admin;}
     
     public List<User> getChannelParticipants(){return participants;}
+
+    public int getNbTours(){return nbTours;}
+
+    public void setNbTours(int nbTours){
+        this.nbTours = nbTours;
+    }
 
     public void setChannelName(String name){
         this.name = name;

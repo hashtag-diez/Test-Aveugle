@@ -6,6 +6,7 @@ import src.ihm.controller.GameSceneController;
 import src.ihm.controller.MainSceneController;
 import src.ihm.model.SystemTestAveugle;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -60,17 +61,27 @@ public class App extends Application {
         gameSceneController.updateGameInSession();
     }
 
+    public void killTime() {
+        if(gameSceneController != null) {
+            gameSceneController.killTime();
+        } 
+    }
+
     public void goToGame() {
+
+    Platform.runLater(() -> {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("view/GameScene.fxml"));
             gameScene = new Scene(loader.load());
             gameSceneController = loader.getController();
-            stage.centerOnScreen();
+            stage.setX(300);
+            stage.setY(25);
             stage.setScene(gameScene);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    });
     }
 
     public void goToMenu() {
@@ -78,7 +89,9 @@ public class App extends Application {
         stage.centerOnScreen();
         stage.show();
     }
-
+    public void refreshMenu() {
+        stage.show();
+    } 
     public void goToError() {
         gameSceneController.goToError();
     }

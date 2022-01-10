@@ -1,5 +1,6 @@
 package src.ihm.controller;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -78,11 +79,14 @@ public class MainSceneController implements Initializable {
     }
 
     public void updateGameList() {
-        gameList.getItems().clear();
-        this.games = system.getGames();
-        for(Game g : games) {
-            gameList.getItems().add(g.getName());
-        }
-        if(joinGameController!= null) joinGameController.updateGame();
+        Platform.runLater(() -> {
+            gameList.getItems().clear();
+            this.games = system.getGames();
+            for(Game g : games) {
+                gameList.getItems().add(g.getName());
+            }
+            if(joinGameController!= null) joinGameController.updateGame();
+        });
+        
     }
 }

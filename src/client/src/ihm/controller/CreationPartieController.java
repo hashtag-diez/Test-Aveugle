@@ -35,7 +35,7 @@ public class CreationPartieController implements Initializable {
 
     private static SystemTestAveugle system = SystemTestAveugle.getSystem();
     private static ArrayList<Theme> themes = system.getThemes();
-    private static Integer[] nbTourVal = {10, 15, 20, 25};
+    private static Integer[] nbTourVal = {10, 15, 20};
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
