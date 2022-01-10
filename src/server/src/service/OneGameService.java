@@ -32,7 +32,7 @@ public class OneGameService implements ServiceInterface {
     Map<String, String> result = new HashMap<String, String>();
 
     String channelName = req.getData().get("params").get("channelName");
-    String categorieName = req.getData().get("params").get("categorieName");
+    String categorieName = req.getData().get("params").get("categorieName").toLowerCase();
     String winnerUser = req.getData().get("params").get("pseudo"); // user that found a correct answer
     String startTime = Instant.now().plus(6, ChronoUnit.SECONDS).toString();
     Image image = CategorieRepository.getRandomImage(channelName, categorieName);
@@ -44,6 +44,7 @@ public class OneGameService implements ServiceInterface {
       res.setStatus(Status.OK);
       res.setRange(Range.ONLY_PLAYERS);
       result.put("startTime", startTime);
+      result.put("channelName", channelName);
       result.put("response", image.getResponse());
       result.put("image", image.getImg());
       result.put("winnerUser", winnerUser);

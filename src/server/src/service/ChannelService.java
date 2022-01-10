@@ -112,12 +112,13 @@ public class ChannelService implements ServiceInterface {
       res.setStatus(Status.OK);
       ChannelRepository.start(channelName);
       result.put("response", image.getResponse());
+      System.out.println(image.getResponse());
       result.put("image", image.getImg());
       result.put("channelName", channelName); // may be no need
       result.put("startTime", startTime);
       res.setRange(Range.EVERYONE);
     }
-    data.put("result", result);
+    data.put("results", result);
     res.setData(data);
   }
 

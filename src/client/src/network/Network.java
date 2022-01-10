@@ -116,18 +116,23 @@ public class Network {
     }
 
     public static void gameStarted(Map<String, Map<String, String>> data) {
+        System.out.println("GameStarted");
         Map<String, String> results = data.get("results");
+        System.out.println("response");
+        System.out.println(results.get("response"));
         String reponse = results.get("response");
+        System.out.println("image");
         String image = results.get("image");
+        System.out.println("channelName");
         String game = results.get("channelName");
+        System.out.println("startTime");
         String startTime = results.get("startTime");
         Question question = new Question(image, startTime, reponse);
-        System.out.println("GameStarted");
         system.gameStarted(question, game);
     }
 
     public static void sendAnswer(String text, Game game, String player, boolean isLastTurn) {
-        String line = "USER_ANSWER "+ game.getCurrentQuestion().getResponse() + " " + player  + " " + text;
+        String line = "USER_ANSWER "+ game.getCurrentQuestion().getResponse().toLowerCase().replaceAll(" ", "") + " " + player  + " " + game.getName() + " " + text;
         try {
             UserConnection.sendRequest(line);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -138,14 +143,16 @@ public class Network {
     public static void receiveAnswer(Map<String, Map<String, String>> data) {
         String text = data.get("result").get("userAnswer");
         String player = data.get("result").get("pseudo");
-        String gameName = data.get("result").get("gameName"); 
+        String gameName = data.get("result").get("channelName"); 
         String isCorrect = data.get("result").get("trueOrFalse");
         Game game = system.getGameByName(gameName);
 
         if (game.getName().equals(system.getCurrentGame().getName())) {
+            System.out.println("C'est notre game !");
             system.receiveAnswer(text, player);
             if(isCorrect.equals("true") && system.getCurrentPlayer().isAdmin()){
-                sendScoreRefresh(gameName, system.getCurrentPlayer().getName(), game.getTheme().getName());
+                System.out.println("Trouvé !");
+                sendScoreRefresh(gameName, player, game.getTheme().getName());
             }
         }
     }
@@ -155,6 +162,7 @@ public class Network {
         request += " " + channelName;
         request += " " + pseudo;
         request += " " + categString;
+        System.out.println(request);
         try {
             UserConnection.sendRequest(request);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -178,8 +186,10 @@ public class Network {
         }
         Question question = new Question(image, startTime, reponse);
         if (!system.isLastTurn()) {
+            System.out.println("Et ça continue !");
             system.setNextQuestion(question);
         } else {
+            System.out.println("CLAP DE FIN !");
             system.endGame();
         }
     }

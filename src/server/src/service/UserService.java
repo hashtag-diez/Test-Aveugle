@@ -99,7 +99,7 @@ public class UserService implements ServiceInterface {
       result.put("pseudo", pseudo);
       result.put("userAnswer", userAnswer);
       result.put("channelName", channelName);
-      if (userAnswer == questionResponse) {
+      if (userAnswer.toLowerCase().replaceAll(" ", "").equals(questionResponse)) {
         result.put("trueOrFalse", "true");
       } else {
         result.put("trueOrFalse", "false");

@@ -85,8 +85,9 @@ public class UserConnection {
         System.out.println("On veut envoyer sa réponse !");
         type.put("type", command[0]);
         params.put("questionResponse", command[1]);
-        params.put("userAnswer", String.join(" ", Arrays.copyOfRange(command, 3, command.length)));
+        params.put("userAnswer", String.join(" ", Arrays.copyOfRange(command, 4, command.length)));
         params.put("pseudo", command[2]);
+        params.put("channelName", command[3]);
         request.put("header", type);
         request.put("params", params);
         break;

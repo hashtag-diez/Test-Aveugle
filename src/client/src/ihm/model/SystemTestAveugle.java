@@ -2,6 +2,7 @@ package src.ihm.model;
 
 import java.util.ArrayList;
 
+import javafx.application.Platform;
 import src.ihm.App;
 import src.network.Network;
 
@@ -106,22 +107,27 @@ public class SystemTestAveugle {
     }
 
     public void gameStarted(Question question, String gameName) {
+        System.out.println("HELP");
         if(currentGame == null || !currentGame.getName().equals(gameName)) {
             Game game = getGameByName(gameName);
             if(game != null) games.remove(game);
             app.updateGameList();
-            return;
         }
-        currentGame.setStarted(true);
-        currentGame.setCurrentQuestion(question);
-        app.startGame();
-        System.out.println("ZEID : On est arrivé jusque là ?");
+        else{
+            currentGame.setStarted(true);
+            currentGame.setCurrentQuestion(question);
+            app.startGame();
+            System.out.println("ZEID : On est arrivé jusque là ?");
+        }
+        
     }
 
     public void setNextQuestion(Question question) {
-        currentGame.setCurrentQuestion(question);
-        currentGame.decrementTours();
-        if(currentGame.isStarted()) app.updateGameInSession();
+        Platform.runLater(() -> {
+            currentGame.setCurrentQuestion(question);
+            currentGame.decrementTours();
+            if(currentGame.isStarted()) app.updateGameInSession();
+        });
     }
 
     public void sendAnswer(String text) {
@@ -141,6 +147,7 @@ public class SystemTestAveugle {
         String name = currentPlayer.getName().equals(player) ? "moi" : player;
         currentGame.addAnswer(name + " : " + text);
         app.updateAnswers();
+        System.out.println("Ca s'est bien passé !");
     }
 
     public void goToMenu() {
@@ -148,20 +155,21 @@ public class SystemTestAveugle {
     }
 
     public void receiveCorrectAnswer(String text, String player, boolean isClockEnd) {
-        if(isClockEnd) {
-            currentGame.addAnswer("Personne n'a trouvé ! ");
-        } else {
-            app.killTime();
-            for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
-                if(player.equals(currentGame.getPlayers().get(i).getName())) {
-                    currentGame.getPlayers().get(i).addPoints();
+        Platform.runLater(() -> {
+            if(isClockEnd) {
+                currentGame.addAnswer("Personne n'a trouvé ! ");
+            } else {
+                app.killTime();
+                for(int i = 0; i < currentGame.getPlayers().size() ; i++) {
+                    if(player.equals(currentGame.getPlayers().get(i).getName())) {
+                        currentGame.getPlayers().get(i).addPoints();
+                    }
                 }
+                String name = currentPlayer.getName().equals(player) ? "Vous avez " : player + " a ";  
+                currentGame.addAnswer(name + " trouvé ! ");
             }
-            String name = currentPlayer.getName().equals(player) ? "moi" : player;
-            currentGame.addAnswer(name + " : " + text);
-            currentGame.addAnswer(player + " a trouvé ! ");
-        }
-        app.updateAnswers();
+            app.updateAnswers();
+        });
     }
 
 
@@ -213,15 +221,20 @@ public class SystemTestAveugle {
             currentGame = null;
             app.goToError();
         } else {
-            removePlayerFromGame(game.getName(), player);
-            if(currentPlayer != null) {
-                if(player.equals(currentPlayer.getName())) {
-                    currentGame = null;
-                    currentPlayer = null;
-                    app.goToMenu();
-                } 
-            }
-            app.updateGameList();
+            System.out.println("Tu taille gamin");
+            Platform.runLater(() -> {
+                removePlayerFromGame(game.getName(), player);
+                if(currentPlayer != null) {
+                    if(player.equals(currentPlayer.getName())) {
+                        currentGame = null;
+                        currentPlayer = null;
+                        app.goToMenu();
+                    } 
+                }                
+                app.updateGameList();
+                app.refreshMenu();
+            });
+            
         }
     }
 
@@ -251,16 +264,14 @@ public class SystemTestAveugle {
     }
 
     public void hasJoinedGame(String player, Game game) {
-        if(game == null) return;
-        if(currentPlayer != null && currentPlayer.getGame().equals(game.getName()) && currentPlayer.getName().equals(player)){
+        Platform.runLater(() -> {
+            if(game == null) return;
+            System.out.println("Tac");
             addPlayerInGameList(player, game, true);
             currentGame = game;
+            app.updateGameList();
             app.goToGame();
-        }
-        else{
-            addPlayerInGameList(player, game, false);
-        }
-        app.updateGameList();
+        });
     }
 
     public void connexion() {

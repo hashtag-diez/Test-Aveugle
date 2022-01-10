@@ -1,5 +1,6 @@
 package src.ihm.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -58,14 +59,16 @@ public class GameSceneController implements Initializable {
     }
 
     public void startGame() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/InGameView.fxml"));
-            Pane createPane = (Pane) loader.load();
-            inGameController = loader.getController();
-            gamePane.setCenter(createPane);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            Platform.runLater(() -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/InGameView.fxml"));
+                    Pane createPane = (Pane) loader.load();
+                    inGameController = loader.getController();
+                gamePane.setCenter(createPane);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
     }
 
     public void goToError() {
@@ -93,15 +96,18 @@ public class GameSceneController implements Initializable {
     }
 
     public void endGame() {
-        try {
-            inGameController.endGame();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/EndGameView.fxml"));
-            Pane createPane = (Pane) loader.load();
-            gamePane.setCenter(createPane);
-            system.deleteCurrentGame();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            Platform.runLater(() -> {
+                try {
+                inGameController.endGame();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/EndGameView.fxml"));
+                Pane createPane = (Pane) loader.load();
+                gamePane.setCenter(createPane);
+                system.deleteCurrentGame();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        
     }
     
     public void updateAnswers() {
@@ -109,8 +115,10 @@ public class GameSceneController implements Initializable {
     }
 
     public void updateGameInSession() {
-        inGameController.updateScore();
-        inGameController.updateGame();
+        Platform.runLater(() -> {
+            inGameController.updateScore();
+            inGameController.updateGame();
+        });
     }
 
 }

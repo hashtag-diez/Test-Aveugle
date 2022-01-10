@@ -217,7 +217,9 @@ public class InGameController implements Initializable{
     }
 
     public void updateScore() {
-        setSortedTable(system.getCurrentGame().getPlayers());
+        Platform.runLater(() -> {
+            setSortedTable(system.getCurrentGame().getPlayers());
+        });
     }
 
     public void updateGame() {

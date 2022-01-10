@@ -89,7 +89,9 @@ public class App extends Application {
         stage.centerOnScreen();
         stage.show();
     }
-
+    public void refreshMenu() {
+        stage.show();
+    } 
     public void goToError() {
         gameSceneController.goToError();
     }
