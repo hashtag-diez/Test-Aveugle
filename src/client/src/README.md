@@ -14,5 +14,7 @@ Modifier le fichier **launch.json** situé dans *.vscode* en remplaçant <path> 
     "projectName": "Test-Aveugle_628d6755"
 },
 ```
+    
+/!\ l'application côté serveur doit avoir été lancée en parallèle afin de permettre un lancement correct.
 
 Lancer l'exécution via le main de la classe **App** situé dans *client/src/ihm*
